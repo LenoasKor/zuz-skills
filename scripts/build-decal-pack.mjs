@@ -32,9 +32,51 @@ const skillModules = new Map(descriptor.modules.flatMap((module) => module.skill
 const skills = [];
 const files = [];
 
+function providerSkillTargets(skillId, relativePath = "SKILL.md") {
+  return [
+    { provider: "codex", path: `skills/${skillId}/${relativePath}` },
+    { provider: "claude", path: `.claude/skills/${skillId}/${relativePath}` },
+    { provider: "gemini", path: `.gemini/skills/${skillId}/${relativePath}` },
+    { provider: "acp", path: `.agents/skills/${skillId}/${relativePath}` },
+  ];
+}
+
+function promptAgentSkill(text, identity, relativePath) {
+  const frontmatterEnd = text.indexOf("\n---\n", 4);
+  if (frontmatterEnd < 0) throw new Error(`unterminated-frontmatter:${relativePath}`);
+  const header = text.slice(4, frontmatterEnd);
+  const value = (key) => header.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?$`, "m"))?.[1]?.trim() ?? null;
+  const label = value("label");
+  const template = value("template");
+  if (!label) throw new Error(`missing-prompt-label:${relativePath}`);
+  const body = text.slice(frontmatterEnd + 5).trim();
+  const description = `${label} 규약을 프로젝트에서 실행합니다.`;
+  return Buffer.from([
+    "---",
+    `name: ${identity.id}`,
+    `description: ${JSON.stringify(description)}`,
+    `version: ${identity.version}`,
+    "---",
+    "",
+    `# ${label}`,
+    "",
+    template,
+    template && body ? "" : null,
+    body,
+    "",
+  ].filter((line) => line !== null && line !== undefined).join("\n"));
+}
+
 function installTargets(relativePath, moduleId) {
   if (relativePath.startsWith("skills/prompts/")) {
     const rest = relativePath.slice("skills/prompts/".length);
+    const resource = rest.match(/^resources\/([^/]+)\/(.+)$/);
+    if (resource) {
+      return [
+        { provider: "shared", path: `docs/skills/${rest}` },
+        ...providerSkillTargets(resource[1], resource[2]),
+      ];
+    }
     return [{ provider: "shared", path: `docs/skills/${rest}` }];
   }
   if (relativePath.startsWith("skills/agents/")) {
@@ -63,8 +105,10 @@ for (const absolute of await walkFiles()) {
   assertSafeRelativePath(relativePath);
   const bytes = await readFile(absolute);
   let moduleId = relativePath.startsWith("contracts/") ? "task-work-bug" : relativePath.startsWith("vendor/") ? "portable-core" : "portable-core";
+  let promptIdentity = null;
   if (relativePath.startsWith("skills/prompts/") && relativePath.endsWith(".md") && !relativePath.includes("/resources/")) {
     const identity = parsePromptMetadata(bytes.toString("utf8"), relativePath);
+    promptIdentity = identity;
     moduleId = skillModules.get(identity.id);
     skills.push({ ...identity, kind: "prompt", moduleId, sourcePath: relativePath });
   } else if (relativePath.startsWith("skills/agents/") && relativePath.endsWith("/SKILL.md")) {
@@ -87,6 +131,20 @@ for (const absolute of await walkFiles()) {
     installTargets: targets,
     contentBase64: bytes.toString("base64"),
   });
+  if (promptIdentity) {
+    const agentBytes = promptAgentSkill(bytes.toString("utf8"), promptIdentity, relativePath);
+    const generatedPath = `generated/skills/${promptIdentity.id}/SKILL.md`;
+    files.push({
+      sourcePath: generatedPath,
+      derivedFrom: relativePath,
+      moduleId,
+      sha256: sha256(agentBytes),
+      size: agentBytes.byteLength,
+      executable: false,
+      installTargets: providerSkillTargets(promptIdentity.id),
+      contentBase64: agentBytes.toString("base64"),
+    });
+  }
 }
 
 skills.sort((a, b) => a.id.localeCompare(b.id));

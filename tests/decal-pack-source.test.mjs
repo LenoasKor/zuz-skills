@@ -31,8 +31,8 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
   const revision = "a".repeat(40);
   const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
   execFileSync(process.execPath, args, { stdio: "pipe" });
-  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.1.manifest.json");
-  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.1.zuz-pack.json");
+  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.2.manifest.json");
+  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.2.zuz-pack.json");
   const firstManifest = await readFile(manifestPath);
   const firstPackage = await readFile(packagePath);
   execFileSync(process.execPath, args, { stdio: "pipe" });
@@ -43,7 +43,7 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
 test("signed manifest binds every consumer acceptance ID to fixture bytes", async () => {
   const revision = "b".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.1.manifest.json"), "utf8"));
+  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.2.manifest.json"), "utf8"));
   assert.deepEqual(
     manifest.consumerAcceptanceFixtures.map((fixture) => fixture.id),
     manifest.consumerAcceptance,
@@ -54,6 +54,20 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
     assert.ok(file, fixture.id);
     assert.equal(file.sha256, fixture.sha256);
     assert.equal(file.size, fixture.size);
+  }
+});
+
+test("every prompt skill is emitted as an Agent Skill for all portable providers", async () => {
+  const revision = "c".repeat(40);
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.2.zuz-pack.json"), "utf8"));
+  const promptSkills = packageValue.skills.filter((skill) => skill.kind === "prompt");
+  for (const skill of promptSkills) {
+    const generated = packageValue.files.find((file) => file.sourcePath === `generated/skills/${skill.id}/SKILL.md`);
+    assert.ok(generated, skill.id);
+    assert.deepEqual(generated.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+    const content = Buffer.from(generated.contentBase64, "base64").toString("utf8");
+    assert.match(content, new RegExp(`^---\\nname: ${skill.id}\\ndescription: `));
   }
 });
 
