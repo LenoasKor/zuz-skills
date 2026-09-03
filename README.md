@@ -11,7 +11,13 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Public release still requires the Skill Store review, deterministic package verification, and signature pipeline.
+First-party contents are licensed under Apache-2.0. Decal Pack 1.3.2 is the current verified public release:
+
+- source release: [decal-pack-v1.3.2](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v1.3.2)
+- signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
+- stable Pack identity: `decal-project-pack`
+
+The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
 
 ## Decal Pack
 
@@ -33,3 +39,5 @@ npm run build:decal-pack -- --source-revision <40-character-git-sha>
 The build is deterministic for the same source revision and source bytes. Generated artifacts are written to `dist/` and are not committed. Every declared consumer acceptance ID is bound to a fixture digest in the signed manifest, so Decal, Primer, Jig, and each supported CLI can prove that they tested the same contract.
 
 Prompt-based tools are preserved as shared documentation and are also emitted as Agent Skills in the native Codex, Claude, Gemini, and ACP project paths. This keeps the same Pack usable with or without Decal.
+
+When Decal Native is unavailable, the installed skills continue through their documented portable CLI fallback. Only the missing Native panel or permission helper is unavailable; the Task·Work·Bug workflow itself must not be rejected merely because the current host is Codex, Claude, Gemini, or ACP outside Decal.
