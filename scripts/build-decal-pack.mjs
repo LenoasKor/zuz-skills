@@ -49,6 +49,9 @@ function installTargets(relativePath, moduleId) {
   if (relativePath.startsWith("contracts/")) return [{ provider: "shared", path: relativePath }];
   if (relativePath.startsWith("vendor/")) return [{ provider: "shared", path: `docs/skills/${relativePath}` }];
   if (relativePath === "project-skill-pack-policy.json") return [];
+  if (relativePath === "LICENSE" || relativePath === "NOTICE") {
+    return [{ provider: "shared", path: `docs/skills/vendor/zuz.decal-pack/${relativePath}` }];
+  }
   throw new Error(`unmapped-source-path:${relativePath}:${moduleId}`);
 }
 
@@ -110,4 +113,3 @@ const outputDirectory = join(repositoryRoot, "dist");
 await writeStableJson(join(outputDirectory, `decal-pack-${descriptor.packVersion}.manifest.json`), { ...unsignedManifest, manifestSha256, packageSha256 });
 await writeStableJson(join(outputDirectory, `decal-pack-${descriptor.packVersion}.zuz-pack.json`), packageValue);
 console.log(JSON.stringify({ packId: descriptor.packId, packVersion: descriptor.packVersion, sourceRevision, manifestSha256, packageSha256, skills: skills.length, files: files.length }));
-

@@ -2,6 +2,7 @@
   "name": "zuz-skills",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build:decal-pack": "node scripts/build-decal-pack.mjs",
@@ -9,4 +10,3 @@
     "test": "node --test tests/*.test.mjs"
   }
 }
-

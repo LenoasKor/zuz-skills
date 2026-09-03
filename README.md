@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-The repository starts as a private canonicalization workspace. Public release is blocked until the first-party license is selected and the release is signed by the Skill Store pipeline.
+First-party contents are licensed under Apache-2.0. Public release still requires the Skill Store review, deterministic package verification, and signature pipeline.
 
 ## Decal Pack
 
@@ -31,4 +31,3 @@ npm run build:decal-pack -- --source-revision <40-character-git-sha>
 ```
 
 The build is deterministic for the same source revision and source bytes. Generated artifacts are written to `dist/` and are not committed.
-

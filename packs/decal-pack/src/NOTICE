@@ -1,0 +1,5 @@
+Copyright 2026 zuz.dev contributors
+
+The first-party Decal Pack skills, portable contracts, manifests, fixtures, and build tooling are licensed under the Apache License, Version 2.0.
+
+This distribution includes adapted animation guidance by Emil Kowalski under the MIT License. The pinned source, copyright notice, adaptation record, and MIT license are preserved under `vendor/emil-kowalski-animation/`.

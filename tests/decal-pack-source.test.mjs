@@ -10,8 +10,12 @@ test("source registry is complete and opt-in", () => {
   assert.match(output, /29 skills across 3 modules/);
 });
 
-test("public build remains blocked while the first-party license is undecided", () => {
-  assert.throws(() => execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "a".repeat(40)], { stdio: "pipe" }), (error) => error.status === 3);
+test("first-party source is Apache-2.0 and public release is unblocked", async () => {
+  const descriptor = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/pack.source.json"), "utf8"));
+  assert.equal(descriptor.firstPartyLicense, "Apache-2.0");
+  assert.equal(descriptor.publicReleaseBlocked, false);
+  assert.match(await readFile(join(repositoryRoot, "LICENSE"), "utf8"), /Apache License\s+Version 2\.0/);
+  assert.match(await readFile(join(repositoryRoot, "packs/decal-pack/src/NOTICE"), "utf8"), /Emil Kowalski/);
 });
 
 test("stable JSON and digest are deterministic", () => {
@@ -21,7 +25,19 @@ test("stable JSON and digest are deterministic", () => {
   assert.equal(sha256(first), sha256(second));
 });
 
+test("the same source revision produces byte-identical Pack artifacts", async () => {
+  const revision = "a".repeat(40);
+  const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
+  execFileSync(process.execPath, args, { stdio: "pipe" });
+  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.2.0.manifest.json");
+  const packagePath = join(repositoryRoot, "dist/decal-pack-1.2.0.zuz-pack.json");
+  const firstManifest = await readFile(manifestPath);
+  const firstPackage = await readFile(packagePath);
+  execFileSync(process.execPath, args, { stdio: "pipe" });
+  assert.deepEqual(await readFile(manifestPath), firstManifest);
+  assert.deepEqual(await readFile(packagePath), firstPackage);
+});
+
 test.after(async () => {
   await rm(join(repositoryRoot, "dist"), { recursive: true, force: true });
 });
-
