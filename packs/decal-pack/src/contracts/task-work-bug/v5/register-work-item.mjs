@@ -54,7 +54,10 @@ function yamlScalar(value) {
 }
 
 function renderRecord(intent, id, timestamp) {
-  const applied = (impact) => (impact === "none" ? "not-required" : "pending");
+  const applied = (impact) => {
+    if (impact === "none") return "not-required";
+    return intent.releaseMode === "task-batch" ? "pending-task" : "pending";
+  };
   const lines = [
     "---",
     `schema: ${KINDS[intent.kind].schema}`,

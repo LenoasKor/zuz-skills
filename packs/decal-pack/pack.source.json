@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "1.3.2",
+  "packVersion": "1.3.3",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 Task·Work·Bug 규약을 사용할 수 있는 휴대형 개발 Pack",
   "recommended": true,
@@ -102,7 +102,7 @@
   "compatibility": {
     "portableContract": "task-work-bug/v5",
     "minimumHosts": {
-      "decal": "0.391.0",
+      "decal": "0.392.0",
       "primer": null,
       "jig": null
     }
