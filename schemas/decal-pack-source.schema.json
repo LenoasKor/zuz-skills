@@ -18,6 +18,7 @@
     "installLayouts",
     "compatibility",
     "capabilities",
+    "executionPolicies",
     "revocations",
     "consumerAcceptance"
   ],
@@ -52,6 +53,41 @@
     "installLayouts": { "type": "object" },
     "compatibility": { "type": "object" },
     "capabilities": { "type": "array" },
+    "executionPolicies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repositoryAuthority", "settlementCommit"],
+      "properties": {
+        "repositoryAuthority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemaVersion", "identityProbe", "crossProjectAccess", "approvalBinding", "separateAuthorities"],
+          "properties": {
+            "schemaVersion": { "const": 1 },
+            "identityProbe": { "const": "root-and-product-identity-only" },
+            "crossProjectAccess": { "const": "explicit-current-user-approval" },
+            "approvalBinding": {
+              "const": ["repository-root", "operation-scope", "current-task"]
+            },
+            "separateAuthorities": {
+              "const": ["commit", "push", "deploy", "delete"]
+            }
+          }
+        },
+        "settlementCommit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemaVersion", "decalOwnedSession", "externalHost", "finalizerRequired", "pushIncluded"],
+          "properties": {
+            "schemaVersion": { "const": 1 },
+            "decalOwnedSession": { "const": "native-atomic-transaction" },
+            "externalHost": { "const": "explicit-settlement-request-authorizes-exact-settlement-commit" },
+            "finalizerRequired": { "const": true },
+            "pushIncluded": { "const": false }
+          }
+        }
+      }
+    },
     "revocations": { "type": "object" },
     "consumerAcceptance": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true }
   }

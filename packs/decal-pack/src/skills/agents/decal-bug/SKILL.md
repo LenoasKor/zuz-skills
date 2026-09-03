@@ -2,13 +2,23 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   portable: true
 ---
 
 # Decal Bug
 
 Manage an observed defect using the repository's canonical Task·Work·Bug contract.
+
+## Repository authority boundary
+
+Treat the Git root containing the invocation context as the only active project. A mention, link,
+dependency, companion repository, contract source, or shared Pack does not authorize access to another
+project. Before reading another project's contents beyond a root/product-identity probe, running a command
+there, or changing its files or Git state, obtain explicit current-user approval naming the repository root
+and allowed operation scope for the current task. Verify the approved root independently and follow that
+repository's own instructions. Commit, push, deploy, delete, and other external effects remain separate
+authorities unless the approval explicitly includes them.
 
 ## Before changing files
 
@@ -74,5 +84,10 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 
 - Preserve unrelated dirty files and other sessions' work.
 - Recheck the source revision, canonical path, symlink boundary, and exact write-set before every lifecycle write.
+- Outside Decal, an explicit request to settle or close the Bug authorizes the immediate isolated commit of
+  only the exact settlement write-set produced by that operation. Commit it before any other edit, then run
+  the repository settlement finalizer. If commit or finalization is blocked, preserve the pending marker and
+  report `settlement prepared; commit pending`; do not report the Bug as durably settled. This authority does
+  not include implementation files, push, merge, deploy, or a different repository.
 - Prove the fix with focused regression evidence. Distinguish `fixed`, `not reproduced`, `duplicate`, and `cancelled`; only a fixed standalone Bug applies its declared patch settlement.
 - Report the Bug ID, resulting status, verification evidence, commit checkpoint, and remaining release or settlement work.

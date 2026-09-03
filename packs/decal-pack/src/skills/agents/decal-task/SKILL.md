@@ -2,13 +2,23 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   portable: true
 ---
 
 # Decal Task
 
 Manage a project Task using the repository's canonical Task·Work·Bug contract.
+
+## Repository authority boundary
+
+Treat the Git root containing the invocation context as the only active project. A mention, link,
+dependency, companion repository, contract source, or shared Pack does not authorize access to another
+project. Before reading another project's contents beyond a root/product-identity probe, running a command
+there, or changing its files or Git state, obtain explicit current-user approval naming the repository root
+and allowed operation scope for the current task. Verify the approved root independently and follow that
+repository's own instructions. Commit, push, deploy, delete, and other external effects remain separate
+authorities unless the approval explicitly includes them.
 
 ## Before changing files
 
@@ -38,5 +48,10 @@ Register before implementation. Record scope, exclusions, completion criteria, d
 
 - Preserve unrelated dirty files. Do not stage, stash, reset, or rewrite another session's work.
 - Recheck the source revision and target paths immediately before every lifecycle write.
+- Outside Decal, an explicit request to settle or close the Task authorizes the immediate isolated commit of
+  only the exact settlement write-set produced by that operation. Commit it before any other edit, then run
+  the repository settlement finalizer. If commit or finalization is blocked, preserve the pending marker and
+  report `settlement prepared; commit pending`; do not report the Task as durably settled. This authority does
+  not include implementation files, push, merge, deploy, or a different repository.
 - Do not equate implementation, commit, merge, Smoke, release, and version settlement. Advance only through the lifecycle gates supported by the project.
 - Report the exact Task ID, resulting status, validation evidence, and any remaining release or settlement work.

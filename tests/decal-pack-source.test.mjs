@@ -31,8 +31,8 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
   const revision = "a".repeat(40);
   const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
   execFileSync(process.execPath, args, { stdio: "pipe" });
-  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.3.manifest.json");
-  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.3.zuz-pack.json");
+  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.4.manifest.json");
+  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.4.zuz-pack.json");
   const firstManifest = await readFile(manifestPath);
   const firstPackage = await readFile(packagePath);
   execFileSync(process.execPath, args, { stdio: "pipe" });
@@ -43,7 +43,7 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
 test("signed manifest binds every consumer acceptance ID to fixture bytes", async () => {
   const revision = "b".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.3.manifest.json"), "utf8"));
+  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.4.manifest.json"), "utf8"));
   assert.deepEqual(
     manifest.consumerAcceptanceFixtures.map((fixture) => fixture.id),
     manifest.consumerAcceptance,
@@ -60,7 +60,7 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
 test("every prompt skill is emitted as an Agent Skill for all portable providers", async () => {
   const revision = "c".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.3.zuz-pack.json"), "utf8"));
+  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.4.zuz-pack.json"), "utf8"));
   const promptSkills = packageValue.skills.filter((skill) => skill.kind === "prompt");
   for (const skill of promptSkills) {
     const generated = packageValue.files.find((file) => file.sourcePath === `generated/skills/${skill.id}/SKILL.md`);
@@ -68,6 +68,28 @@ test("every prompt skill is emitted as an Agent Skill for all portable providers
     assert.deepEqual(generated.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
     const content = Buffer.from(generated.contentBase64, "base64").toString("utf8");
     assert.match(content, new RegExp(`^---\\nname: ${skill.id}\\ndescription: `));
+    assert.match(content, /## Repository authority boundary/);
+    assert.match(content, /explicit approval from the current user that names the repository root and allowed operation scope/);
+  }
+});
+
+test("Pack execution policy binds cross-project approval and settlement commit", async () => {
+  const revision = "d".repeat(40);
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.4.zuz-pack.json"), "utf8"));
+  assert.equal(packageValue.executionPolicies.repositoryAuthority.crossProjectAccess, "explicit-current-user-approval");
+  assert.deepEqual(packageValue.executionPolicies.repositoryAuthority.approvalBinding, ["repository-root", "operation-scope", "current-task"]);
+  assert.equal(packageValue.executionPolicies.settlementCommit.externalHost, "explicit-settlement-request-authorizes-exact-settlement-commit");
+  assert.equal(packageValue.executionPolicies.settlementCommit.finalizerRequired, true);
+  assert.equal(packageValue.executionPolicies.settlementCommit.pushIncluded, false);
+
+  for (const id of ["decal-task", "decal-work", "decal-bug"]) {
+    const file = packageValue.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
+    assert.ok(file, id);
+    const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.match(content, /## Repository authority boundary/);
+    assert.match(content, /explicit current-user approval/);
+    assert.match(content, /exact settlement write-set/);
   }
 });
 

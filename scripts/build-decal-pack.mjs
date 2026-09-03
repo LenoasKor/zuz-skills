@@ -51,6 +51,11 @@ function promptAgentSkill(text, identity, relativePath) {
   if (!label) throw new Error(`missing-prompt-label:${relativePath}`);
   const body = text.slice(frontmatterEnd + 5).trim();
   const description = `${label} 규약을 프로젝트에서 실행합니다.`;
+  const repositoryAuthority = [
+    "## Repository authority boundary",
+    "",
+    "Treat the Git root containing the invocation context as the only active project. A mention, link, dependency, companion repository, contract source, or shared Pack does not authorize access to another project. Before reading another project's contents beyond a root/product-identity probe, running a command there, or changing its files or Git state, obtain explicit approval from the current user that names the repository root and allowed operation scope for the current task. Verify the approved root independently, follow that repository's own instructions, and stop if identity or scope differs. Commit, push, deploy, delete, and other external effects are separate authorities unless the approval explicitly includes them.",
+  ];
   return Buffer.from([
     "---",
     `name: ${identity.id}`,
@@ -59,6 +64,8 @@ function promptAgentSkill(text, identity, relativePath) {
     "---",
     "",
     `# ${label}`,
+    "",
+    ...repositoryAuthority,
     "",
     template,
     template && body ? "" : null,
@@ -177,6 +184,7 @@ const unsignedManifest = {
   modules: descriptor.modules,
   compatibility: descriptor.compatibility,
   capabilities: descriptor.capabilities,
+  executionPolicies: descriptor.executionPolicies,
   revocations: descriptor.revocations,
   consumerAcceptance: descriptor.consumerAcceptance,
   consumerAcceptanceFixtures,

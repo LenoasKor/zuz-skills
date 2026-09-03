@@ -8,6 +8,8 @@
     "relative-paths-only",
     "verify-digest-before-write",
     "preserve-user-modified-files",
-    "portable-fallback-without-decal-native"
+    "portable-fallback-without-decal-native",
+    "cross-project-access-requires-root-and-scope-approval",
+    "settlement-request-chains-exact-commit-and-finalize"
   ]
 }

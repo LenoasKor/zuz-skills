@@ -8,6 +8,8 @@
     "online-revocation-blocks-new-install",
     "primer-managed-project-is-delegated",
     "remote-shows-state-without-install-authority",
-    "preserve-user-modified-files"
+    "preserve-user-modified-files",
+    "managed-rules-enforce-cross-project-approval",
+    "native-settlement-commit-remains-atomic"
   ]
 }

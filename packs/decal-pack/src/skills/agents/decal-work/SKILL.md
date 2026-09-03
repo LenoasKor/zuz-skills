@@ -2,13 +2,23 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   portable: true
 ---
 
 # Decal Work
 
 Manage a bounded Work item using the repository's canonical Task·Work·Bug contract.
+
+## Repository authority boundary
+
+Treat the Git root containing the invocation context as the only active project. A mention, link,
+dependency, companion repository, contract source, or shared Pack does not authorize access to another
+project. Before reading another project's contents beyond a root/product-identity probe, running a command
+there, or changing its files or Git state, obtain explicit current-user approval naming the repository root
+and allowed operation scope for the current task. Verify the approved root independently and follow that
+repository's own instructions. Commit, push, deploy, delete, and other external effects remain separate
+authorities unless the approval explicitly includes them.
 
 ## Before changing files
 
@@ -76,5 +86,10 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 
 - Preserve unrelated dirty files and other sessions' staged state.
 - Revalidate the canonical target, source revision, symlink boundary, and exact write-set before each write.
+- Outside Decal, an explicit request to settle or close the Work authorizes the immediate isolated commit of
+  only the exact settlement write-set produced by that operation. Commit it before any other edit, then run
+  the repository settlement finalizer. If commit or finalization is blocked, preserve the pending marker and
+  report `settlement prepared; commit pending`; do not report the Work as durably settled. This authority does
+  not include implementation files, push, merge, deploy, or a different repository.
 - Move through the project's Work lifecycle; implementation completion does not by itself authorize release, settlement, push, or merge.
 - Report the Work ID, resulting status, evidence, commit checkpoint, and remaining settlement work.

@@ -1,18 +1,20 @@
 {
   "schemaVersion": 1,
   "packId": "decal-project-pack",
-  "packVersion": "1.3.3",
+  "packVersion": "1.3.4",
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [
       "fcc78acd90a16702ba753c15ad8cee197f34866f7eb9b103bb278b8a7d1f2dc6"
     ]
   },
   "minimumCompatible": {
-    "decal-slice-maintenance": "0.6.1",
+    "decal-commit-ready": "0.9.0",
+    "decal-slice-maintenance": "0.7.0",
     "decaldev-rebuild-relaunch": "0.9.0"
   },
   "revokedVersions": {
     "decal-slice-maintenance": [
+      "0.6.1",
       "0.6.0",
       "0.5.0",
       "0.4.1",

@@ -12,6 +12,11 @@ if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must 
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");
 if (descriptor.publicReleaseBlocked !== (descriptor.firstPartyLicense === "UNLICENSED")) failures.push("public release block must match first-party license state");
 if (policy.packId !== descriptor.packId || policy.packVersion !== descriptor.packVersion) failures.push("project skill Pack policy identity must match source descriptor");
+if (descriptor.executionPolicies?.repositoryAuthority?.crossProjectAccess !== "explicit-current-user-approval") failures.push("cross-project access must require explicit current-user approval");
+if (descriptor.executionPolicies?.repositoryAuthority?.identityProbe !== "root-and-product-identity-only") failures.push("cross-project pre-approval probe must be identity-only");
+if (descriptor.executionPolicies?.settlementCommit?.externalHost !== "explicit-settlement-request-authorizes-exact-settlement-commit") failures.push("external settlement must include its exact commit checkpoint");
+if (descriptor.executionPolicies?.settlementCommit?.finalizerRequired !== true) failures.push("settlement finalizer must be required");
+if (descriptor.executionPolicies?.settlementCommit?.pushIncluded !== false) failures.push("settlement authority must not include push");
 
 const moduleIds = new Set();
 const membership = new Map();
