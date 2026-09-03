@@ -6,7 +6,7 @@ const failures = [];
 const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
 
 if (descriptor.schemaVersion !== 1) failures.push("schemaVersion must be 1");
-if (descriptor.packId !== "zuz.decal-pack") failures.push("packId must be zuz.decal-pack");
+if (descriptor.packId !== "decal-project-pack") failures.push("packId must preserve the installed decal-project-pack identity");
 if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must be SemVer");
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");
 if (descriptor.publicReleaseBlocked !== (descriptor.firstPartyLicense === "UNLICENSED")) failures.push("public release block must match first-party license state");
@@ -51,4 +51,3 @@ if (failures.length) {
 }
 
 console.log(`Decal Pack source verified: ${discovered.size} skills across ${moduleIds.size} modules.`);
-

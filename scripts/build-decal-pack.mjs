@@ -50,7 +50,7 @@ function installTargets(relativePath, moduleId) {
   if (relativePath.startsWith("vendor/")) return [{ provider: "shared", path: `docs/skills/${relativePath}` }];
   if (relativePath === "project-skill-pack-policy.json") return [];
   if (relativePath === "LICENSE" || relativePath === "NOTICE") {
-    return [{ provider: "shared", path: `docs/skills/vendor/zuz.decal-pack/${relativePath}` }];
+    return [{ provider: "shared", path: `docs/skills/vendor/decal-project-pack/${relativePath}` }];
   }
   throw new Error(`unmapped-source-path:${relativePath}:${moduleId}`);
 }

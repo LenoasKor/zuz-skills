@@ -12,6 +12,8 @@ test("source registry is complete and opt-in", () => {
 
 test("first-party source is Apache-2.0 and public release is unblocked", async () => {
   const descriptor = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/pack.source.json"), "utf8"));
+  assert.equal(descriptor.packId, "decal-project-pack");
+  assert.deepEqual(descriptor.aliases, ["zuz.decal-pack"]);
   assert.equal(descriptor.firstPartyLicense, "Apache-2.0");
   assert.equal(descriptor.publicReleaseBlocked, false);
   assert.match(await readFile(join(repositoryRoot, "LICENSE"), "utf8"), /Apache License\s+Version 2\.0/);
