@@ -4,12 +4,14 @@ import { portablePath, loadSourceDescriptor, parseAgentMetadata, parsePromptMeta
 const descriptor = await loadSourceDescriptor();
 const failures = [];
 const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
+const policy = JSON.parse(await readFile(new URL("../packs/decal-pack/src/project-skill-pack-policy.json", import.meta.url), "utf8"));
 
 if (descriptor.schemaVersion !== 1) failures.push("schemaVersion must be 1");
 if (descriptor.packId !== "decal-project-pack") failures.push("packId must preserve the installed decal-project-pack identity");
 if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must be SemVer");
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");
 if (descriptor.publicReleaseBlocked !== (descriptor.firstPartyLicense === "UNLICENSED")) failures.push("public release block must match first-party license state");
+if (policy.packId !== descriptor.packId || policy.packVersion !== descriptor.packVersion) failures.push("project skill Pack policy identity must match source descriptor");
 
 const moduleIds = new Set();
 const membership = new Map();
