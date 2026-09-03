@@ -31,13 +31,30 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
   const revision = "a".repeat(40);
   const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
   execFileSync(process.execPath, args, { stdio: "pipe" });
-  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.2.0.manifest.json");
-  const packagePath = join(repositoryRoot, "dist/decal-pack-1.2.0.zuz-pack.json");
+  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.0.manifest.json");
+  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.0.zuz-pack.json");
   const firstManifest = await readFile(manifestPath);
   const firstPackage = await readFile(packagePath);
   execFileSync(process.execPath, args, { stdio: "pipe" });
   assert.deepEqual(await readFile(manifestPath), firstManifest);
   assert.deepEqual(await readFile(packagePath), firstPackage);
+});
+
+test("signed manifest binds every consumer acceptance ID to fixture bytes", async () => {
+  const revision = "b".repeat(40);
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.0.manifest.json"), "utf8"));
+  assert.deepEqual(
+    manifest.consumerAcceptanceFixtures.map((fixture) => fixture.id),
+    manifest.consumerAcceptance,
+  );
+  for (const fixture of manifest.consumerAcceptanceFixtures) {
+    assert.match(fixture.sha256, /^[0-9a-f]{64}$/);
+    const file = manifest.files.find((candidate) => candidate.sourcePath === fixture.sourcePath);
+    assert.ok(file, fixture.id);
+    assert.equal(file.sha256, fixture.sha256);
+    assert.equal(file.size, fixture.size);
+  }
 });
 
 test.after(async () => {

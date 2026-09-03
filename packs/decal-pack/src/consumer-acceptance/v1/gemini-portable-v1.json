@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "gemini-portable-v1",
+  "consumer": "gemini",
+  "installTarget": ".gemini/skills/{skillId}/SKILL.md",
+  "requiredCases": [
+    "modules-are-opt-in",
+    "relative-paths-only",
+    "verify-digest-before-write",
+    "preserve-user-modified-files",
+    "portable-fallback-without-decal-native"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "acp-portable-v1",
+  "consumer": "acp",
+  "installTarget": ".agents/skills/{skillId}/SKILL.md",
+  "requiredCases": [
+    "modules-are-opt-in",
+    "relative-paths-only",
+    "verify-digest-before-write",
+    "preserve-user-modified-files",
+    "portable-fallback-without-decal-native"
+  ]
+}

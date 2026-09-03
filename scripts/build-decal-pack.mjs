@@ -47,6 +47,9 @@ function installTargets(relativePath, moduleId) {
     ];
   }
   if (relativePath.startsWith("contracts/")) return [{ provider: "shared", path: relativePath }];
+  if (relativePath.startsWith("consumer-acceptance/")) {
+    return [{ provider: "shared", path: `docs/skills/vendor/decal-project-pack/${relativePath}` }];
+  }
   if (relativePath.startsWith("vendor/")) return [{ provider: "shared", path: `docs/skills/${relativePath}` }];
   if (relativePath === "project-skill-pack-policy.json") return [];
   if (relativePath === "LICENSE" || relativePath === "NOTICE") {
@@ -88,6 +91,23 @@ for (const absolute of await walkFiles()) {
 
 skills.sort((a, b) => a.id.localeCompare(b.id));
 files.sort((a, b) => a.sourcePath.localeCompare(b.sourcePath));
+const acceptanceFiles = new Map();
+for (const file of files) {
+  const match = file.sourcePath.match(/^consumer-acceptance\/v1\/([a-z0-9-]+)\.json$/);
+  if (!match) continue;
+  const fixture = JSON.parse(Buffer.from(file.contentBase64, "base64").toString("utf8"));
+  if (fixture.schemaVersion !== 1 || fixture.fixtureId !== match[1]) {
+    throw new Error(`invalid-consumer-acceptance-fixture:${file.sourcePath}`);
+  }
+  if (acceptanceFiles.has(fixture.fixtureId)) throw new Error(`duplicate-consumer-acceptance-fixture:${fixture.fixtureId}`);
+  acceptanceFiles.set(fixture.fixtureId, file);
+}
+const consumerAcceptanceFixtures = descriptor.consumerAcceptance.map((id) => {
+  const file = acceptanceFiles.get(id);
+  if (!file) throw new Error(`missing-consumer-acceptance-fixture:${id}`);
+  return { id, sourcePath: file.sourcePath, sha256: file.sha256, size: file.size };
+});
+if (acceptanceFiles.size !== consumerAcceptanceFixtures.length) throw new Error("undeclared-consumer-acceptance-fixture");
 const unsignedManifest = {
   schemaVersion: 1,
   packageType: "zuz-portable-pack",
@@ -101,6 +121,7 @@ const unsignedManifest = {
   capabilities: descriptor.capabilities,
   revocations: descriptor.revocations,
   consumerAcceptance: descriptor.consumerAcceptance,
+  consumerAcceptanceFixtures,
   license: descriptor.firstPartyLicense,
   skills,
   files: files.map(({ contentBase64: _contentBase64, ...file }) => file),

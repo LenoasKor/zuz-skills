@@ -26,6 +26,7 @@ for (const module of descriptor.modules ?? []) {
 }
 
 const discovered = new Map();
+const acceptanceFixtures = new Map();
 for (const absolute of await walkFiles()) {
   const relative = portablePath(sourceRoot, absolute);
   if (relative.startsWith("skills/prompts/") && relative.endsWith(".md") && !relative.includes("/resources/")) {
@@ -36,14 +37,29 @@ for (const absolute of await walkFiles()) {
     const metadata = parseAgentMetadata(await readFile(absolute, "utf8"), relative);
     discovered.set(metadata.id, { ...metadata, kind: "agent", relative });
   }
+  const acceptanceMatch = relative.match(/^consumer-acceptance\/v1\/([a-z0-9-]+)\.json$/);
+  if (acceptanceMatch) {
+    const fixture = JSON.parse(await readFile(absolute, "utf8"));
+    const id = acceptanceMatch[1];
+    if (fixture.schemaVersion !== 1 || fixture.fixtureId !== id || typeof fixture.consumer !== "string") {
+      failures.push(`invalid consumer acceptance fixture:${relative}`);
+    }
+    if (!Array.isArray(fixture.requiredCases) || fixture.requiredCases.length === 0 || fixture.requiredCases.some((item) => typeof item !== "string" || !item)) {
+      failures.push(`consumer acceptance cases required:${relative}`);
+    }
+    if (acceptanceFixtures.has(id)) failures.push(`duplicate consumer acceptance fixture:${id}`);
+    acceptanceFixtures.set(id, relative);
+  }
 }
 
 for (const skillId of membership.keys()) if (!discovered.has(skillId)) failures.push(`manifest skill missing:${skillId}`);
 for (const skillId of discovered.keys()) if (!membership.has(skillId)) failures.push(`source skill missing module:${skillId}`);
 
-for (const required of ["codex-portable-v1", "claude-portable-v1", "decal-bundled-v1", "primer-embedded-v1", "jig-embedded-v1"]) {
+for (const required of ["codex-portable-v1", "claude-portable-v1", "gemini-portable-v1", "acp-portable-v1", "decal-bundled-v1", "primer-embedded-v1", "jig-embedded-v1"]) {
   if (!(descriptor.consumerAcceptance ?? []).includes(required)) failures.push(`missing consumer acceptance:${required}`);
+  if (!acceptanceFixtures.has(required)) failures.push(`missing consumer acceptance fixture:${required}`);
 }
+for (const id of acceptanceFixtures.keys()) if (!(descriptor.consumerAcceptance ?? []).includes(id)) failures.push(`undeclared consumer acceptance fixture:${id}`);
 
 if (failures.length) {
   console.error(failures.join("\n"));

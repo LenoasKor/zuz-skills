@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "primer-embedded-v1",
+  "consumer": "primer",
+  "requiredCases": [
+    "pack-is-recommended-but-not-preselected",
+    "preview-includes-release-digest-and-relative-paths",
+    "preview-stage-and-first-commit-use-identical-bytes",
+    "skills-lock-records-release-modules-and-file-digests",
+    "skill-sync-preserves-user-modified-files",
+    "task-work-bug-ledger-is-not-auto-created"
+  ]
+}

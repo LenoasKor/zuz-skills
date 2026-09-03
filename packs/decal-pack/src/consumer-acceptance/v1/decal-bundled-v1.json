@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "decal-bundled-v1",
+  "consumer": "decal",
+  "requiredCases": [
+    "exact-release-and-digest-pinned-at-build",
+    "offline-bundled-install-remains-available",
+    "online-revocation-blocks-new-install",
+    "primer-managed-project-is-delegated",
+    "remote-shows-state-without-install-authority",
+    "preserve-user-modified-files"
+  ]
+}

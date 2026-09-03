@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "codex-portable-v1",
+  "consumer": "codex",
+  "installTarget": "skills/{skillId}/SKILL.md",
+  "requiredCases": [
+    "modules-are-opt-in",
+    "relative-paths-only",
+    "verify-digest-before-write",
+    "preserve-user-modified-files",
+    "portable-fallback-without-decal-native"
+  ]
+}
