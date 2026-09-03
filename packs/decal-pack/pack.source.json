@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "1.3.4",
+  "packVersion": "1.3.5",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 Task·Work·Bug 규약을 사용할 수 있는 휴대형 개발 Pack",
   "recommended": true,
@@ -109,6 +109,12 @@
   },
   "capabilities": [
     {
+      "id": "task-registry-explicit-initializer",
+      "scope": "contract",
+      "providers": ["codex", "claude", "gemini", "acp", "decal"],
+      "required": true
+    },
+    {
       "id": "portable-cli-fallback",
       "scope": "skill",
       "providers": ["codex", "claude", "gemini", "acp"],
@@ -141,6 +147,13 @@
       "externalHost": "explicit-settlement-request-authorizes-exact-settlement-commit",
       "finalizerRequired": true,
       "pushIncluded": false
+    },
+    "taskRegistryInitialization": {
+      "schemaVersion": 1,
+      "mode": "explicit-only",
+      "writer": "contracts/task-work-bug/initialize-task-registry.mjs",
+      "approvalBinding": ["repository-root", "operation-scope", "current-task"],
+      "automaticInstall": false
     }
   },
   "revocations": {

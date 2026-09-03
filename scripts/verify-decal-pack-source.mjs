@@ -17,6 +17,9 @@ if (descriptor.executionPolicies?.repositoryAuthority?.identityProbe !== "root-a
 if (descriptor.executionPolicies?.settlementCommit?.externalHost !== "explicit-settlement-request-authorizes-exact-settlement-commit") failures.push("external settlement must include its exact commit checkpoint");
 if (descriptor.executionPolicies?.settlementCommit?.finalizerRequired !== true) failures.push("settlement finalizer must be required");
 if (descriptor.executionPolicies?.settlementCommit?.pushIncluded !== false) failures.push("settlement authority must not include push");
+if (descriptor.executionPolicies?.taskRegistryInitialization?.mode !== "explicit-only") failures.push("Task registry initialization must be explicit-only");
+if (descriptor.executionPolicies?.taskRegistryInitialization?.writer !== "contracts/task-work-bug/initialize-task-registry.mjs") failures.push("Task registry initializer path must be canonical");
+if (descriptor.executionPolicies?.taskRegistryInitialization?.automaticInstall !== false) failures.push("Pack installation must not initialize a Task registry");
 
 const moduleIds = new Set();
 const membership = new Map();

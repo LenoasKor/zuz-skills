@@ -56,7 +56,7 @@
     "executionPolicies": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["repositoryAuthority", "settlementCommit"],
+      "required": ["repositoryAuthority", "settlementCommit", "taskRegistryInitialization"],
       "properties": {
         "repositoryAuthority": {
           "type": "object",
@@ -84,6 +84,18 @@
             "externalHost": { "const": "explicit-settlement-request-authorizes-exact-settlement-commit" },
             "finalizerRequired": { "const": true },
             "pushIncluded": { "const": false }
+          }
+        },
+        "taskRegistryInitialization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemaVersion", "mode", "writer", "approvalBinding", "automaticInstall"],
+          "properties": {
+            "schemaVersion": { "const": 1 },
+            "mode": { "const": "explicit-only" },
+            "writer": { "const": "contracts/task-work-bug/initialize-task-registry.mjs" },
+            "approvalBinding": { "const": ["repository-root", "operation-scope", "current-task"] },
+            "automaticInstall": { "const": false }
           }
         }
       }

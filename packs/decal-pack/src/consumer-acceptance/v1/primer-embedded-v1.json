@@ -8,6 +8,7 @@
     "preview-stage-and-first-commit-use-identical-bytes",
     "skills-lock-records-release-modules-and-file-digests",
     "skill-sync-preserves-user-modified-files",
-    "task-work-bug-ledger-is-not-auto-created"
+    "task-work-bug-ledger-is-not-auto-created",
+    "task-registry-initialization-is-explicit-and-fail-closed"
   ]
 }

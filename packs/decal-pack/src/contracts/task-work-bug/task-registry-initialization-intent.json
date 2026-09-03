@@ -1,0 +1,21 @@
+{
+  "schema": "decal.task-work-bug.task-registry-initialization-intent/v1",
+  "intentId": "replace-with-stable-current-task-intent-id",
+  "categories": [
+    {
+      "id": "product",
+      "label": "Product",
+      "purpose": "Product behavior and user experience"
+    },
+    {
+      "id": "workflow",
+      "label": "Workflow",
+      "purpose": "Development lifecycle and repository operations"
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "purpose": "Tests, verification, reliability, and accessibility"
+    }
+  ]
+}

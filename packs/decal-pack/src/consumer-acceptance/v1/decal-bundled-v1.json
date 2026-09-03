@@ -10,6 +10,8 @@
     "remote-shows-state-without-install-authority",
     "preserve-user-modified-files",
     "managed-rules-enforce-cross-project-approval",
-    "native-settlement-commit-remains-atomic"
+    "native-settlement-commit-remains-atomic",
+    "missing-task-registry-is-initialization-required",
+    "task-registry-initialization-is-explicit-and-fail-closed"
   ]
 }
