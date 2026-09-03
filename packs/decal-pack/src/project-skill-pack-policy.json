@@ -4,7 +4,8 @@
   "packVersion": "1.3.5",
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [
-      "fcc78acd90a16702ba753c15ad8cee197f34866f7eb9b103bb278b8a7d1f2dc6"
+      "fcc78acd90a16702ba753c15ad8cee197f34866f7eb9b103bb278b8a7d1f2dc6",
+      "c767f0580aef11b93a942a00f364dc9be1671a7ccf022c1417e22377bcf277ed"
     ]
   },
   "minimumCompatible": {
