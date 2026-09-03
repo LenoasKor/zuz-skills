@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "packId": "zuz.decal-pack",
+  "legacyPackIds": ["decal-project-pack"],
+  "packVersion": "1.2.0",
+  "title": "Decal Pack",
+  "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 Task·Work·Bug 규약을 사용할 수 있는 휴대형 개발 Pack",
+  "recommended": true,
+  "defaultSelected": false,
+  "firstPartyLicense": "UNLICENSED",
+  "publicReleaseBlocked": true,
+  "modules": [
+    {
+      "id": "portable-core",
+      "title": "기본 개발 도구",
+      "description": "상태 확인, 빌드, 디버깅, 안전한 Git 작업, 작업 공간, 인계와 모션 지침",
+      "defaultSelected": false,
+      "projectInitialization": false,
+      "skillIds": [
+        "decal-animate",
+        "decal-build",
+        "decal-commit-ready",
+        "decal-debug",
+        "decal-deploy",
+        "decal-handoff",
+        "decal-healthcheck",
+        "decal-improve-animations",
+        "decal-orient",
+        "decal-pull-ready",
+        "decal-push-ready",
+        "decal-review-animations",
+        "decal-risk-review",
+        "decal-status-summary",
+        "decal-task-space"
+      ]
+    },
+    {
+      "id": "task-work-bug",
+      "title": "Task·Work·Bug",
+      "description": "선택형 작업 원장 스킬과 portable reader·writer·acceptance 계약",
+      "defaultSelected": false,
+      "projectInitialization": false,
+      "skillIds": [
+        "decal-bug",
+        "decal-slice",
+        "decal-slice-dev-report",
+        "decal-slice-hygiene",
+        "decal-slice-maintenance",
+        "decal-slice-map",
+        "decal-slice-plan-report",
+        "decal-slice-report",
+        "decal-slice-smoke",
+        "decal-slice-test-report",
+        "decal-task",
+        "decal-work"
+      ]
+    },
+    {
+      "id": "decal-maintainer",
+      "title": "Decal 저장소 유지보수",
+      "description": "Decal 저장소의 개발 앱과 A/B 테스트 빌드 전용 도구",
+      "defaultSelected": false,
+      "projectInitialization": false,
+      "audience": ["decal-repository"],
+      "skillIds": [
+        "decaldev-rebuild-relaunch",
+        "decaldev-rebuild-relaunch-worktree"
+      ]
+    }
+  ],
+  "installLayouts": {
+    "promptSkills": {
+      "sourcePrefix": "src/skills/prompts/",
+      "target": "docs/skills/{relativePath}"
+    },
+    "agentSkills": {
+      "sourcePrefix": "src/skills/agents/",
+      "targets": {
+        "codex": "skills/{relativePath}",
+        "claude": ".claude/skills/{relativePath}",
+        "gemini": ".gemini/skills/{relativePath}",
+        "acp": ".agents/skills/{relativePath}"
+      }
+    },
+    "contracts": {
+      "sourcePrefix": "src/contracts/",
+      "target": "contracts/{relativePath}",
+      "moduleId": "task-work-bug"
+    },
+    "vendorNotices": {
+      "sourcePrefix": "src/vendor/",
+      "target": "docs/skills/vendor/{relativePath}",
+      "moduleId": "portable-core"
+    }
+  },
+  "compatibility": {
+    "portableContract": "task-work-bug/v5",
+    "minimumHosts": {
+      "decal": "0.391.0",
+      "primer": null,
+      "jig": null
+    }
+  },
+  "capabilities": [
+    {
+      "id": "portable-cli-fallback",
+      "scope": "skill",
+      "providers": ["codex", "claude", "gemini", "acp"],
+      "required": true
+    },
+    {
+      "id": "decal-native-ui",
+      "scope": "skill",
+      "providers": ["decal"],
+      "required": false
+    },
+    {
+      "id": "jig-task-ledger",
+      "scope": "consumer",
+      "providers": ["jig"],
+      "required": false
+    }
+  ],
+  "revocations": {
+    "versions": [],
+    "digests": [],
+    "snapshotGeneratedAt": "2026-09-03T00:00:00Z"
+  },
+  "consumerAcceptance": [
+    "codex-portable-v1",
+    "claude-portable-v1",
+    "gemini-portable-v1",
+    "acp-portable-v1",
+    "decal-bundled-v1",
+    "primer-embedded-v1",
+    "jig-embedded-v1"
+  ]
+}
+

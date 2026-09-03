@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "packId": "decal-project-pack",
+  "packVersion": "1.2.0",
+  "repositoryAuthoringProfiles": {
+    "jig.development-task-authoring/v1": [
+      "fcc78acd90a16702ba753c15ad8cee197f34866f7eb9b103bb278b8a7d1f2dc6"
+    ]
+  },
+  "minimumCompatible": {
+    "decal-slice-maintenance": "0.6.1",
+    "decaldev-rebuild-relaunch": "0.8.0"
+  },
+  "revokedVersions": {
+    "decal-slice-maintenance": [
+      "0.6.0",
+      "0.5.0",
+      "0.4.1",
+      "0.4.0",
+      "0.3.0",
+      "0.2.0",
+      "0.1.0"
+    ],
+    "decaldev-rebuild-relaunch": [
+      "0.7.2",
+      "0.7.1",
+      "0.7.0",
+      "0.6.1",
+      "0.6.0",
+      "0.5.1",
+      "0.5.0",
+      "0.4.0",
+      "0.3.2",
+      "0.3.1",
+      "0.2.0",
+      "0.1.0"
+    ]
+  },
+  "revokedDigests": {
+    "decal-slice-maintenance": [
+      "sha256:3cd9200b906b1f84bb0d3377e24f02eaf5c0ed9b9a0542b9d9a60c6df00103dd",
+      "sha256:9df9a6f68251f828783af2c2669a1ac149c1f7e0ea0761a4314f95628f4dbc0b"
+    ],
+    "decaldev-rebuild-relaunch": [
+      "sha256:166cd57d69eba51fe05088f37ebb1fa6daa37c14616f49fe93a8b4aa0e9ce088"
+    ]
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://decal.local/contracts/task-work-bug/v1/work-document.schema.json",
+  "title": "Decal Work Document frontmatter v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "id",
+    "title",
+    "status",
+    "priority",
+    "taskRefs",
+    "createdAt",
+    "updatedAt",
+    "blocked",
+    "completion",
+    "closure"
+  ],
+  "properties": {
+    "schema": { "const": "decal.task-work-bug.work-document" },
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "pattern": "^WORK-[0-9]{3,}$" },
+    "title": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$" },
+    "status": {
+      "enum": [
+        "new",
+        "planned",
+        "in_progress",
+        "blocked",
+        "development_complete",
+        "release_ready",
+        "closed"
+      ]
+    },
+    "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+    "taskRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[1-9][0-9]*$" },
+      "uniqueItems": true
+    },
+    "nextAction": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[^\\r\\n]*$" }
+      ]
+    },
+    "versionImpact": { "enum": ["desktop-patch", "none"] },
+    "remoteVersionImpact": { "enum": ["remote-patch", "none"] },
+    "releaseMode": { "enum": ["standalone", "task-batch"] },
+    "releaseTaskRef": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[1-9][0-9]*$" }
+      ]
+    },
+    "versionApplied": {
+      "anyOf": [
+        { "enum": ["pending", "pending-task", "not-required"] },
+        { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      ]
+    },
+    "remoteVersionApplied": {
+      "anyOf": [
+        { "enum": ["pending", "pending-task", "not-required"] },
+        { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" }
+      ]
+    },
+    "createdAt": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "updatedAt": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "blocked": { "$ref": "#/$defs/blockedOrNull" },
+    "completion": { "$ref": "#/$defs/completionOrNull" },
+    "closure": { "$ref": "#/$defs/closureOrNull" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "blocked" } }, "required": ["status"] },
+      "then": { "properties": { "blocked": { "$ref": "#/$defs/blocked" } } },
+      "else": { "properties": { "blocked": { "type": "null" } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "enum": ["development_complete", "release_ready"] }
+        },
+        "required": ["status"]
+      },
+      "then": { "properties": { "completion": { "$ref": "#/$defs/completion" } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "closed" } }, "required": ["status"] },
+      "then": { "properties": { "closure": { "$ref": "#/$defs/closure" } } },
+      "else": { "properties": { "closure": { "type": "null" } } }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "closed" },
+          "closure": {
+            "type": "object",
+            "properties": { "reason": { "const": "completed" } },
+            "required": ["reason"]
+          }
+        },
+        "required": ["status", "closure"]
+      },
+      "then": { "properties": { "completion": { "$ref": "#/$defs/completion" } } }
+    }
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "blocked": {
+      "type": "object",
+      "required": ["from", "reason", "exitCriteria", "blockedAt"],
+      "properties": {
+        "from": {
+          "enum": ["planned", "in_progress", "development_complete", "release_ready"]
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "exitCriteria": { "type": "string", "minLength": 1 },
+        "blockedAt": { "type": "string", "format": "date-time", "pattern": "Z$" }
+      },
+      "additionalProperties": true
+    },
+    "blockedOrNull": {
+      "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/blocked" }]
+    },
+    "completion": {
+      "type": "object",
+      "required": ["summary", "evidence", "completedAt"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "completedAt": { "type": "string", "format": "date-time", "pattern": "Z$" }
+      },
+      "additionalProperties": true
+    },
+    "completionOrNull": {
+      "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/completion" }]
+    },
+    "closure": {
+      "type": "object",
+      "required": ["reason", "note", "duplicateOf", "closedAt"],
+      "properties": {
+        "reason": { "enum": ["completed", "cancelled", "duplicate", "not_needed"] },
+        "note": { "type": ["string", "null"] },
+        "duplicateOf": {
+          "anyOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^(WORK|BUG)-[0-9]{3,}$" }
+          ]
+        },
+        "closedAt": { "type": "string", "format": "date-time", "pattern": "Z$" }
+      },
+      "additionalProperties": true
+    },
+    "closureOrNull": {
+      "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/closure" }]
+    }
+  }
+}

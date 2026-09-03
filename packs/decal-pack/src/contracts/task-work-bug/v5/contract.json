@@ -1,0 +1,42 @@
+{
+  "schema": "decal.task-work-bug.contract/v5",
+  "contractId": "decal.task-work-bug/v5",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v4",
+    "manifestSha256": "2a7a88aa8db122db00eb4c2cbea1e40b2770b6418448ac8c455d5ef5cb77fed4"
+  },
+  "reader": "contracts/task-work-bug/v5/validate-work-items.mjs",
+  "writer": "contracts/task-work-bug/v5/register-work-item.mjs",
+  "lifecycleWriter": "contracts/task-work-bug/v5/transition-work-item.mjs",
+  "registrationIntentSchema": "decal.task-work-bug.work-item-registration-intent/v5",
+  "canonicalPaths": {
+    "workDocuments": "docs/work-items/work/WORK-<number>.md",
+    "bugCards": "docs/work-items/bugs/BUG-<number>.md"
+  },
+  "recordShape": "one file per record; Work and Bug never appear as rows in docs/tasks/index.md",
+  "writeSet": ["docs/work-items/<work|bugs>/<ID>.md"],
+  "documentProfiles": {
+    "work": { "schema": "decal.task-work-bug.work-document", "schemaVersion": 1 },
+    "bug": { "schema": "decal.task-work-bug.bug-card", "schemaVersion": 1 }
+  },
+  "flows": {
+    "work": ["new", "planned", "in_progress", "development_complete", "release_ready", "closed"],
+    "bug": ["new", "confirmed", "in_progress", "development_complete", "release_ready", "closed"]
+  },
+  "conditionalObjects": {
+    "development_complete": "requires --summary and at least one --evidence",
+    "closed": "requires --reason; duplicate additionally requires --duplicate-of"
+  },
+  "preconditions": [
+    "current v1-v5 package digests",
+    "plain files and non-symlink parents",
+    "unused assigned identity and target",
+    "matching expected source revision for writes",
+    "known schema and supported schema version"
+  ],
+  "authoringReadiness": {
+    "ready": "both canonical directories exist and every record parses",
+    "update_required": "a canonical directory is absent and must be provisioned",
+    "malformed": "a record failed identity, schema or plain-file validation"
+  }
+}

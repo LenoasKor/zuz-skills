@@ -1,0 +1,13 @@
+{
+  "schema": "decal.task-work-bug.work-item-registration-intent/v5",
+  "intentId": "decal-v5-acceptance-work-002",
+  "kind": "work",
+  "title": "Portable Work 등록 acceptance",
+  "priority": "P1",
+  "taskRefs": ["666"],
+  "nextAction": "acceptance 후 정리한다.",
+  "versionImpact": "desktop-patch",
+  "remoteVersionImpact": "none",
+  "releaseMode": "standalone",
+  "body": "## 업무\n\nv5 writer의 결정적 등록 결과를 고정한다.\n\n## 완료 조건\n\n- write-set이 단일 경로다.\n"
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "decal.task-work-bug.projection/v3",
+  "contractId": "decal.task-work-bug/v3",
+  "records": [
+    {
+      "kind": "task",
+      "id": "1",
+      "title": "Registry acceptance fixture",
+      "status": "planned",
+      "priority": "P1",
+      "nextAction": "Decal·Jig 교차 acceptance 검증"
+    }
+  ],
+  "diagnostics": []
+}

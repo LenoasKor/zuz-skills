@@ -1,0 +1,16 @@
+{
+  "schema": "decal.task-work-bug.acceptance-cases/v4",
+  "cases": [
+    { "id": "canonical_numeric_five_columns", "expected": "accepted" },
+    { "id": "blank_separated_canonical_rows", "expected": "all_rows_accepted" },
+    { "id": "register_task_two_from_task_one_fixture", "expected": "planned_three_path_write_set" },
+    { "id": "start_task_two", "expected": "in_progress_two_path_write_set" },
+    { "id": "task_word_prefix", "expected": "non_numeric_task_id" },
+    { "id": "missing_area_column", "expected": "missing_columns" },
+    { "id": "missing_contract_directory", "expected": "contract_unavailable" },
+    { "id": "missing_writer", "expected": "authoring_unavailable" },
+    { "id": "stale_source_revision", "expected": "stale_source_revision" },
+    { "id": "duplicate_or_existing_target", "expected": "target_overlap" },
+    { "id": "symlink_target_or_parent", "expected": "symlink_rejected" }
+  ]
+}

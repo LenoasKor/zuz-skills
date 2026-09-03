@@ -1,0 +1,45 @@
+{
+  "schema": "decal.task-work-bug.contract/v3",
+  "contractId": "decal.task-work-bug/v3",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v2",
+    "manifestSha256": "e7a7a73a079976c0f528629ecbef8a267bad70b1d81a8211aa156d56bb96585c",
+    "acceptedHistoricalReadOnlyConsumerManifests": [
+      "d855f9dfeb999204d5101c985b701e255f8c8deb831c2c4a22356c30b6f62eb5"
+    ],
+    "historicalMode": "read_only_consumer_only_new_writers_install_current_chain"
+  },
+  "canonicalPaths": {
+    "taskIndex": "docs/tasks/index.md",
+    "taskCategoryIndex": "docs/tasks/category_index.md",
+    "taskDocuments": "docs/tasks/task_<ID>_<existing-suffix>.md"
+  },
+  "registryIndex": {
+    "header": ["Task", "상태", "우선순위", "관련 영역", "검증/다음 액션"],
+    "columnCount": 5,
+    "taskLinkLabel": "<positive-decimal-id> <title>",
+    "taskLinkTarget": "task_<same-positive-decimal-id>_<suffix>.md",
+    "legacyTaskLinkTarget": "slice_<same-positive-decimal-id>_<suffix>.md",
+    "canonicalEmissionOnly": true,
+    "unknownExtraColumns": "rejected"
+  },
+  "rejectionCodes": [
+    "missing_header",
+    "missing_columns",
+    "extra_columns",
+    "non_numeric_task_id",
+    "invalid_task_id",
+    "invalid_link_target",
+    "filename_id_mismatch",
+    "invalid_status",
+    "invalid_priority",
+    "duplicate_task_id",
+    "ambiguous_registry"
+  ],
+  "consumerResult": {
+    "accepted": "all registry rows and referenced Task identities are valid",
+    "malformed": "at least one row is rejected with source-relative line and typed reason",
+    "unsupported_version": "contract version is newer than the consumer"
+  },
+  "portableValidator": "contracts/task-work-bug/v3/validate-task-index.mjs"
+}

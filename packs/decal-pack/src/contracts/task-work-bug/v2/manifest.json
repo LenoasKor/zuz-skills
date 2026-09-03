@@ -1,0 +1,17 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v2",
+  "files": {
+    "README.md": "82f262dbba7d6efd2ce420331ec0bd18e62fd1eb55ee48bf8d832775a609fc4d",
+    "acceptance-cases.json": "88b825441c8aaf497f29da45f4b76e02f7de0771f61f21650f4e4d9e87dbbeca",
+    "contract.json": "43960401bac20eb7ff8cfa63b2188cd8f0b582ac4c4cf5af6f02b531e2a7b817",
+    "expected-dry-run.json": "79e96cd5b158c096af12d41234420fa5957ad2fa679e2ccbc2bada206adce572",
+    "fixtures/project/docs/slices/category_index.md": "9f9e72363650bd8714ca3082db0df5b89c313a4fa52e2d571a8367129dccd8c6",
+    "fixtures/project/docs/slices/index.md": "24122421c206029f1195951701c5dd14ef29f7dbac83befd4f0f4a7e978d146a",
+    "fixtures/project/docs/slices/slice_578_workflow_023_task_work_bug_storage_migration.md": "a765c6735802bba331ea564f645f73411c0513f79308ffc0e87d41978f66df2f",
+    "fixtures/project/docs/work-items/bugs/BUG-003.md": "5e406850b5e685b07c6e0644857daeb32156214d6d04daee806e25a175ee97f0",
+    "fixtures/project/docs/work-items/improvements/IMP-001.md": "f629e76fd3695ed6e281d6ac3c106a53ac9586f2a718d6e31ddb2798016b2c05",
+    "fixtures/project/docs/work-items/tasks/TASK-007.md": "12276e877d755d2b32e19da180a4e205d1566a06cd91afbad6d80a86132bd686",
+    "fixtures/project/docs/work-items/work/WORK-001.md": "b9918b8d7a804218e188594da8dfbf28f4d6b639c8e28e258e4ff93af2c4d34d",
+    "schemas/migration-manifest.schema.json": "cdc5d94ea047287b1adb613bac71a67498f9f2198e9460138910d0270718d7e1"
+  }
+}

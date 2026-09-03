@@ -1,0 +1,14 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v5",
+  "files": {
+    "README.md": "d2bd9180c034b184f5db2345ade2acd4313ddd9b25b499dee4380d35e937c4b6",
+    "contract.json": "cb98c8b953c238011cd1c690adcd4285c317398b108842a337abe91a2f8cbc45",
+    "fixtures/project/docs/work-items/bugs/BUG-001.md": "bbf0de68d821dc23cab25a237a29be887727d792c7b2d9e5157e51aa10b85672",
+    "fixtures/project/docs/work-items/work/WORK-001.md": "5ffed417a7c3e425d1c55f6cc23b36bdd68749c981874ac21d00e9e70c330870",
+    "fixtures/work-002-intent.json": "39ef8eadd306eed321791c0ca449090240a9d3fd3ad5a655f099ce3828bef2b1",
+    "register-work-item.mjs": "f52c6032e9bba548ea3289583684087221c266551dc9b2481160d80dda171e4f",
+    "transition-work-item.mjs": "138d748d36b580d14354090b70d355b6036161aa5d92bee32a5b08bd10ab2874",
+    "validate-work-items.mjs": "f2f9b1940dd6bf71e6cd946427d48f24ab20e118374391e60f9b3cf08a7df465",
+    "work-items.mjs": "ddfb570a7c5a09a1bec9b08c738616941385f2b8c26f91c400468f16f04cef95"
+  }
+}

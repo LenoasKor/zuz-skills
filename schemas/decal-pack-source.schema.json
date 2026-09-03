@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skills.zuz.dev/schemas/decal-pack-source-v1.json",
+  "title": "zuz Skills Decal Pack source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packId",
+    "packVersion",
+    "title",
+    "description",
+    "recommended",
+    "defaultSelected",
+    "firstPartyLicense",
+    "publicReleaseBlocked",
+    "modules",
+    "installLayouts",
+    "compatibility",
+    "capabilities",
+    "revocations",
+    "consumerAcceptance"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packId": { "const": "zuz.decal-pack" },
+    "legacyPackIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "packVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "recommended": { "type": "boolean" },
+    "defaultSelected": { "const": false },
+    "firstPartyLicense": { "type": "string", "minLength": 1 },
+    "publicReleaseBlocked": { "type": "boolean" },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "description", "defaultSelected", "projectInitialization", "skillIds"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "title": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "defaultSelected": { "const": false },
+          "projectInitialization": { "const": false },
+          "audience": { "type": "array", "items": { "type": "string" } },
+          "skillIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        }
+      }
+    },
+    "installLayouts": { "type": "object" },
+    "compatibility": { "type": "object" },
+    "capabilities": { "type": "array" },
+    "revocations": { "type": "object" },
+    "consumerAcceptance": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true }
+  }
+}
+

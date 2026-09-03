@@ -1,0 +1,13 @@
+Emil Kowalski Animation Skills
+Copyright (c) 2026 Emil Kowalski
+
+Source: https://github.com/emilkowalski/skills
+Pinned revision: d23d7f88a2e21c9e4b1418c7abe420f5c1052ba7
+License: MIT; see LICENSE in this directory.
+
+Decal adaptation:
+- `animate` -> `decal-animate`
+- `review-animations` -> `decal-review-animations`
+- `improve-animations` -> `decal-improve-animations`
+- Decal adds its Task/Work/Bug lifecycle, high-frequency professional-tool motion posture,
+  provider-neutral companion lookup, and removes the upstream private `plans/` lifecycle.

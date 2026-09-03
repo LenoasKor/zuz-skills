@@ -1,0 +1,13 @@
+{
+  "schema": "decal.task-work-bug.task-registration-intent/v4",
+  "intentId": "fixture-portable-task-2",
+  "category": "product",
+  "slug": "portable_writer_fixture",
+  "title": "Portable writer fixture",
+  "priority": "P1 planned-next",
+  "areas": ["Contract", "Writer"],
+  "summary": "v4 portable writer의 결정적 세 경로 등록을 검증한다.",
+  "versionImpact": "none",
+  "remoteVersionImpact": "none",
+  "body": "## Context Budget\n\n- 필수: v4 fixture\n\n## App.tsx 영향 계획\n\n- 없음\n\n## 완료 기준\n\n- [ ] portable writer가 같은 identity를 발급한다."
+}
