@@ -5,6 +5,9 @@ import { join } from "node:path";
 import test from "node:test";
 import { repositoryRoot, sha256, stableJson } from "../scripts/pack-lib.mjs";
 
+const sourceDescriptor = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/pack.source.json"), "utf8"));
+const artifactPath = (suffix) => join(repositoryRoot, `dist/decal-pack-${sourceDescriptor.packVersion}.${suffix}`);
+
 test("source registry is complete and opt-in", () => {
   const output = execFileSync(process.execPath, [join(repositoryRoot, "scripts/verify-decal-pack-source.mjs")], { encoding: "utf8" });
   assert.match(output, /29 skills across 3 modules/);
@@ -31,8 +34,8 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
   const revision = "a".repeat(40);
   const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
   execFileSync(process.execPath, args, { stdio: "pipe" });
-  const manifestPath = join(repositoryRoot, "dist/decal-pack-1.3.5.manifest.json");
-  const packagePath = join(repositoryRoot, "dist/decal-pack-1.3.5.zuz-pack.json");
+  const manifestPath = artifactPath("manifest.json");
+  const packagePath = artifactPath("zuz-pack.json");
   const firstManifest = await readFile(manifestPath);
   const firstPackage = await readFile(packagePath);
   execFileSync(process.execPath, args, { stdio: "pipe" });
@@ -43,7 +46,7 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
 test("signed manifest binds every consumer acceptance ID to fixture bytes", async () => {
   const revision = "b".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const manifest = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.5.manifest.json"), "utf8"));
+  const manifest = JSON.parse(await readFile(artifactPath("manifest.json"), "utf8"));
   assert.deepEqual(
     manifest.consumerAcceptanceFixtures.map((fixture) => fixture.id),
     manifest.consumerAcceptance,
@@ -60,7 +63,7 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
 test("every prompt skill is emitted as an Agent Skill for all portable providers", async () => {
   const revision = "c".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.5.zuz-pack.json"), "utf8"));
+  const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   const promptSkills = packageValue.skills.filter((skill) => skill.kind === "prompt");
   for (const skill of promptSkills) {
     const generated = packageValue.files.find((file) => file.sourcePath === `generated/skills/${skill.id}/SKILL.md`);
@@ -76,7 +79,9 @@ test("every prompt skill is emitted as an Agent Skill for all portable providers
 test("Pack execution policy binds cross-project approval and settlement commit", async () => {
   const revision = "d".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
-  const packageValue = JSON.parse(await readFile(join(repositoryRoot, "dist/decal-pack-1.3.5.zuz-pack.json"), "utf8"));
+  const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v6");
+  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v6/register-task-batch.mjs"));
   assert.equal(packageValue.executionPolicies.repositoryAuthority.crossProjectAccess, "explicit-current-user-approval");
   assert.deepEqual(packageValue.executionPolicies.repositoryAuthority.approvalBinding, ["repository-root", "operation-scope", "current-task"]);
   assert.equal(packageValue.executionPolicies.settlementCommit.externalHost, "explicit-settlement-request-authorizes-exact-settlement-commit");
@@ -93,6 +98,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /## Repository authority boundary/);
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
+    if (id === "decal-task") {
+      assert.match(content, /version: "1\.6\.0"/);
+      assert.match(content, /task-work-bug\/v6\/register-task-batch\.mjs/);
+    }
   }
 });
 
