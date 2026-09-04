@@ -12,6 +12,7 @@
     "managed-rules-enforce-cross-project-approval",
     "native-settlement-commit-remains-atomic",
     "missing-task-registry-is-initialization-required",
-    "task-registry-initialization-is-explicit-and-fail-closed"
+    "task-registry-initialization-is-explicit-and-fail-closed",
+    "task-registration-v6-routes-to-native-host-transaction"
   ]
 }

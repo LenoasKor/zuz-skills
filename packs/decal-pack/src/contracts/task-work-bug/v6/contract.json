@@ -1,0 +1,46 @@
+{
+  "schema": "decal.task-work-bug.contract/v6",
+  "contractId": "decal.task-work-bug/v6",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v5",
+    "manifestSha256": "993f14fbf05591edb4aebd40778b09c1d6f83cae9222183798b575ecf6909983"
+  },
+  "writer": "contracts/task-work-bug/v6/register-task-batch.mjs",
+  "registrationIntentSchema": "decal.task-work-bug.task-registration-batch-intent/v6",
+  "resultSchema": "decal.task-work-bug.task-registration-batch/v6",
+  "hostRouting": {
+    "external": {
+      "providers": ["codex", "claude", "gemini", "acp"],
+      "route": "contracts/task-work-bug/v6/register-task-batch.mjs",
+      "mutationOwner": "portable-writer"
+    },
+    "desktop": {
+      "route": "decal_ui.request_slice_maintenance_commit",
+      "operation": "slice_register_intent",
+      "mutationOwner": "desktop-host",
+      "portableWriterInvocation": false,
+      "semanticGuarantees": [
+        "host-owned-latest-main-allocation",
+        "shared-settlement-lock",
+        "exact-target-native-commit",
+        "idempotent-intent-replay"
+      ]
+    },
+    "remote": {
+      "route": "remote-input-to-desktop-host",
+      "mutationOwner": "desktop-host",
+      "directGitMutation": false
+    }
+  },
+  "approval": "dry-run returns a canonical semantic intent digest; --write requires the same --approved-digest and recomputes IDs on latest main",
+  "writeSet": [
+    "docs/tasks/task_<assigned-id>_<category>_<category-index>_<slug>.md (one or more)",
+    "docs/tasks/index.md",
+    "docs/tasks/category_index.md"
+  ],
+  "commit": "one exact-path commit carrying the Decal-Task-Registration-Intent trailer",
+  "lock": ".decal-slice-completion.lock shared with lifecycle settlement; bounded to 30 seconds",
+  "journal": ".decal/task-registration-pending-v6.json",
+  "replay": "an existing exact commit with the same approved intent digest returns a receipt and creates no new Task",
+  "excludedAuthority": ["push", "merge", "deploy", "lifecycle completion", "version settlement"]
+}

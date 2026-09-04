@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 1.3.5 is the current verified public release:
+First-party contents are licensed under Apache-2.0. Decal Pack 1.3.6 is the current verified public release:
 
-- source release: [decal-pack-v1.3.5](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v1.3.5)
+- source release: [decal-pack-v1.3.6](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v1.3.6)
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 

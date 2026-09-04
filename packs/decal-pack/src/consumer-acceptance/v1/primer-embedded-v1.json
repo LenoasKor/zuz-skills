@@ -9,6 +9,7 @@
     "skills-lock-records-release-modules-and-file-digests",
     "skill-sync-preserves-user-modified-files",
     "task-work-bug-ledger-is-not-auto-created",
-    "task-registry-initialization-is-explicit-and-fail-closed"
+    "task-registry-initialization-is-explicit-and-fail-closed",
+    "task-registration-v6-contract-is-pinned"
   ]
 }

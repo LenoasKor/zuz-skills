@@ -9,6 +9,7 @@
     "jig-ledger-is-not-auto-created",
     "project-install-remains-user-opt-in",
     "preserve-user-modified-files",
-    "task-registry-initialization-is-explicit-and-fail-closed"
+    "task-registry-initialization-is-explicit-and-fail-closed",
+    "task-registration-v6-contract-is-pinned"
   ]
 }

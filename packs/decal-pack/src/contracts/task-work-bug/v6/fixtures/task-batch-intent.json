@@ -1,0 +1,32 @@
+{
+  "schema": "decal.task-work-bug.task-registration-batch-intent/v6",
+  "intentId": "fixture-portable-task-batch",
+  "commitMessage": "docs(tasks): register fixture task batch",
+  "tasks": [
+    {
+      "localRef": "foundation",
+      "category": "product",
+      "slug": "batch_foundation_fixture",
+      "title": "Batch foundation fixture",
+      "priority": "P1 planned-next",
+      "areas": ["Contract", "Batch writer"],
+      "summary": "v6 batch writer의 첫 Task와 exact commit을 검증한다.",
+      "versionImpact": "none",
+      "remoteVersionImpact": "none",
+      "body": "## Context Budget\n\n- 필수: v6 batch fixture\n\n## App.tsx 영향 계획\n\n- 없음\n\n## 완료 기준\n\n- [ ] batch foundation이 등록된다."
+    },
+    {
+      "localRef": "consumer",
+      "category": "product",
+      "slug": "batch_consumer_fixture",
+      "title": "Batch consumer fixture",
+      "priority": "P1 planned-next",
+      "areas": ["Contract", "Local reference"],
+      "summary": "batch 내부 localRef가 발급된 Task ID로 변환되는지 검증한다.",
+      "versionImpact": "none",
+      "remoteVersionImpact": "none",
+      "dependsOn": [{ "localRef": "foundation" }],
+      "body": "## Context Budget\n\n- 필수: v6 batch fixture\n\n## App.tsx 영향 계획\n\n- 없음\n\n## 완료 기준\n\n- [ ] localRef dependency가 해소된다."
+    }
+  ]
+}
