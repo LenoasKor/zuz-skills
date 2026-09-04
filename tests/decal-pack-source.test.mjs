@@ -10,7 +10,7 @@ const artifactPath = (suffix) => join(repositoryRoot, `dist/decal-pack-${sourceD
 
 test("source registry is complete and opt-in", () => {
   const output = execFileSync(process.execPath, [join(repositoryRoot, "scripts/verify-decal-pack-source.mjs")], { encoding: "utf8" });
-  assert.match(output, /29 skills across 3 modules/);
+  assert.match(output, /31 skills across 3 modules/);
 });
 
 test("first-party source is Apache-2.0 and public release is unblocked", async () => {
@@ -103,6 +103,26 @@ test("Pack execution policy binds cross-project approval and settlement commit",
       assert.match(content, /task-work-bug\/v6\/register-task-batch\.mjs/);
     }
   }
+});
+
+test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", async () => {
+  const revision = "e".repeat(40);
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  assert.equal(packageValue.packVersion, "2.0.0");
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v6");
+  assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v2");
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v1/manifest.json"), true);
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v6/register-task-batch.mjs"), true);
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v1/project.mjs"), true);
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v2/register-incident.mjs"), true);
+  assert.equal(packageValue.skills.some((skill) => skill.id === "zuz-its"), true);
+  assert.equal(packageValue.skills.some((skill) => skill.id === "decal-incident"), true);
+  const itsSkill = packageValue.files.find((file) => file.sourcePath === "skills/agents/zuz-its/SKILL.md");
+  assert.ok(itsSkill);
+  const itsSource = Buffer.from(itsSkill.contentBase64, "base64").toString("utf8");
+  assert.match(itsSource, /Work \/ 소작업: a lightweight but still formally ticketed execution unit/u);
+  assert.match(itsSource, /@incident:INC-###/u);
 });
 
 test.after(async () => {

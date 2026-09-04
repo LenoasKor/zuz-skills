@@ -1,0 +1,12 @@
+{
+  "schema": "zuz.its.fixture-manifest/v1",
+  "contractId": "zuz.its/v2",
+  "files": {
+    "README.md": "3f43cb4535071e9b31d6ca440d811e708526b5647332dcbd08ce84d1002d1458",
+    "contract.json": "503eb5b7f4a534e804aad6b30274002c11407fb2a0b20aa913b211caf8fba2e1",
+    "fixtures/incident-intent.json": "041035a044096567420805ed2b3b4d8986719edf54d831de09ceeb365defe174",
+    "incident.mjs": "183f438542cbcc9a532423a02c61522832b4038fa87e2e7c5a1571a58740a9bf",
+    "register-incident.mjs": "7d4d9de23552490ef9ab8eac608ad138751092de158010a6e1a407ad1fbeab63",
+    "transition-incident.mjs": "36a4842b9bcfb3f816f2d5339dbbf1098bc49fb084cb4de3aafc5075f54e4177"
+  }
+}

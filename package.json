@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build:decal-pack": "node scripts/build-decal-pack.mjs",
+    "install:decal-pack": "node scripts/install-decal-pack.mjs",
     "verify:source": "node scripts/verify-decal-pack-source.mjs",
     "test": "node --test tests/*.test.mjs"
   }

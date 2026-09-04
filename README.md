@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 1.3.6 is the current verified public release:
+First-party contents are licensed under Apache-2.0. Decal Pack 1.3.6 is the current verified public release. Pack 2.0.0 is the current development candidate adding ZUZ ITS compatibility and Incident support:
 
 - source release: [decal-pack-v1.3.6](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v1.3.6)
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
@@ -24,7 +24,7 @@ The GitHub release preserves the deterministic source manifest and package bytes
 The source lives under [`packs/decal-pack`](packs/decal-pack). The pack contains:
 
 - `portable-core`: status, build, debugging, safe Git, handoff, workspace, and motion guidance;
-- `task-work-bug`: optional Task·Work·Bug skills and versioned portable contracts;
+- `task-work-bug`: optional ZUZ ITS Task·Work·Issue skills, legacy Task·Work·Bug contracts, and additive Incident support;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 
 Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. An installer selects modules explicitly, previews the exact relative paths, and records the selected release and file digests.

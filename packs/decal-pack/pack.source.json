@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "1.3.6",
+  "packVersion": "2.0.0",
   "title": "Decal Pack",
-  "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 Task·Work·Bug 규약을 사용할 수 있는 휴대형 개발 Pack",
+  "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 ZUZ ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "recommended": true,
   "defaultSelected": false,
   "firstPartyLicense": "Apache-2.0",
@@ -36,12 +36,13 @@
     },
     {
       "id": "task-work-bug",
-      "title": "Task·Work·Bug",
-      "description": "선택형 작업 원장 스킬과 portable reader·writer·acceptance 계약",
+      "title": "ZUZ ITS · Task·Work·Issue",
+      "description": "기존 Task·Work·Bug 호환을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,
       "projectInitialization": false,
       "skillIds": [
         "decal-bug",
+        "decal-incident",
         "decal-slice",
         "decal-slice-dev-report",
         "decal-slice-hygiene",
@@ -52,7 +53,8 @@
         "decal-slice-smoke",
         "decal-slice-test-report",
         "decal-task",
-        "decal-work"
+        "decal-work",
+        "zuz-its"
       ]
     },
     {
@@ -101,6 +103,7 @@
   },
   "compatibility": {
     "portableContract": "task-work-bug/v6",
+    "zuzItsContract": "zuz.its/v2",
     "minimumHosts": {
       "decal": "0.392.0",
       "primer": null,

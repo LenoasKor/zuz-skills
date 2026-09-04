@@ -1,0 +1,24 @@
+{
+  "schema": "zuz.its.contract/v1",
+  "contractId": "zuz.its/v1",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v6",
+    "manifestSha256": "6d5176a773e03724b36e1be333a533ae223988d56a1f924f43ba0def8529db5e"
+  },
+  "identitySchema": "zuz.its.ticket-identity/v1",
+  "inventorySchema": "zuz.its.inventory/v1",
+  "ticketKinds": ["task", "work", "issue"],
+  "issueKinds": ["bug", "incident"],
+  "legacyProductKinds": ["task", "work", "bug"],
+  "incidentPersistence": "reserved-for-task-676",
+  "workIsTicket": true,
+  "taskDisplayPrefix": "TASK-",
+  "compatibility": {
+    "rewriteExistingIds": false,
+    "rewriteExistingStatuses": false,
+    "rewriteExistingPaths": false,
+    "createSliceUnit": false,
+    "legacyMentions": "preserve"
+  },
+  "projector": "contracts/zuz-its/v1/project.mjs"
+}
