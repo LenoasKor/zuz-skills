@@ -29,7 +29,7 @@ try {
       identityPending: true,
       preview: plan.preview,
       writeSet: plan.writeSet,
-      authorization: "approval includes one exact main registration commit; it does not include push, merge, deploy, lifecycle completion, or version settlement",
+      authorization: "approval includes one exact canonical-default-branch registration commit; it does not include push, merge, deploy, lifecycle completion, or version settlement",
     });
   } else {
     process.stdout.write(`${JSON.stringify(await registerTicket({ root, intent, approvedDigest: args.get("--approved-digest") }))}\n`);

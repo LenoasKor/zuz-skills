@@ -21,6 +21,7 @@ import {
   splitCells,
   validateProject,
 } from "../v4/registry.mjs";
+import { resolveCanonicalDefaultBranch } from "./default-branch.mjs";
 
 const execFileAsync = promisify(execFile);
 const LOCK_FILE = ".decal-slice-completion.lock";
@@ -301,6 +302,7 @@ function renderTask(intent, batchIntentId, taskId, categoryLabel, categoryIndex,
 export async function planTaskRegistrationBatch(root, rawIntent) {
   const intent = normalizeTaskRegistrationBatchIntent(rawIntent);
   await validateV7Package(root);
+  await assertGitBoundary(root);
   const project = await validateProject(root);
   const baseHead = String(await git(root, ["rev-parse", "HEAD"])).trim();
   const nextByCategory = new Map(
@@ -365,8 +367,7 @@ export async function planTaskRegistrationBatch(root, rawIntent) {
 async function assertGitBoundary(root) {
   const canonicalRoot = String(await git(root, ["rev-parse", "--show-toplevel"])).trim();
   if (await realpath(canonicalRoot) !== await realpath(root)) fail("invalid_repository_root");
-  const branch = String(await git(root, ["branch", "--show-current"])).trim();
-  if (branch !== "main") fail("main_branch_required", branch || "detached");
+  await resolveCanonicalDefaultBranch(root);
   const unmerged = String(await git(root, ["diff", "--name-only", "--diff-filter=U"])).trim();
   if (unmerged) fail("unmerged_paths_present");
   const staged = String(await git(root, ["diff", "--cached", "--name-only"])).trim();
@@ -568,6 +569,7 @@ export async function registerTaskBatch({ root, intent: rawIntent, approvedDiges
       if (testFailAt === "after_write_and_advance_head") {
         await git(root, ["commit", "--allow-empty", "-m", "test: advance head during task registration"]);
       }
+      await assertGitBoundary(root);
       await assertHeadUnchanged(root, plan.baseHead);
       await git(root, ["add", "--", ...plan.writeSet]);
       const staged = String(await git(root, ["diff", "--cached", "--name-only"])).trim().split(/\r?\n/u).filter(Boolean).sort();

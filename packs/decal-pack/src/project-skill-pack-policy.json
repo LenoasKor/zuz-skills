@@ -1,8 +1,18 @@
 {
   "schemaVersion": 1,
   "packId": "decal-project-pack",
-  "packVersion": "2.0.1",
+  "packVersion": "2.0.2",
   "zuzItsContract": "zuz.its/v2",
+  "packInstallation": {
+    "schemaVersion": 1,
+    "modes": ["initial-pack-bootstrap", "update"],
+    "approvalArgument": "--approved-plan-digest",
+    "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
+    "existingLock": "plain-v1-same-pack-and-selection",
+    "modifiedFiles": "preserve-and-block-entire-write",
+    "obsoleteManagedFiles": "report-and-preserve",
+    "rollbackScope": ["create", "update", "installation-lock"]
+  },
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [
       "fcc78acd90a16702ba753c15ad8cee197f34866f7eb9b103bb278b8a7d1f2dc6",
@@ -11,7 +21,7 @@
   },
   "minimumCompatible": {
     "decal-commit-ready": "0.9.0",
-    "decal-slice-maintenance": "0.7.0",
+    "decal-slice-maintenance": "0.7.1",
     "decaldev-rebuild-relaunch": "0.9.0"
   },
   "revokedVersions": {

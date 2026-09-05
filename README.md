@@ -11,13 +11,15 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 2.0.1 is the current ZUZ ITS-compatible release with atomic Task·Work·Bug·Incident registration:
+First-party contents are licensed under Apache-2.0. Decal Pack 2.0.2 is the current ZUZ ITS-compatible source release candidate with canonical-default-branch Task·Work·Bug·Incident registration and digest-approved transactional installation/update:
 
-- source release: [decal-pack-v2.0.1](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v2.0.1)
+- source tag/release: `decal-pack-v2.0.2` (published only after review)
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
 The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
+
+Portable v7 writers resolve an unambiguous `main` or `master` directly. Native canonical-branch parity requires Decal 0.406.0 or newer; older Decal hosts must not claim full 2.0.2 Native compatibility.
 
 ## Decal Pack
 
@@ -27,7 +29,7 @@ The source lives under [`packs/decal-pack`](packs/decal-pack). The pack contains
 - `task-work-bug`: optional ZUZ ITS Task·Work·Issue skills, legacy Task·Work·Bug contracts, and additive Incident support;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 
-Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. An installer selects modules explicitly, previews the exact relative paths, and records the selected release and file digests.
+Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. The installer selects modules/providers explicitly and returns an `installationPlanDigest` bound to the canonical project root, immutable package/manifest identity, selection, and exact file digests. `--write` requires that digest and recomputes the plan under the installation lock. Existing lock-managed bytes can be updated transactionally; modified files and selection changes block the entire write, while obsolete managed files are reported and preserved.
 
 ## Commands
 

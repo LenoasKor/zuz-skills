@@ -33,7 +33,7 @@ try {
         localRef, category, title, priority, areas, summary, versionImpact, remoteVersionImpact,
       })),
       writeSet: ["docs/tasks/task_<assigned>_<category>_<assigned>_<slug>.md", "docs/tasks/index.md", "docs/tasks/category_index.md"],
-      authorization: "approval includes one exact main registration commit; it does not include push, merge, deploy, lifecycle completion, or version settlement",
+      authorization: "approval includes one exact canonical-default-branch registration commit; it does not include push, merge, deploy, lifecycle completion, or version settlement",
     });
   } else {
     process.stdout.write(`${JSON.stringify(await registerTaskBatch({ root, intent, approvedDigest: args.get("--approved-digest") }))}\n`);

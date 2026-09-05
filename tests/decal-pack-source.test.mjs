@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFile, rm } from "node:fs/promises";
+import { lstat, readFile, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import test from "node:test";
 import { repositoryRoot, sha256, stableJson } from "../scripts/pack-lib.mjs";
@@ -28,6 +28,39 @@ test("stable JSON and digest are deterministic", () => {
   const second = stableJson({ a: { x: null, y: true }, z: [3, 2, 1] });
   assert.equal(first, second);
   assert.equal(sha256(first), sha256(second));
+});
+
+test("legacy Task Work Bug v1 through v6 contract bytes remain pinned", async () => {
+  const expectedManifestDigests = {
+    v1: "62bcab47e97221ee715725c9981090a4428b1079997ad9124aec890984f9cb67",
+    v2: "e7a7a73a079976c0f528629ecbef8a267bad70b1d81a8211aa156d56bb96585c",
+    v3: "438c36cede469a65e2e9f239200e485452bdc5111351879198779e5b139e6fc0",
+    v4: "2a7a88aa8db122db00eb4c2cbea1e40b2770b6418448ac8c455d5ef5cb77fed4",
+    v5: "993f14fbf05591edb4aebd40778b09c1d6f83cae9222183798b575ecf6909983",
+    v6: "6d5176a773e03724b36e1be333a533ae223988d56a1f924f43ba0def8529db5e",
+  };
+  async function collect(directory, prefix = "") {
+    const output = [];
+    for (const entry of (await readdir(directory, { withFileTypes: true })).sort((left, right) => left.name.localeCompare(right.name))) {
+      const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+      const absolute = join(directory, entry.name);
+      const metadata = await lstat(absolute);
+      assert.equal(metadata.isSymbolicLink(), false, relative);
+      if (entry.isDirectory()) output.push(...await collect(absolute, relative));
+      else output.push(relative);
+    }
+    return output;
+  }
+  for (const [version, expectedManifestDigest] of Object.entries(expectedManifestDigests)) {
+    const contractRoot = join(repositoryRoot, "packs/decal-pack/src/contracts/task-work-bug", version);
+    const manifestBytes = await readFile(join(contractRoot, "manifest.json"));
+    assert.equal(sha256(manifestBytes), expectedManifestDigest, `${version}/manifest.json`);
+    const manifest = JSON.parse(manifestBytes.toString("utf8"));
+    assert.deepEqual((await collect(contractRoot)).filter((relative) => relative !== "manifest.json").sort(), Object.keys(manifest.files).sort(), version);
+    for (const [relative, expected] of Object.entries(manifest.files)) {
+      assert.equal(sha256(await readFile(join(contractRoot, relative))), expected, `${version}/${relative}`);
+    }
+  }
 });
 
 test("the same source revision produces byte-identical Pack artifacts", async () => {
@@ -60,6 +93,9 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
     const fixtureValue = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src", fixture.sourcePath), "utf8"));
     assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("registration-v6")), false, fixture.id);
     assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("ticket-registration-v7")), true, fixture.id);
+    assert.equal(fixtureValue.requiredCases.includes("ticket-registration-v7-supports-unambiguous-main-and-master"), true, fixture.id);
+    assert.equal(fixtureValue.requiredCases.includes("pack-installation-plan-is-canonical-digest-approved-and-recomputed"), true, fixture.id);
+    assert.equal(fixtureValue.requiredCases.includes("managed-pack-update-preserves-conflicts-and-obsolete-files"), true, fixture.id);
   }
 });
 
@@ -84,6 +120,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
+  assert.equal(packageValue.compatibility.minimumHosts.decal, "0.406.0");
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-task-batch.mjs"));
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"));
   assert.equal(packageValue.executionPolicies.repositoryAuthority.crossProjectAccess, "explicit-current-user-approval");
@@ -94,6 +131,27 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.mode, "explicit-only");
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.writer, "contracts/task-work-bug/initialize-task-registry.mjs");
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.automaticInstall, false);
+  assert.deepEqual(packageValue.executionPolicies.packInstallation.modes, ["initial-pack-bootstrap", "update"]);
+  assert.equal(packageValue.executionPolicies.packInstallation.approvalArgument, "--approved-plan-digest");
+  assert.equal(packageValue.executionPolicies.packInstallation.modifiedFiles, "preserve-and-block-entire-write");
+  assert.equal(packageValue.executionPolicies.packInstallation.obsoleteManagedFiles, "report-and-preserve");
+  const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
+  assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
+  const expectedSkillVersions = {
+    "decal-task": "1.8.0",
+    "decal-work": "1.5.0",
+    "decal-bug": "1.5.0",
+    "decal-incident": "1.1.0",
+    "zuz-its": "1.1.0",
+    "decal-slice": "0.4.7",
+    "decal-slice-maintenance": "0.7.1",
+    "decal-slice-smoke": "0.5.1",
+  };
+  for (const [id, version] of Object.entries(expectedSkillVersions)) {
+    assert.equal(packageValue.skills.find((skill) => skill.id === id)?.version, version, id);
+  }
+  const packPolicy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
+  assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.7.1");
 
   for (const id of ["decal-task", "decal-work", "decal-bug"]) {
     const file = packageValue.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
@@ -103,7 +161,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.7\.0"/);
+      assert.match(content, /version: "1\.8\.0"/);
       assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
@@ -113,7 +171,7 @@ test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.0.1");
+  assert.equal(packageValue.packVersion, "2.0.2");
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
   assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v2");
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v1/manifest.json"), true);

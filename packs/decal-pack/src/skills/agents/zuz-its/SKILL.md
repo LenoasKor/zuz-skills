@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use ZUZ ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   portable: true
 ---
 
@@ -50,5 +50,5 @@ Never guess a missing ticket. Search the canonical repository records first. If 
 
 - Read compatibility projection rules from `contracts/zuz-its/v1`.
 - Read Incident creation and lifecycle rules from `contracts/zuz-its/v2`.
-- Continue to use `contracts/task-work-bug/v1` through `v6` for existing Task, Work, and Bug storage and writers.
+- Preserve `contracts/task-work-bug/v1` through `v6` as pinned compatibility dependencies and use the v7 common writer for new Task, Work, Bug, and Incident registration.
 - Use the more specific `decal-task`, `decal-work`, `decal-bug`, or `decal-incident` skill when creating or changing a ticket.

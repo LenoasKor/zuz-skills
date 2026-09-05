@@ -9,7 +9,12 @@
   "ticketWriter": "contracts/task-work-bug/v7/register-ticket.mjs",
   "registrationIntentSchema": "decal.zuz-its.ticket-registration-intent/v7",
   "kinds": ["task", "work", "bug", "incident"],
-  "identityAllocation": "approval-time on latest main under the shared repository lock",
+  "canonicalDefaultBranch": {
+    "preferred": "non-dangling origin/HEAD resolving to origin/main or origin/master with the matching local branch",
+    "fallback": "only when refs/remotes/origin/HEAD is absent; then exactly one local main or master",
+    "rejects": ["feature-branch", "detached-head", "missing-candidate", "ambiguous-main-and-master", "non-symbolic-origin-head", "unsupported-origin-head", "dangling-allowed-origin-head", "missing-matching-local-branch"]
+  },
+  "identityAllocation": "approval-time on the canonical default branch under the shared repository lock",
   "receiptFields": ["intentDigest", "commit", "assigned", "writeSet"],
   "authorizationExcludes": ["push", "merge", "deploy", "lifecycle-completion", "version-settlement"]
 }

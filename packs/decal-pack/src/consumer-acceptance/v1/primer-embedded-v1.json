@@ -8,9 +8,12 @@
     "preview-stage-and-first-commit-use-identical-bytes",
     "skills-lock-records-release-modules-and-file-digests",
     "skill-sync-preserves-user-modified-files",
+    "pack-installation-plan-is-canonical-digest-approved-and-recomputed",
+    "managed-pack-update-preserves-conflicts-and-obsolete-files",
     "task-work-bug-ledger-is-not-auto-created",
     "task-registry-initialization-is-explicit-and-fail-closed",
     "ticket-registration-v7-contract-is-pinned",
+    "ticket-registration-v7-supports-unambiguous-main-and-master",
     "zuz-its-contract-is-exactly-pinned",
     "work-remains-a-ticket",
     "existing-projects-are-not-forced-to-migrate"

@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { portablePath, loadSourceDescriptor, parseAgentMetadata, parsePromptMetadata, sourceRoot, walkFiles } from "./pack-lib.mjs";
+import { portablePath, loadSourceDescriptor, parseAgentMetadata, parsePromptMetadata, sourceRoot, stableJson, walkFiles } from "./pack-lib.mjs";
 
 const descriptor = await loadSourceDescriptor();
 const failures = [];
@@ -12,6 +12,7 @@ if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must 
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");
 if (descriptor.publicReleaseBlocked !== (descriptor.firstPartyLicense === "UNLICENSED")) failures.push("public release block must match first-party license state");
 if (policy.packId !== descriptor.packId || policy.packVersion !== descriptor.packVersion) failures.push("project skill Pack policy identity must match source descriptor");
+if (descriptor.compatibility?.minimumHosts?.decal !== "0.406.0") failures.push("Pack 2.0.2 Native parity requires Decal 0.406.0");
 if (descriptor.executionPolicies?.repositoryAuthority?.crossProjectAccess !== "explicit-current-user-approval") failures.push("cross-project access must require explicit current-user approval");
 if (descriptor.executionPolicies?.repositoryAuthority?.identityProbe !== "root-and-product-identity-only") failures.push("cross-project pre-approval probe must be identity-only");
 if (descriptor.executionPolicies?.settlementCommit?.externalHost !== "explicit-settlement-request-authorizes-exact-settlement-commit") failures.push("external settlement must include its exact commit checkpoint");
@@ -20,6 +21,19 @@ if (descriptor.executionPolicies?.settlementCommit?.pushIncluded !== false) fail
 if (descriptor.executionPolicies?.taskRegistryInitialization?.mode !== "explicit-only") failures.push("Task registry initialization must be explicit-only");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.writer !== "contracts/task-work-bug/initialize-task-registry.mjs") failures.push("Task registry initializer path must be canonical");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.automaticInstall !== false) failures.push("Pack installation must not initialize a Task registry");
+const expectedPackInstallation = {
+  schemaVersion: 1,
+  modes: ["initial-pack-bootstrap", "update"],
+  approvalArgument: "--approved-plan-digest",
+  approvalBinding: ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
+  existingLock: "plain-v1-same-pack-and-selection",
+  modifiedFiles: "preserve-and-block-entire-write",
+  obsoleteManagedFiles: "report-and-preserve",
+  rollbackScope: ["create", "update", "installation-lock"],
+};
+if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");
+if (stableJson(policy.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("project skill Pack installation policy must match source descriptor");
+if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.7.1") failures.push("canonical default branch maintenance requires decal-slice-maintenance 0.7.1");
 
 const moduleIds = new Set();
 const membership = new Map();

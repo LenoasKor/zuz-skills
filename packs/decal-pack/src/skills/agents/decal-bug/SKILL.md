@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.4.0"
+  version: "1.5.0"
   portable: true
 ---
 
@@ -55,8 +55,9 @@ directory is missing, the repository needs a Project Pack update rather than a h
 ## Portable writer
 
 When the repository ships `contracts/task-work-bug/v7/`, use it instead of hand-writing a record. The
-dry-run returns no final ID. Approval authorizes the writer to issue the ID on latest `main`, validate the
-record, commit exactly one path, and return its receipt.
+dry-run returns no final ID. Approval authorizes the writer to resolve an allowed `origin/HEAD` or one
+unambiguous local `main`/`master`, issue the ID on that canonical default branch, validate the record,
+commit exactly one path, and return its receipt.
 
 ```sh
 node contracts/task-work-bug/v7/register-ticket.mjs \

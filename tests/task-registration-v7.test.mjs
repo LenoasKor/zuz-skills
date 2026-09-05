@@ -50,7 +50,7 @@ function runAsync(args, cwd) {
   });
 }
 
-async function fixture() {
+async function fixture(defaultBranch = "main") {
   const root = await mkdtemp(path.join(tmpdir(), "decal-its-v7-"));
   await mkdir(path.join(root, "docs/work-items/work"), { recursive: true });
   await mkdir(path.join(root, "docs/work-items/bugs"), { recursive: true });
@@ -61,7 +61,7 @@ async function fixture() {
     path.join(root, "contracts/task-work-bug/v6/manifest.json"),
   );
   await writeFile(path.join(root, "tracked.txt"), "base\n");
-  assert.equal(run("git", ["init", "-b", "main"], root).status, 0);
+  assert.equal(run("git", ["init", "-b", defaultBranch], root).status, 0);
   assert.equal(run("git", ["config", "user.email", "fixture@decal.test"], root).status, 0);
   assert.equal(run("git", ["config", "user.name", "Decal Fixture"], root).status, 0);
   assert.equal(run("git", ["add", "."], root).status, 0);
@@ -198,13 +198,107 @@ try {
   await rm(root, { recursive: true, force: true });
 }
 
-console.log("Task·Work·Bug v7 main atomic ticket registration verification passed.");
+console.log("Task·Work·Bug v7 canonical-default-branch atomic ticket registration verification passed.");
+
+const masterRoot = await fixture("master");
+try {
+  const masterIntent = intent("work", "master-default");
+  const masterIntentPath = path.join(masterRoot, "master-intent.json");
+  await writeFile(masterIntentPath, `${JSON.stringify(masterIntent)}\n`);
+  const preview = run(process.execPath, [writer, "--root", masterRoot, "--intent", masterIntentPath, "--dry-run"], masterRoot);
+  assert.equal(preview.status, 0, preview.stderr);
+  const written = run(process.execPath, [
+    writer, "--root", masterRoot, "--intent", masterIntentPath,
+    "--approved-digest", preview.body.intentDigest, "--write",
+  ], masterRoot);
+  assert.equal(written.status, 0, written.stderr);
+  assert.equal(written.body.assigned.id, "WORK-001");
+} finally {
+  await rm(masterRoot, { recursive: true, force: true });
+}
+
+const originDefaultRoot = await fixture();
+try {
+  assert.equal(run("git", ["branch", "master"], originDefaultRoot).status, 0);
+  assert.equal(run("git", ["update-ref", "refs/remotes/origin/master", "HEAD"], originDefaultRoot).status, 0);
+  assert.equal(run("git", ["symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/master"], originDefaultRoot).status, 0);
+  assert.equal(run("git", ["switch", "-q", "master"], originDefaultRoot).status, 0);
+  const originIntent = intent("bug", "origin-master");
+  const originIntentPath = path.join(originDefaultRoot, "origin-intent.json");
+  await writeFile(originIntentPath, `${JSON.stringify(originIntent)}\n`);
+  const preview = run(process.execPath, [writer, "--root", originDefaultRoot, "--intent", originIntentPath, "--dry-run"], originDefaultRoot);
+  assert.equal(preview.status, 0, preview.stderr);
+  const written = run(process.execPath, [
+    writer, "--root", originDefaultRoot, "--intent", originIntentPath,
+    "--approved-digest", preview.body.intentDigest, "--write",
+  ], originDefaultRoot);
+  assert.equal(written.status, 0, written.stderr);
+  assert.equal(written.body.assigned.id, "BUG-001");
+} finally {
+  await rm(originDefaultRoot, { recursive: true, force: true });
+}
+
+const unsupportedOriginRoot = await fixture();
+try {
+  assert.equal(run("git", ["update-ref", "refs/remotes/origin/trunk", "HEAD"], unsupportedOriginRoot).status, 0);
+  assert.equal(run("git", ["symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/trunk"], unsupportedOriginRoot).status, 0);
+  const unsupportedIntent = intent("work", "unsupported-origin");
+  const unsupportedIntentPath = path.join(unsupportedOriginRoot, "unsupported-origin.json");
+  await writeFile(unsupportedIntentPath, `${JSON.stringify(unsupportedIntent)}\n`);
+  const rejected = run(process.execPath, [writer, "--root", unsupportedOriginRoot, "--intent", unsupportedIntentPath, "--dry-run"], unsupportedOriginRoot);
+  assert.equal(rejected.status, 2);
+  assert.equal(rejected.body.code, "main_branch_required");
+} finally {
+  await rm(unsupportedOriginRoot, { recursive: true, force: true });
+}
+
+for (const [label, prepare] of [
+  ["ambiguous", async (boundaryRoot) => { assert.equal(run("git", ["branch", "master"], boundaryRoot).status, 0); }],
+  ["detached", async (boundaryRoot) => { assert.equal(run("git", ["checkout", "--detach", "-q"], boundaryRoot).status, 0); }],
+  ["non-symbolic-origin", async (boundaryRoot) => {
+    assert.equal(run("git", ["update-ref", "refs/remotes/origin/HEAD", "HEAD"], boundaryRoot).status, 0);
+  }],
+  ["dangling-origin", async (boundaryRoot) => {
+    assert.equal(run("git", ["symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/master"], boundaryRoot).status, 0);
+  }],
+  ["missing-local-origin", async (boundaryRoot) => {
+    assert.equal(run("git", ["update-ref", "refs/remotes/origin/master", "HEAD"], boundaryRoot).status, 0);
+    assert.equal(run("git", ["symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/master"], boundaryRoot).status, 0);
+  }],
+]) {
+  const boundaryRoot = await fixture();
+  try {
+    await prepare(boundaryRoot);
+    const boundaryIntent = intent("work", label);
+    const boundaryIntentPath = path.join(boundaryRoot, `${label}.json`);
+    await writeFile(boundaryIntentPath, `${JSON.stringify(boundaryIntent)}\n`);
+    const rejected = run(process.execPath, [writer, "--root", boundaryRoot, "--intent", boundaryIntentPath, "--dry-run"], boundaryRoot);
+    assert.equal(rejected.status, 2, label);
+    assert.equal(rejected.body.code, "main_branch_required", label);
+  } finally {
+    await rm(boundaryRoot, { recursive: true, force: true });
+  }
+}
+
+const missingDefaultRoot = await fixture("trunk");
+try {
+  const missingIntent = intent("work", "missing-default");
+  const missingIntentPath = path.join(missingDefaultRoot, "missing-default.json");
+  await writeFile(missingIntentPath, `${JSON.stringify(missingIntent)}\n`);
+  const rejected = run(process.execPath, [writer, "--root", missingDefaultRoot, "--intent", missingIntentPath, "--dry-run"], missingDefaultRoot);
+  assert.equal(rejected.status, 2);
+  assert.equal(rejected.body.code, "main_branch_required");
+} finally {
+  await rm(missingDefaultRoot, { recursive: true, force: true });
+}
+
+console.log("Task·Work·Bug v7 canonical main/master branch resolution verification passed.");
 
 const taskRoot = await mkdtemp(path.join(tmpdir(), "decal-its-v7-task-"));
 try {
   await cp(path.join(repositoryRoot, "packs/decal-pack/src/contracts"), path.join(taskRoot, "contracts"), { recursive: true });
   await cp(path.join(repositoryRoot, "packs/decal-pack/src/contracts/task-work-bug/v4/fixtures/project/docs"), path.join(taskRoot, "docs"), { recursive: true });
-  assert.equal(run("git", ["init", "-b", "main"], taskRoot).status, 0);
+  assert.equal(run("git", ["init", "-b", "master"], taskRoot).status, 0);
   assert.equal(run("git", ["config", "user.email", "fixture@decal.test"], taskRoot).status, 0);
   assert.equal(run("git", ["config", "user.name", "Decal Fixture"], taskRoot).status, 0);
   assert.equal(run("git", ["add", "."], taskRoot).status, 0);

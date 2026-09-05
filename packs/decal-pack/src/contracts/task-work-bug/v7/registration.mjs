@@ -5,6 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
+import { resolveCanonicalDefaultBranch } from "./default-branch.mjs";
+
 const execFileAsync = promisify(execFile);
 const LOCK_FILE = ".decal-slice-completion.lock";
 const JOURNAL_FILE = ".decal/its-ticket-registration-pending-v1.json";
@@ -235,8 +237,7 @@ function render(intent, id, timestamp) {
 async function assertGitBoundary(root) {
   const top = String(await git(root, ["rev-parse", "--show-toplevel"])).trim();
   if (await realpath(top) !== await realpath(root)) fail("main_repository_required");
-  const branch = String(await git(root, ["branch", "--show-current"])).trim();
-  if (branch !== "main") fail("main_branch_required");
+  await resolveCanonicalDefaultBranch(root);
   if (String(await git(root, ["diff", "--cached", "--name-only"])).trim()) fail("staged_changes_present");
   if (String(await git(root, ["diff", "--name-only", "--diff-filter=U"])).trim()) fail("unmerged_paths_present");
   const gitDirectory = path.resolve(root, String(await git(root, ["rev-parse", "--git-dir"])).trim());
@@ -414,7 +415,7 @@ export async function registerTicket({ root, intent: rawIntent, approvedDigest, 
       await rename(temporary, target);
       await journal(root, { ...pending, phase: "sealed" });
       if (testFailAt === "after_write") fail("injected_failure");
-      if (String(await git(root, ["rev-parse", "HEAD"])).trim() !== baseHead) fail("head_changed");
+      if (await assertGitBoundary(root) !== baseHead) fail("head_changed");
       await git(root, ["add", "--", relative]);
       const staged = String(await git(root, ["diff", "--cached", "--name-only"])).trim();
       if (staged !== relative) fail("staged_write_set_mismatch");

@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage ZUZ ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   portable: true
 ---
 
@@ -32,22 +32,28 @@ Incident is a ZUZ ITS Issue with its own stable `INC-###` namespace and canonica
 
 ## Portable writer
 
-Outside Decal, first preview the exact candidate:
+Outside Decal, use the v7 common ticket writer. First preview the semantic candidate; the final `INC-###`
+identity remains pending until approval:
 
 ```sh
-node contracts/zuz-its/v2/register-incident.mjs \
+node contracts/task-work-bug/v7/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 ```
 
-Only after the current user approves that exact scope, write it with the returned source revision:
+Only after the current user approves that exact scope, write the same intent with the returned digest:
 
 ```sh
-node contracts/zuz-its/v2/register-incident.mjs \
+node contracts/task-work-bug/v7/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
-  --expected-source-revision sha256:<revision> --write
+  --approved-digest sha256:<dry-run digest> --write
 ```
 
-Use `transition-incident.mjs` for lifecycle changes. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
+The writer resolves an allowed `origin/HEAD` or one unambiguous local `main`/`master`, then allocates and
+commits the Incident under the shared repository lock. Feature branches, detached HEAD, missing candidates,
+and ambiguous local `main` plus `master` are rejected. The approval includes only that exact registration
+commit, not push, merge, deploy, lifecycle completion, or settlement.
+
+Use `contracts/zuz-its/v2/transition-incident.mjs` for lifecycle changes. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
 
 In a Decal-owned session, prefer its advertised Native candidate and lifecycle capability. If Native is unavailable in an external Codex, Claude, Gemini, or ACP session, use the portable flow instead of refusing the entire ITS task.
 

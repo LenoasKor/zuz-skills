@@ -1,12 +1,13 @@
 {
   "schema": "decal.task-work-bug.fixture-manifest/v7",
   "files": {
-    "README.md": "bf7a6bf50bd6deb44dc15563b24e3f45d5e7a2bf4b91d33d7ed7d118c8d7c73e",
-    "contract.json": "c3307e0964ad2ea44731384e01d7aaed7195dbb1abc5d22ce88e794029de7a56",
+    "README.md": "f182056772292734c75fbbbbbf30426ae0356f9543c0f01fd08b508ea86c4b71",
+    "contract.json": "21fced351746b12b82234573a7981679bd2809adb6f8e2dceaa7c14b4c21ae40",
+    "default-branch.mjs": "337c36cf10ea43e4a4ab5a9148652fcaebf99db469923aac7d747e426f20c5ad",
     "fixtures/work-intent.json": "1f43185ad85d64519c9166b030c4933cfec7c3731081d6b630a195c090dbfab8",
-    "register-task-batch.mjs": "d88fb92fe0bd28cfcac67518ec3a4ce31288eb9ae1d12052dcbc4873dc1159e6",
-    "register-ticket.mjs": "e225349820271a487f80efcd3e7004697c7d7f5123816946fecc49ac8656f75b",
-    "registration.mjs": "f55709bba4de3927b751182d541f803643873dcc8bf1e4d5dad7371da409fc61",
-    "task-registration-batch.mjs": "9cf216d62f60b05043c8ed45ba23869bb472d5838f5fcb094a81a13b7a3b4227"
+    "register-task-batch.mjs": "13a88491fdf38adfb67db4183c29ec600863de5914cc15b4f9468036ed61e573",
+    "register-ticket.mjs": "8492cf1a9bae641780d678cf1559cc65957e14307cfa3aa3ae4c843e95ad167f",
+    "registration.mjs": "782b42c0971ff1ab6827d0ff4bbc0f1dcd780a598e5c1023cf4af003021e8568",
+    "task-registration-batch.mjs": "d232f33bf0922bcf7b9947118feac1be0173622ae68a93dd964a29b4d9da0ed8"
   }
 }
