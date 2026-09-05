@@ -13,7 +13,7 @@
     "native-settlement-commit-remains-atomic",
     "missing-task-registry-is-initialization-required",
     "task-registry-initialization-is-explicit-and-fail-closed",
-    "task-registration-v6-routes-to-native-host-transaction",
+    "ticket-registration-v7-routes-to-native-host-transaction",
     "zuz-its-preserves-task-work-bug-identities",
     "work-remains-a-ticket",
     "incident-and-chat-reference-semantics-match-remote"

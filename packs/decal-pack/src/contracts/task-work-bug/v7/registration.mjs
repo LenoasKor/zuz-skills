@@ -263,14 +263,21 @@ async function acquireLock(root, timeoutMs = 30_000) {
     } catch (error) {
       if (error?.code !== "EEXIST") throw error;
       const lockMetadata = await metadata(target);
-      if (lockMetadata?.isSymbolicLink() || !lockMetadata?.isFile()) fail("unsafe_repository_lock");
+      if (!lockMetadata) {
+        await sleep(40);
+        continue;
+      }
+      if (lockMetadata.isSymbolicLink() || !lockMetadata.isFile()) fail("unsafe_repository_lock");
       let pid = null;
       try {
         const source = await readFile(target, "utf8");
         try {
           pid = JSON.parse(source).pid;
         } catch {
-          if (!source.trim() && Date.now() - started < timeoutMs) {
+          // Another writer may observe the lock after open("wx") succeeds but
+          // before the small owner JSON write is complete. Treat any incomplete
+          // JSON as ordinary contention during the bounded acquisition window.
+          if (Date.now() - started < timeoutMs) {
             await sleep(40);
             continue;
           }
@@ -283,7 +290,13 @@ async function acquireLock(root, timeoutMs = 30_000) {
         }
         throw error;
       }
-      if (!Number.isSafeInteger(pid) || pid < 1) fail("unsafe_repository_lock");
+      if (!Number.isSafeInteger(pid) || pid < 1) {
+        if (Date.now() - started < timeoutMs) {
+          await sleep(40);
+          continue;
+        }
+        fail("unsafe_repository_lock");
+      }
       try { process.kill(pid, 0); } catch (presenceError) {
         if (presenceError?.code === "ESRCH") { await unlink(target); continue; }
       }

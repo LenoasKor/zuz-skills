@@ -57,6 +57,9 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
     assert.ok(file, fixture.id);
     assert.equal(file.sha256, fixture.sha256);
     assert.equal(file.size, fixture.size);
+    const fixtureValue = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src", fixture.sourcePath), "utf8"));
+    assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("registration-v6")), false, fixture.id);
+    assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("ticket-registration-v7")), true, fixture.id);
   }
 });
 
@@ -110,7 +113,7 @@ test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.0.0");
+  assert.equal(packageValue.packVersion, "2.0.1");
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
   assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v2");
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v1/manifest.json"), true);

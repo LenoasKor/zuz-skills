@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 1.3.6 is the current verified public release. Pack 2.0.0 is the current development candidate adding ZUZ ITS compatibility and Incident support:
+First-party contents are licensed under Apache-2.0. Decal Pack 2.0.1 is the current ZUZ ITS-compatible release with atomic Task·Work·Bug·Incident registration:
 
-- source release: [decal-pack-v1.3.6](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v1.3.6)
+- source release: [decal-pack-v2.0.1](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v2.0.1)
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 

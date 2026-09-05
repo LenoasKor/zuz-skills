@@ -176,6 +176,24 @@ try {
   } finally {
     await rm(unsafeRoot, { recursive: true, force: true });
   }
+
+  const partialLockRoot = await fixture();
+  try {
+    const partialLock = path.join(partialLockRoot, ".decal-slice-completion.lock");
+    await writeFile(partialLock, '{"schema":"decal.repository-lock/v1",');
+    const releasePartialLock = setTimeout(() => { void rm(partialLock, { force: true }); }, 80);
+    const partialLockIntent = intent("bug", "partial-lock");
+    const partialLockResult = await registerTicket({
+      root: partialLockRoot,
+      intent: partialLockIntent,
+      approvedDigest: ticketRegistrationIntentDigest(partialLockIntent),
+    });
+    clearTimeout(releasePartialLock);
+    assert.equal(partialLockResult.status, "committed");
+    assert.equal(partialLockResult.assigned.id, "BUG-001");
+  } finally {
+    await rm(partialLockRoot, { recursive: true, force: true });
+  }
 } finally {
   await rm(root, { recursive: true, force: true });
 }

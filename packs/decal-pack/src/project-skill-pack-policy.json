@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "packId": "decal-project-pack",
-  "packVersion": "2.0.0",
+  "packVersion": "2.0.1",
   "zuzItsContract": "zuz.its/v2",
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [

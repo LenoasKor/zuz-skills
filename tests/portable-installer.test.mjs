@@ -11,8 +11,8 @@ const installer = path.join(repositoryRoot, "scripts/install-decal-pack.mjs");
 const revision = "f".repeat(40);
 execFileSync(process.execPath, [path.join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision]);
 const fixtureRoot = await mkdtemp(path.join(tmpdir(), "zuz-pack-fixture-"));
-const packagePath = path.join(fixtureRoot, "decal-pack-2.0.0.zuz-pack.json");
-await writeFile(packagePath, await readFile(path.join(repositoryRoot, "dist/decal-pack-2.0.0.zuz-pack.json")));
+const packagePath = path.join(fixtureRoot, "decal-pack-2.0.1.zuz-pack.json");
+await writeFile(packagePath, await readFile(path.join(repositoryRoot, "dist/decal-pack-2.0.1.zuz-pack.json")));
 const packageValue = JSON.parse(await readFile(packagePath, "utf8"));
 
 function run(root, mode, approved = null) {
@@ -42,7 +42,7 @@ test("portable installer previews exact ITS paths and preserves unrelated skills
     assert.equal(installed.value.status, "installed");
     assert.equal(await readFile(path.join(root, ".claude/skills/deploy/SKILL.md"), "utf8"), "user deploy skill\n");
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.0.0");
+    assert.equal(lock.packVersion, "2.0.1");
     assert.equal(lock.manifestSha256, packageValue.manifestSha256);
     const repeated = run(root, "--dry-run");
     assert.equal(repeated.value.createCount, 0);

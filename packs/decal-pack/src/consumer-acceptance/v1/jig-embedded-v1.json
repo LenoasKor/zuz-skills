@@ -10,7 +10,7 @@
     "project-install-remains-user-opt-in",
     "preserve-user-modified-files",
     "task-registry-initialization-is-explicit-and-fail-closed",
-    "task-registration-v6-contract-is-pinned",
+    "ticket-registration-v7-contract-is-pinned",
     "zuz-its-contract-is-exactly-pinned",
     "work-remains-a-ticket",
     "existing-jig-task-ledger-is-not-rewritten"

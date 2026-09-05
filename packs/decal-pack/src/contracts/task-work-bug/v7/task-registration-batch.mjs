@@ -129,17 +129,33 @@ async function acquireRepositoryLock(root, { timeoutMs = 30_000, retryMs = 40 } 
       let ownerPid = null;
       try {
         ownerPid = JSON.parse(await readFile(target, "utf8")).pid;
-      } catch {
+      } catch (readError) {
+        if (readError?.code === "ENOENT") {
+          await sleep(retryMs);
+          continue;
+        }
+        // The winner creates the path before its owner JSON write completes.
+        // A bounded retry distinguishes that normal race from a persistent,
+        // malformed lock without letting any writer bypass the shared lock.
+        if (Date.now() - startedAt < timeoutMs) {
+          await sleep(retryMs);
+          continue;
+        }
         fail("unsafe_repository_lock");
       }
-      if (Number.isSafeInteger(ownerPid) && ownerPid > 0) {
-        try {
-          process.kill(ownerPid, 0);
-        } catch (presenceError) {
-          if (presenceError?.code === "ESRCH") {
-            await unlink(target);
-            continue;
-          }
+      if (!Number.isSafeInteger(ownerPid) || ownerPid < 1) {
+        if (Date.now() - startedAt < timeoutMs) {
+          await sleep(retryMs);
+          continue;
+        }
+        fail("unsafe_repository_lock");
+      }
+      try {
+        process.kill(ownerPid, 0);
+      } catch (presenceError) {
+        if (presenceError?.code === "ESRCH") {
+          await unlink(target);
+          continue;
         }
       }
       if (Date.now() - startedAt >= timeoutMs) fail("repository_lock_timeout");

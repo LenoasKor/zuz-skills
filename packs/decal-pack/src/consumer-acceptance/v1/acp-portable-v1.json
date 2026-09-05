@@ -12,7 +12,7 @@
     "cross-project-access-requires-root-and-scope-approval",
     "settlement-request-chains-exact-commit-and-finalize",
     "task-registry-initialization-is-explicit-and-fail-closed",
-    "task-registration-v6-is-semantic-approved-and-atomic",
+    "ticket-registration-v7-is-semantic-approved-and-atomic",
     "zuz-its-preserves-task-work-bug-identities",
     "work-remains-a-ticket",
     "incident-writer-and-chat-references-are-portable"

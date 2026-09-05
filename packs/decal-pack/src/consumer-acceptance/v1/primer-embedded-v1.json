@@ -10,7 +10,7 @@
     "skill-sync-preserves-user-modified-files",
     "task-work-bug-ledger-is-not-auto-created",
     "task-registry-initialization-is-explicit-and-fail-closed",
-    "task-registration-v6-contract-is-pinned",
+    "ticket-registration-v7-contract-is-pinned",
     "zuz-its-contract-is-exactly-pinned",
     "work-remains-a-ticket",
     "existing-projects-are-not-forced-to-migrate"
