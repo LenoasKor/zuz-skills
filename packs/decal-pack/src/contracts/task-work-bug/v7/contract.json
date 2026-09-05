@@ -1,0 +1,15 @@
+{
+  "schema": "decal.task-work-bug.contract/v7",
+  "contractId": "decal.task-work-bug/v7",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v6",
+    "manifestSha256": "6d5176a773e03724b36e1be333a533ae223988d56a1f924f43ba0def8529db5e"
+  },
+  "taskWriter": "contracts/task-work-bug/v7/register-task-batch.mjs",
+  "ticketWriter": "contracts/task-work-bug/v7/register-ticket.mjs",
+  "registrationIntentSchema": "decal.zuz-its.ticket-registration-intent/v7",
+  "kinds": ["task", "work", "bug", "incident"],
+  "identityAllocation": "approval-time on latest main under the shared repository lock",
+  "receiptFields": ["intentDigest", "commit", "assigned", "writeSet"],
+  "authorizationExcludes": ["push", "merge", "deploy", "lifecycle-completion", "version-settlement"]
+}

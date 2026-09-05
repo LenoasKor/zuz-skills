@@ -80,8 +80,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const revision = "d".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v6");
-  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v6/register-task-batch.mjs"));
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
+  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-task-batch.mjs"));
+  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"));
   assert.equal(packageValue.executionPolicies.repositoryAuthority.crossProjectAccess, "explicit-current-user-approval");
   assert.deepEqual(packageValue.executionPolicies.repositoryAuthority.approvalBinding, ["repository-root", "operation-scope", "current-task"]);
   assert.equal(packageValue.executionPolicies.settlementCommit.externalHost, "explicit-settlement-request-authorizes-exact-settlement-commit");
@@ -99,8 +100,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.6\.0"/);
-      assert.match(content, /task-work-bug\/v6\/register-task-batch\.mjs/);
+      assert.match(content, /version: "1\.7\.0"/);
+      assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
 });
@@ -110,10 +111,11 @@ test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", 
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.packVersion, "2.0.0");
-  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v6");
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
   assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v2");
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v1/manifest.json"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v6/register-task-batch.mjs"), true);
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v1/project.mjs"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v2/register-incident.mjs"), true);
   assert.equal(packageValue.skills.some((skill) => skill.id === "zuz-its"), true);

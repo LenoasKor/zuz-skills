@@ -2,7 +2,7 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   portable: true
 ---
 
@@ -26,7 +26,7 @@ authorities unless the approval explicitly includes them.
 2. Compare the repository product identity in its instructions or manifest with any project, product, or repository named by the user. If they differ, or the target identity cannot be proven, stop before reading Work records or changing files. Contract source ownership does not move the Work record to Decal or another upstream repository.
 3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own Task·Work·Bug authoring profile when its instructions name one.
 4. Read the current schema and lifecycle contract under `contracts/task-work-bug/`, plus any linked Task.
-5. Search canonical Work records and reserve the next unused stable `WORK-###` ID only at write time.
+5. Search canonical Work records for duplicates, but do not reserve a final `WORK-###` ID in the agent. The approved main writer assigns it under the shared lock.
 6. Derive version settlement fields with the repository helper when one exists. Do not invent `null`, version, release mode, or source revision values.
 
 ## Host routing
@@ -56,18 +56,17 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/v5/`, use it instead of hand-writing a record. The
-writer issues the identity, writes exactly one path, and revalidates afterwards.
+When the repository ships `contracts/task-work-bug/v7/`, use it instead of hand-writing a record. The
+dry-run returns no final ID. Approval authorizes the writer to issue the ID on latest `main`, validate the
+record, commit exactly one path, and return its receipt.
 
 ```sh
-node contracts/task-work-bug/v5/validate-work-items.mjs --root .
-
-node contracts/task-work-bug/v5/register-work-item.mjs \
+node contracts/task-work-bug/v7/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 
-node contracts/task-work-bug/v5/register-work-item.mjs \
+node contracts/task-work-bug/v7/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
-  --expected-source-revision sha256:<dry-run revision> --write
+  --approved-digest sha256:<dry-run digest> --write
 ```
 
 Lifecycle steps use the same revision binding. Work starts at `new → planned → in_progress` and then follows the

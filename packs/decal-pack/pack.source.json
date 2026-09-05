@@ -102,10 +102,10 @@
     }
   },
   "compatibility": {
-    "portableContract": "task-work-bug/v6",
+    "portableContract": "task-work-bug/v7",
     "zuzItsContract": "zuz.its/v2",
     "minimumHosts": {
-      "decal": "0.392.0",
+      "decal": "0.404.0",
       "primer": null,
       "jig": null
     }
