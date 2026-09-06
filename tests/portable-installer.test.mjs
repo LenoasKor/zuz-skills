@@ -89,15 +89,19 @@ async function readOrAbsent(target) {
 test("installed Pack carries the runner for all providers and settles a Showcase-shaped product without Decal", async () => {
   const root = await realpath(await mkdtemp(path.join(tmpdir(), "zuz-pack-settlement-smoke-")));
   const providers = ["codex", "claude", "gemini", "acp"];
-  const preview = run(root, "--dry-run", null, { providers });
+  const modules = ["portable-core", "task-work-bug"];
+  const preview = run(root, "--dry-run", null, { providers, modules });
   assert.equal(preview.status, 0);
   assert.ok(preview.value.writeSet.includes("contracts/task-work-bug/v8/manifest.json"));
   assert.equal(preview.value.writeSet.includes(".decal/settlement-profile.json"), false);
-  const installed = run(root, "--write", preview.value.installationPlanDigest, { providers });
+  const installed = run(root, "--write", preview.value.installationPlanDigest, { providers, modules });
   assert.equal(installed.status, 0, installed.stdout);
   const skillPaths = ["skills", ".claude/skills", ".gemini/skills", ".agents/skills"];
-  const expected = await readFile(path.join(repositoryRoot, "packs/decal-pack/src/skills/agents/decal-task/SKILL.md"));
-  for (const prefix of skillPaths) assert.deepEqual(await readFile(path.join(root, prefix, "decal-task/SKILL.md")), expected);
+  for (const id of ["decal-task", "decal-work", "decal-bug", "decal-incident", "zuz-its", "decal-commit-ready", "decal-slice", "decal-slice-maintenance"]) {
+    const file = packageValue.files.find((item) => item.sourcePath === `skills/agents/${id}/SKILL.md` || item.sourcePath === `generated/skills/${id}/SKILL.md`);
+    const expected = Buffer.from(file.contentBase64, "base64");
+    for (const prefix of skillPaths) assert.deepEqual(await readFile(path.join(root, prefix, id, "SKILL.md")), expected, `${prefix}/${id}`);
+  }
   const env = { ...process.env }; delete env.DECAL_SESSION_ID;
   const node = (file, args = []) => JSON.parse(execFileSync(process.execPath, [path.join(root, "contracts/task-work-bug/v8", file), ...args], { cwd: root, env, encoding: "utf8" }));
   assert.equal(node("verify-contract.mjs").status, "accepted");
@@ -208,7 +212,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock updates managed bytes to 2.1.0 and preserves obsolete files", async () => {
+test("Pack 2.0.0 lock updates managed bytes to 2.1.1 and preserves obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -227,7 +231,7 @@ test("Pack 2.0.0 lock updates managed bytes to 2.1.0 and preserves obsolete file
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.1.0");
+    assert.equal(lock.packVersion, "2.1.1");
     assert.equal(lock.mode, "update");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");

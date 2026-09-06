@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.1.1"
+  version: "1.1.2"
   portable: true
 ---
 
@@ -13,6 +13,17 @@ Use the repository's installed zuz Issue Tracking System without replacing its e
 ## Repository authority boundary
 
 Treat the Git root containing the invocation context as the active project. Do not read or change another repository merely because it is linked or supplies this Pack. Cross-project access requires explicit current-user approval naming the other root and operation scope. Commit, push, deploy, delete, and settlement remain separate authorities unless the user explicitly includes them.
+
+## External commit approval
+
+For ordinary commits outside Decal, follow the host policy and valid user approval, including an
+existing standing or automatic approval covering this repository and task scope. Before committing,
+briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
+approval when that authorization remains valid; ask when approval is absent or the scope is unclear
+or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
+contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
+This does not replace Native approval, registration-digest approval, or completion/settlement gates,
+and does not authorize push, merge, deploy, deletion, or access to another repository.
 
 ## Meaning
 

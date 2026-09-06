@@ -149,13 +149,13 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.9.0",
-    "decal-work": "1.6.0",
-    "decal-bug": "1.6.0",
-    "decal-incident": "1.1.1",
-    "zuz-its": "1.1.1",
-    "decal-slice": "0.4.7",
-    "decal-slice-maintenance": "0.7.1",
+    "decal-task": "1.9.1",
+    "decal-work": "1.6.1",
+    "decal-bug": "1.6.1",
+    "decal-incident": "1.1.2",
+    "zuz-its": "1.1.2",
+    "decal-slice": "0.4.8",
+    "decal-slice-maintenance": "0.7.2",
     "decal-slice-smoke": "0.5.1",
     "decal-commit-ready": "0.9.1",
   };
@@ -173,7 +173,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.9\.0"/);
+      assert.match(content, /version: "1\.9\.1"/);
       assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
@@ -196,11 +196,41 @@ test("commit guidance is preserved in shared and every provider entrypoint", asy
   assert.equal(agent.sha256, sha256(Buffer.from(agent.contentBase64, "base64")));
 });
 
+test("ITS and maintenance entrypoints retain scoped external commit approval for every provider", async () => {
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  for (const id of ["decal-task", "decal-work", "decal-bug", "decal-incident", "zuz-its"]) {
+    const path = `skills/agents/${id}/SKILL.md`;
+    const file = pack.files.find((candidate) => candidate.sourcePath === path);
+    const bytes = Buffer.from(file.contentBase64, "base64");
+    assert.deepEqual(bytes, await readFile(join(repositoryRoot, "packs/decal-pack/src", path)));
+    assert.deepEqual(file.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+    assert.equal(file.sha256, sha256(bytes));
+    const content = bytes.toString("utf8");
+    assert.match(content, /existing standing or automatic approval/);
+    assert.match(content, /repository, branch, exact files, and intended changes/);
+    assert.match(content, /Never self-authorize/);
+    assert.match(content, /does not replace Native approval, registration-digest approval, or completion\/settlement gates/);
+  }
+  for (const [id, name] of [["decal-slice", "slice.md"], ["decal-slice-maintenance", "decal-slice-maintenance.md"]]) {
+    const shared = pack.files.find((file) => file.sourcePath === `skills/prompts/${name}`);
+    const agent = pack.files.find((file) => file.sourcePath === `generated/skills/${id}/SKILL.md`);
+    const source = Buffer.from(shared.contentBase64, "base64").toString("utf8");
+    const generated = Buffer.from(agent.contentBase64, "base64").toString("utf8");
+    const template = source.split("\n").find((line) => line.startsWith("template: ")).slice(10);
+    assert.ok(generated.includes(template));
+    assert.deepEqual(agent.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+    assert.match(template, /기존 사전·자동 승인/);
+    assert.match(template, /저장소·브랜치·정확한 대상 파일과 변경 내용/);
+    assert.doesNotMatch(source, /커밋은 별도 사용자 승인을 요구|외부 커밋은 정확한 경로의 별도 승인을 요구/);
+  }
+});
+
 test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.1.0");
+  assert.equal(packageValue.packVersion, "2.1.1");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");

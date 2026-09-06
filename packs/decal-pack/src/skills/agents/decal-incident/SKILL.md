@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.1.1"
+  version: "1.1.2"
   portable: true
 ---
 
@@ -13,6 +13,17 @@ Manage a zuz ITS Incident using the repository's installed portable contract.
 ## Repository authority boundary
 
 Treat the Git root containing the invocation context as the only active project. Access to another repository requires explicit current-user approval naming its root and operation scope. Commit, push, deploy, delete, and settlement are separate authorities unless explicitly included.
+
+## External commit approval
+
+For ordinary commits outside Decal, follow the host policy and valid user approval, including an
+existing standing or automatic approval covering this repository and task scope. Before committing,
+briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
+approval when that authorization remains valid; ask when approval is absent or the scope is unclear
+or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
+contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
+This does not replace Native approval, registration-digest approval, or completion/settlement gates,
+and does not authorize push, merge, deploy, deletion, or access to another repository.
 
 ## Incident boundary
 

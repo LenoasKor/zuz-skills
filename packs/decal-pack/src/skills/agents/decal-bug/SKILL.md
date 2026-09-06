@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.6.0"
+  version: "1.6.1"
   portable: true
 ---
 
@@ -19,6 +19,17 @@ there, or changing its files or Git state, obtain explicit current-user approval
 and allowed operation scope for the current task. Verify the approved root independently and follow that
 repository's own instructions. Commit, push, deploy, delete, and other external effects remain separate
 authorities unless the approval explicitly includes them.
+
+## External commit approval
+
+For ordinary commits outside Decal, follow the host policy and valid user approval, including an
+existing standing or automatic approval covering this repository and task scope. Before committing,
+briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
+approval when that authorization remains valid; ask when approval is absent or the scope is unclear
+or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
+contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
+This does not replace Native approval, registration-digest approval, or completion/settlement gates,
+and does not authorize push, merge, deploy, deletion, or access to another repository.
 
 ## Before changing files
 
