@@ -130,6 +130,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.settlementCommit.pushIncluded, false);
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.mode, "explicit-only");
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.writer, "contracts/task-work-bug/initialize-task-registry.mjs");
+  assert.equal(packageValue.executionPolicies.taskRegistryInitialization.summaryRepairWriter, "contracts/task-work-bug/repair-task-registry-summary.mjs");
+  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/repair-task-registry-summary.mjs"));
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.automaticInstall, false);
   assert.deepEqual(packageValue.executionPolicies.packInstallation.modes, ["initial-pack-bootstrap", "update"]);
   assert.equal(packageValue.executionPolicies.packInstallation.approvalArgument, "--approved-plan-digest");

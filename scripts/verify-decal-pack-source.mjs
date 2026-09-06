@@ -21,6 +21,7 @@ if (descriptor.executionPolicies?.settlementCommit?.finalizerRequired !== true) 
 if (descriptor.executionPolicies?.settlementCommit?.pushIncluded !== false) failures.push("settlement authority must not include push");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.mode !== "explicit-only") failures.push("Task registry initialization must be explicit-only");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.writer !== "contracts/task-work-bug/initialize-task-registry.mjs") failures.push("Task registry initializer path must be canonical");
+if (descriptor.executionPolicies?.taskRegistryInitialization?.summaryRepairWriter !== "contracts/task-work-bug/repair-task-registry-summary.mjs") failures.push("Task registry summary repair path must be canonical");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.automaticInstall !== false) failures.push("Pack installation must not initialize a Task registry");
 const expectedPackInstallation = {
   schemaVersion: 1,

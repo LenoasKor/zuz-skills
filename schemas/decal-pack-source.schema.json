@@ -91,11 +91,12 @@
         "taskRegistryInitialization": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["schemaVersion", "mode", "writer", "approvalBinding", "automaticInstall"],
+          "required": ["schemaVersion", "mode", "writer", "summaryRepairWriter", "approvalBinding", "automaticInstall"],
           "properties": {
             "schemaVersion": { "const": 1 },
             "mode": { "const": "explicit-only" },
             "writer": { "const": "contracts/task-work-bug/initialize-task-registry.mjs" },
+            "summaryRepairWriter": { "const": "contracts/task-work-bug/repair-task-registry-summary.mjs" },
             "approvalBinding": { "const": ["repository-root", "operation-scope", "current-task"] },
             "automaticInstall": { "const": false }
           }

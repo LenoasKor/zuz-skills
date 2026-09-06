@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { lstat, mkdir, open, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 
-import { parseCategories, parseIndex, validatePackage, validateProject } from "./v4/registry.mjs";
+import { parseCategories, parseIndex, STATUSES, validatePackage, validateProject } from "./v4/registry.mjs";
 
 const RESULT_SCHEMA = "decal.task-work-bug.task-registry-initialization/v1";
 const INTENT_SCHEMA = "decal.task-work-bug.task-registry-initialization-intent/v1";
@@ -106,7 +106,7 @@ function renderIndex() {
     "",
     "| 상태 | 개수 | 비고 |",
     "| --- | ---: | --- |",
-    "| `planned` | 0 | 등록된 Task 없음 |",
+    ...[...STATUSES].filter((status) => status !== "complete").map((status) => `| \`${status}\` | 0 | 없음 |`),
     "",
     "## Task 목록",
     "",

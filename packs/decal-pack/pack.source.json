@@ -156,6 +156,7 @@
       "schemaVersion": 1,
       "mode": "explicit-only",
       "writer": "contracts/task-work-bug/initialize-task-registry.mjs",
+      "summaryRepairWriter": "contracts/task-work-bug/repair-task-registry-summary.mjs",
       "approvalBinding": ["repository-root", "operation-scope", "current-task"],
       "automaticInstall": false
     },

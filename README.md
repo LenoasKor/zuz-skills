@@ -33,6 +33,28 @@ Installing the pack never initializes Task·Work·Bug records or Jig automatical
 
 ## Commands
 
+### Existing Task registry summary repair (BUG-162, 2.0.3 candidate)
+
+The initializer now emits all supported non-legacy status rows, so initialization → v7 registration → v4 `planned` to `in_progress` works end to end. Pinned v1–v7 files are unchanged. An old initialized registry may pass validation but lack the target summary row.
+
+After adopting a verified release that includes the repair tool, preview it in the **approved project root**:
+
+```sh
+node contracts/task-work-bug/repair-task-registry-summary.mjs --root /absolute/project --dry-run
+```
+
+The preview shows the exact before/after index and a root/content-bound revision. It only adds missing **empty** status rows; it never changes Task IDs, documents, statuses, existing summary rows, or user notes. Inconsistent counts, duplicate/unknown rows, missing nonempty statuses and symlinks require review instead of guessed repairs.
+
+Pause all registry writers (including agents and Native lifecycle tools), obtain approval for that preview, then apply using its exact `sourceRevision`:
+
+```sh
+node contracts/task-work-bug/repair-task-registry-summary.mjs --root /absolute/project --expected-source-revision sha256:... --writers-paused --write
+```
+
+The tool also acquires the shared repository lock and rechecks index, category and Task bytes. Historical v4 writers do not honor that lock, so `--writers-paused` is a real operator precondition, not an automatic pause. The original index inode stays in a private `.decal-summary-*/index.before.md` recovery directory whose path is returned. A concurrent replacement is never overwritten: on `recovery_required`, preserve the returned backup and lock and seek review; do not manually delete the lock or retry a guessed rollback. A crash may likewise require explicit recovery. No automatic Git commit, Pack update, deployment or project migration occurs. Initializer acceptance now covers the full registration/transition sequence and repair conflict boundaries, not only empty-registry validation.
+
+The fix remains an unpublished source candidate. Hub/STANZA and other installed projects have not been repaired by these tests.
+
 Every selected configuration includes `docs/skills/vendor/decal-project-pack/LICENSE` and `NOTICE` in its preview, approval digest, installation receipt and rollback transaction. This does not select `portable-core` or initialize ITS. Modified notice files block installation just like other modified files. Schema 1 archives remain readable with their original behavior; schema 1 consumers reject the new archive instead of silently omitting required files. Task 665 tracks the coordinated consumer/review/publishing work; 2.0.3 is not published yet.
 
 ```sh
