@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -86,6 +86,60 @@ async function readOrAbsent(target) {
   }
 }
 
+test("installed Pack carries the runner for all providers and settles a Showcase-shaped product without Decal", async () => {
+  const root = await realpath(await mkdtemp(path.join(tmpdir(), "zuz-pack-settlement-smoke-")));
+  const providers = ["codex", "claude", "gemini", "acp"];
+  const preview = run(root, "--dry-run", null, { providers });
+  assert.equal(preview.status, 0);
+  assert.ok(preview.value.writeSet.includes("contracts/task-work-bug/v8/manifest.json"));
+  assert.equal(preview.value.writeSet.includes(".decal/settlement-profile.json"), false);
+  const installed = run(root, "--write", preview.value.installationPlanDigest, { providers });
+  assert.equal(installed.status, 0, installed.stdout);
+  const skillPaths = ["skills", ".claude/skills", ".gemini/skills", ".agents/skills"];
+  const expected = await readFile(path.join(repositoryRoot, "packs/decal-pack/src/skills/agents/decal-task/SKILL.md"));
+  for (const prefix of skillPaths) assert.deepEqual(await readFile(path.join(root, prefix, "decal-task/SKILL.md")), expected);
+  const env = { ...process.env }; delete env.DECAL_SESSION_ID;
+  const node = (file, args = []) => JSON.parse(execFileSync(process.execPath, [path.join(root, "contracts/task-work-bug/v8", file), ...args], { cwd: root, env, encoding: "utf8" }));
+  assert.equal(node("verify-contract.mjs").status, "accepted");
+  // No project initialization or release profile is silently installed.
+  assert.equal(await readOrAbsent(path.join(root, ".decal/settlement-profile.json")), null);
+  await mkdir(path.join(root, ".decal"), { recursive: true });
+  await mkdir(path.join(root, "product/src-tauri"), { recursive: true });
+  const initial = {
+    "product/package.json": '{"name":"showcase-fixture","version":"0.1.2"}\n',
+    "product/package-lock.json": '{"version":"0.1.2","packages":{"":{"version":"0.1.2"},"node_modules/dependency":{"version":"9.8.7"}}}\n',
+    "product/src-tauri/tauri.conf.json": '{"version":"0.1.2"}\n',
+    "product/src-tauri/Cargo.toml": '[package]\nname = "showcase-fixture"\nversion = "0.1.2"\n\n[dependencies]\nserde = "1"\n',
+    "product/src-tauri/Cargo.lock": 'version = 3\n\n[[package]]\nname = "showcase-fixture"\nversion = "0.1.2"\n\n[[package]]\nname = "serde"\nversion = "1.0.0"\nsource = "registry+https://example.invalid"\n',
+  };
+  for (const [file, source] of Object.entries(initial)) await writeFile(path.join(root, file), source);
+  await writeFile(path.join(root, ".decal/settlement-profile.json"), JSON.stringify({
+    schema: "zuz.its.settlement-profile/v1", engine: "portable", channels: { desktop: "showcase", remote: null }, products: [{ id: "showcase", files: [
+      { path: "product/package.json", format: "json", pointers: ["/version"] },
+      { path: "product/package-lock.json", format: "json", pointers: ["/version", "/packages//version"] },
+      { path: "product/src-tauri/tauri.conf.json", format: "json", pointers: ["/version"] },
+      { path: "product/src-tauri/Cargo.toml", format: "cargo-package" },
+      { path: "product/src-tauri/Cargo.lock", format: "cargo-lock-package", packageName: "showcase-fixture" },
+    ] }],
+  }));
+  await mkdir(path.join(root, "docs/work-items/work"), { recursive: true });
+  await writeFile(path.join(root, "docs/work-items/work/WORK-001.md"), ["---", "schema: decal.task-work-bug.work-document", "schemaVersion: 1", "id: WORK-001", "status: closed",
+    "versionImpact: desktop-patch", "remoteVersionImpact: none", "releaseMode: standalone", "releaseTaskRef: null", "versionApplied: pending", "remoteVersionApplied: not-required", "taskRefs: []",
+    "completion:", '  summary: "isolated fixture"', "  evidence:", '    - "fixture only"', "closure:", "  reason: completed", "---", ""].join("\n"));
+  const git = (args) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+  git(["init", "-b", "main"]); git(["config", "user.name", "Fixture"]); git(["config", "user.email", "fixture@example.invalid"]);
+  git(["add", "."]); git(["commit", "-m", "fixture: approved project profile and implementation"]);
+  const args = ["--root", root, "--kind", "work", "--id", "WORK-001"];
+  const settlement = node("settle-work-item.mjs", [...args, "--dry-run"]);
+  assert.equal(settlement.writeSet.length, 6);
+  assert.equal(node("settle-work-item.mjs", [...args, "--write", "--approved-plan-digest", settlement.approvalDigest]).state, "committed");
+  for (const file of Object.keys(initial)) assert.match(await readFile(path.join(root, file), "utf8"), /0\.1\.3/);
+  const lock = JSON.parse(await readFile(path.join(root, "product/package-lock.json"), "utf8"));
+  assert.equal(lock.packages["node_modules/dependency"].version, "9.8.7");
+  assert.equal(await readOrAbsent(path.join(root, ".decal/settlement-pending-v1.json")), null);
+  assert.equal(node("settle-work-item.mjs", [...args, "--dry-run"]).alreadySettled, true);
+});
+
 test("initial bootstrap binds canonical root, release, selection, and exact files to one approved plan", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-install-"));
   const otherRoot = await mkdtemp(path.join(tmpdir(), "zuz-pack-install-other-"));
@@ -154,7 +208,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock updates managed bytes to 2.0.3 and preserves obsolete files", async () => {
+test("Pack 2.0.0 lock updates managed bytes to 2.1.0 and preserves obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -173,7 +227,7 @@ test("Pack 2.0.0 lock updates managed bytes to 2.0.3 and preserves obsolete file
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.0.3");
+    assert.equal(lock.packVersion, "2.1.0");
     assert.equal(lock.mode, "update");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "2.0.3",
+  "packVersion": "2.1.0",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": ["LICENSE", "NOTICE"],
@@ -104,6 +104,7 @@
   },
   "compatibility": {
     "portableContract": "task-work-bug/v7",
+    "portableSettlement": "task-work-bug/v8",
     "zuzItsContract": "zuz.its/v2",
     "minimumHosts": {
       "decal": "0.406.0",
@@ -112,6 +113,12 @@
     }
   },
   "capabilities": [
+    {
+      "id": "portable-lifecycle-settlement",
+      "scope": "contract",
+      "providers": ["codex", "claude", "gemini", "acp"],
+      "required": false
+    },
     {
       "id": "task-registry-explicit-initializer",
       "scope": "contract",
@@ -138,6 +145,20 @@
     }
   ],
   "executionPolicies": {
+    "portableSettlement": {
+      "schemaVersion": 1,
+      "profile": ".decal/settlement-profile.json",
+      "profileSelection": "explicit-project-approval",
+      "repositoryEngine": "preserve-and-delegate",
+      "manifestValidator": "contracts/task-work-bug/v8/verify-contract.mjs",
+      "taskLifecycle": "contracts/task-work-bug/v8/task-lifecycle.mjs",
+      "workItemLifecycle": "contracts/task-work-bug/v8/work-item-lifecycle.mjs",
+      "standaloneSettlement": "contracts/task-work-bug/v8/settle-work-item.mjs",
+      "finalizer": "contracts/task-work-bug/v8/finalize.mjs",
+      "recovery": "contracts/task-work-bug/v8/recover.mjs",
+      "automaticProfileInstallation": false,
+      "nativeFallback": false
+    },
     "repositoryAuthority": {
       "schemaVersion": 1,
       "identityProbe": "root-and-product-identity-only",

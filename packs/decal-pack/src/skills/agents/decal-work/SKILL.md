@@ -2,7 +2,7 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   portable: true
 ---
 
@@ -72,6 +72,14 @@ node contracts/task-work-bug/v7/register-ticket.mjs \
 
 Lifecycle steps use the same revision binding. Work starts at `new → planned → in_progress` and then follows the
 shared `development_complete → release_ready → closed` flow.
+
+If the project explicitly adopts the packaged v8 runner, read `contracts/task-work-bug/v8/README.md`
+and validate its manifest. Use `v8/work-item-lifecycle.mjs` for normal forward transitions and
+`v8/settle-work-item.mjs --kind work` for closed standalone settlement. Preview, approve, and apply
+the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
+Task, not separately. The approved project profile must name its version sources. Preserve existing
+repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
+writer after a v8 rejection. The following v5 path is only for an older, explicitly pinned installation:
 
 ```sh
 node contracts/task-work-bug/v5/transition-work-item.mjs \

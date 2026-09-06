@@ -120,6 +120,15 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
+  assert.equal(packageValue.compatibility.portableSettlement, "task-work-bug/v8");
+  const settlement = packageValue.executionPolicies.portableSettlement;
+  assert.equal(settlement.automaticProfileInstallation, false);
+  assert.equal(settlement.nativeFallback, false);
+  assert.equal(settlement.repositoryEngine, "preserve-and-delegate");
+  assert.equal(settlement.profile, ".decal/settlement-profile.json");
+  for (const key of ["manifestValidator", "taskLifecycle", "workItemLifecycle", "standaloneSettlement", "finalizer", "recovery"]) {
+    assert.ok(packageValue.files.some((file) => file.sourcePath === settlement[key] && file.moduleId === "task-work-bug"), key);
+  }
   assert.equal(packageValue.compatibility.minimumHosts.decal, "0.406.0");
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-task-batch.mjs"));
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"));
@@ -140,9 +149,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.8.0",
-    "decal-work": "1.5.0",
-    "decal-bug": "1.5.0",
+    "decal-task": "1.9.0",
+    "decal-work": "1.6.0",
+    "decal-bug": "1.6.0",
     "decal-incident": "1.1.1",
     "zuz-its": "1.1.1",
     "decal-slice": "0.4.7",
@@ -163,7 +172,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.8\.0"/);
+      assert.match(content, /version: "1\.9\.0"/);
       assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
@@ -173,7 +182,7 @@ test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.0.3");
+  assert.equal(packageValue.packVersion, "2.1.0");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
