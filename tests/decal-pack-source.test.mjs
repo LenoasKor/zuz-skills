@@ -157,6 +157,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-slice": "0.4.7",
     "decal-slice-maintenance": "0.7.1",
     "decal-slice-smoke": "0.5.1",
+    "decal-commit-ready": "0.9.1",
   };
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
     assert.equal(packageValue.skills.find((skill) => skill.id === id)?.version, version, id);
@@ -176,6 +177,23 @@ test("Pack execution policy binds cross-project approval and settlement commit",
       assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
+});
+
+test("commit guidance is preserved in shared and every provider entrypoint", async () => {
+  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  const source = await readFile(join(repositoryRoot, "packs/decal-pack/src/skills/prompts/commit-ready.md"), "utf8");
+  const shared = pack.files.find((file) => file.sourcePath === "skills/prompts/commit-ready.md");
+  const agent = pack.files.find((file) => file.sourcePath === "generated/skills/decal-commit-ready/SKILL.md");
+  assert.equal(Buffer.from(shared.contentBase64, "base64").toString("utf8"), source);
+  assert.deepEqual(shared.installTargets, [{ provider: "shared", path: "docs/skills/commit-ready.md" }]);
+  assert.deepEqual(agent.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+  const generated = Buffer.from(agent.contentBase64, "base64").toString("utf8");
+  const template = source.split("\n").find((line) => line.startsWith("template: ")).slice("template: ".length);
+  const body = source.slice(source.indexOf("\n---\n", 4) + 5).trim();
+  assert.ok(generated.includes(template), "approval, Native and settlement instructions must be emitted intact");
+  assert.ok(generated.includes(body), "human-readable guidance must agree with provider payload");
+  assert.equal(agent.sha256, sha256(Buffer.from(agent.contentBase64, "base64")));
 });
 
 test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", async () => {

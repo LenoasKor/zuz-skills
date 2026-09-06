@@ -20,7 +20,7 @@
     ]
   },
   "minimumCompatible": {
-    "decal-commit-ready": "0.9.0",
+    "decal-commit-ready": "0.9.1",
     "decal-slice-maintenance": "0.7.1",
     "decaldev-rebuild-relaunch": "0.9.0"
   },
