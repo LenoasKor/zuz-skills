@@ -1,7 +1,7 @@
 {
   "schema": "decal.task-work-bug.fixture-manifest/v8",
   "files": {
-    "README.md": "a3eb09c1f1d5d2fd64a99723273b27282f12ad5a746b760f0126725202a6ea41",
+    "README.md": "46ef6a9f40ae2c31c052df05c34a047daac274de5d53eb321f4a2a91a1f58d27",
     "finalize.mjs": "6325c63212986a2b13b998e65b34042dc4c6e6b3e1402eecbef2cd3b034e49ec",
     "recover.mjs": "c0826eae7b2aa863b3494358bc97daf59d82b4894ebb8f3cc3d5192c7ce8957b",
     "settle-work-item.mjs": "59981f84f64b9911c50fd9079c3f3ed39515f83c04b7b9661c8fd3a84f98cb1d",

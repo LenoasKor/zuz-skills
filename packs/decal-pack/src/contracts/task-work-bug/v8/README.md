@@ -1,9 +1,10 @@
-# Portable settlement — Task 691 development candidate
+# Portable lifecycle and settlement — v8
 
-Not released. This additive directory leaves published v1–v7 bytes unchanged.
-Do not publish an archive under the existing 2.0.3 version or install this draft
-into consumer projects. Package release, installed-consumer verification and
-rollout are still pending; isolated fixtures are not a production rollout.
+This additive contract leaves published v1–v7 bytes unchanged. Use it only from
+an approved, verified Decal Pack release and select a project profile explicitly.
+Source code or local fixture success is not proof that a release has been signed,
+published or installed. Release and consumer adoption evidence is recorded
+separately; never replace an existing immutable archive under the same version.
 
 ## Implemented and tested
 
@@ -27,6 +28,10 @@ rollout are still pending; isolated fixtures are not a production rollout.
   blocked/reopen records are not silently treated as normal forward transitions.
 - Interrupted preparation can resume or roll back known before/after bytes.
   Unknown edits, live-owner locks and another engine's journal are preserved.
+- The complete recovery journal must fit within 16 MiB, including before/after
+  contents and JSON escaping. Oversized plans are rejected before any write;
+  divide independent work into separately reviewed settlements instead of
+  bypassing the limit or splitting an atomic Task-batch release.
 - Separate Git roots, main/master, unrelated dirty preservation, concurrent
   calls, stale source/HEAD, staged changes, duplicate fields, symlinks and
   hardlinks are covered by disposable local fixtures.
@@ -135,10 +140,14 @@ the flag never permits removing a live owner's lock. Recovery is not permission
 to abandon another session's work. Incident release/version policy is not
 invented here.
 
-## Remaining release gates
+## Installation and use
 
-1. Full combined regression, registration races and contract integrity checks.
-2. Pinned manifest, capability and skill routing, new immutable Pack release.
-3. Signed Store/Decal consumption, actual installed-project inventory/diff.
-4. Showcase full flow and approved adoption; preserve modified/unknown files and
-   delegate Primer-managed projects. Do not settle user tickets as test fixtures.
+Select the `task-work-bug` module to install this contract and its provider
+instructions together. Preserve modified/unknown files and delegate
+Primer-managed projects to `skill_sync`. Installing the module neither creates
+a Task registry nor selects version files. Do not settle real user tickets as
+test fixtures. Existing project engines remain authoritative where configured.
+
+Node.js and Git are sufficient for the portable runner. A Decal login, release
+stage reader, running app or network service is not a settlement dependency.
+Application build/deployment policies and permissions remain separate.
