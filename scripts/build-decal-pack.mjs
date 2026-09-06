@@ -174,7 +174,7 @@ const consumerAcceptanceFixtures = descriptor.consumerAcceptance.map((id) => {
 });
 if (acceptanceFiles.size !== consumerAcceptanceFixtures.length) throw new Error("undeclared-consumer-acceptance-fixture");
 const unsignedManifest = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   packageType: "zuz-portable-pack",
   packId: descriptor.packId,
   packVersion: descriptor.packVersion,
@@ -182,6 +182,7 @@ const unsignedManifest = {
   sourceRevision,
   generatedFrom: "packs/decal-pack/pack.source.json",
   modules: descriptor.modules,
+  requiredFiles: descriptor.requiredFiles,
   compatibility: descriptor.compatibility,
   capabilities: descriptor.capabilities,
   executionPolicies: descriptor.executionPolicies,

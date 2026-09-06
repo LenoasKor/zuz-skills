@@ -1,14 +1,14 @@
 ---
 name: zuz-its
-description: Understand and use ZUZ ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
+description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   portable: true
 ---
 
-# ZUZ ITS
+# zuz ITS
 
-Use the repository's installed ZUZ Issue Tracking System without replacing its existing Task, Work, or Bug records.
+Use the repository's installed zuz Issue Tracking System without replacing its existing Task, Work, or Bug records.
 
 ## Repository authority boundary
 
@@ -22,7 +22,7 @@ Treat the Git root containing the invocation context as the active project. Do n
 - Bug / 버그: an Issue caused by a product implementation or behavior defect. Existing `BUG-###` files and IDs remain intact.
 - Incident / 장애: an Issue for actual service interruption or quality degradation, stored as `INC-###` independently from Bugs.
 
-Task Space, session work activity, Office work, Jig planning, and Slice implementation contracts are not ZUZ ITS Work tickets.
+Task Space, session work activity, Office work, Jig planning, and Slice implementation contracts are not zuz ITS Work tickets.
 
 ## Choosing a ticket
 

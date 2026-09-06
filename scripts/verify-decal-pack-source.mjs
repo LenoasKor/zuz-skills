@@ -7,6 +7,7 @@ const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
 const policy = JSON.parse(await readFile(new URL("../packs/decal-pack/src/project-skill-pack-policy.json", import.meta.url), "utf8"));
 
 if (descriptor.schemaVersion !== 1) failures.push("schemaVersion must be 1");
+if (stableJson(descriptor.requiredFiles) !== stableJson(["LICENSE", "NOTICE"])) failures.push("LICENSE and NOTICE must be mandatory shared files");
 if (descriptor.packId !== "decal-project-pack") failures.push("packId must preserve the installed decal-project-pack identity");
 if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must be SemVer");
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");

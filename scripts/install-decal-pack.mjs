@@ -128,7 +128,7 @@ async function ensurePlainDirectories(root, directory) {
 function verifyPackage(value) {
   if (
     !value
-    || value.schemaVersion !== 1
+    || ![1, 2].includes(value.schemaVersion)
     || value.packId !== "decal-project-pack"
     || !/^\d+\.\d+\.\d+$/u.test(value.packVersion ?? "")
     || !/^[0-9a-f]{40}$/u.test(value.sourceRevision ?? "")
@@ -136,6 +136,14 @@ function verifyPackage(value) {
     || !Array.isArray(value.files)
     || !/^[0-9a-f]{64}$/u.test(value.manifestSha256 ?? "")
   ) fail("unsupported_package");
+  if (value.schemaVersion === 2) {
+    if (stableJson(value.requiredFiles) !== stableJson(["LICENSE", "NOTICE"])) fail("unsupported_required_files");
+    for (const name of value.requiredFiles) {
+      const matches = value.files.filter((file) => file?.sourcePath === name);
+      if (matches.length !== 1 || matches[0].executable !== false
+        || stableJson(matches[0].installTargets) !== stableJson([{ provider: "shared", path: `docs/skills/vendor/decal-project-pack/${name}` }])) fail("unsupported_required_files");
+    }
+  } else if (value.requiredFiles !== undefined) fail("unsupported_required_files");
   if (value.files.some((file) => !file || typeof file !== "object")) fail("unsupported_package");
   const moduleIds = new Set();
   for (const module of value.modules) {
@@ -286,13 +294,14 @@ function desiredFiles(packageValue, modules, providers) {
   const selectedProviders = new Set(providers);
   const planned = new Map();
   for (const file of packageValue.files) {
-    if (!selectedModules.has(file.moduleId)) continue;
+    if (!selectedModules.has(file.moduleId) && !packageValue.requiredFiles?.includes(file.sourcePath)) continue;
     for (const target of file.installTargets) {
       if (target.provider !== "shared" && !selectedProviders.has(target.provider)) continue;
       const existing = planned.get(target.path);
       if (existing && existing.sha256 !== file.sha256) fail("duplicate_target_conflict", target.path);
       planned.set(target.path, {
         path: target.path,
+        required: packageValue.requiredFiles?.includes(file.sourcePath) ?? false,
         provider: target.provider,
         sha256: file.sha256,
         bytes: Buffer.from(file.contentBase64, "base64"),
@@ -417,8 +426,9 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       ...entries.filter((entry) => entry.state === "create" || entry.state === "update").map((entry) => entry.path),
       INSTALLATION_LOCK_RELATIVE,
     ];
-  const plannedFiles = entries.map(({ path: filePath, provider, sha256: desiredSha256, state, previousSha256, currentSha256 }) => ({
+  const plannedFiles = entries.map(({ path: filePath, provider, required, sha256: desiredSha256, state, previousSha256, currentSha256 }) => ({
     path: filePath,
+    required,
     provider,
     sha256: desiredSha256,
     state,

@@ -1,14 +1,14 @@
 ---
 name: decal-incident
-description: Register and manage ZUZ ITS Incident tickets for real service interruption or quality degradation.
+description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   portable: true
 ---
 
 # Decal Incident
 
-Manage a ZUZ ITS Incident using the repository's installed portable contract.
+Manage a zuz ITS Incident using the repository's installed portable contract.
 
 ## Repository authority boundary
 
@@ -18,7 +18,7 @@ Treat the Git root containing the invocation context as the only active project.
 
 Use Incident only for an actual operational interruption or quality degradation that requires response, resolution, or follow-up. Use Bug for a product implementation defect. Link them when appropriate, but do not automatically create a Bug or Task for every Incident.
 
-Incident is a ZUZ ITS Issue with its own stable `INC-###` namespace and canonical path:
+Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonical path:
 
 `docs/work-items/incidents/INC-<number>.md`
 

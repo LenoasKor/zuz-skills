@@ -30,6 +30,8 @@ function sealPackage(value) {
 function oldPackageFixture() {
   const old = structuredClone(packageValue);
   old.packVersion = "2.0.0";
+  old.schemaVersion = 1;
+  delete old.requiredFiles;
   old.sourceRevision = "e".repeat(40);
   const changed = old.files.find((file) => file.sourcePath === "skills/agents/decal-task/SKILL.md");
   assert.ok(changed);
@@ -152,7 +154,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock updates managed bytes to 2.0.2 and preserves obsolete files", async () => {
+test("Pack 2.0.0 lock updates managed bytes to 2.0.3 and preserves obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -171,7 +173,7 @@ test("Pack 2.0.0 lock updates managed bytes to 2.0.2 and preserves obsolete file
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.0.2");
+    assert.equal(lock.packVersion, "2.0.3");
     assert.equal(lock.mode, "update");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");
@@ -300,6 +302,48 @@ test("update rollback restores every managed file and the previous lock", async 
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("ITS-only installs carry mandatory notices for every provider, without core skills", async () => {
+  for (const provider of ["codex", "claude", "gemini", "acp"]) {
+    const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-notices-"));
+    try {
+      const options = { modules: ["task-work-bug"], providers: [provider] };
+      const preview = run(root, "--dry-run", null, options);
+      assert.equal(preview.status, 0, preview.stdout);
+      assert.deepEqual(preview.value.modules, ["task-work-bug"]);
+      assert.deepEqual(preview.value.plannedFiles.filter((file) => file.required).map((file) => file.path), [
+        "docs/skills/vendor/decal-project-pack/LICENSE", "docs/skills/vendor/decal-project-pack/NOTICE",
+      ]);
+      assert.equal(preview.value.plannedFiles.some((file) => file.path.includes("decal-build")), false);
+      const result = run(root, "--write", preview.value.installationPlanDigest, options);
+      assert.equal(result.status, 0, result.stdout);
+      const receipt = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
+      for (const name of ["LICENSE", "NOTICE"]) {
+        const relative = `docs/skills/vendor/decal-project-pack/${name}`;
+        const bytes = await readFile(path.join(root, relative));
+        assert.equal(receipt.files.find((file) => file.path === relative)?.sha256, sha256(bytes));
+      }
+      const notice = path.join(root, "docs/skills/vendor/decal-project-pack/NOTICE");
+      await writeFile(notice, "User notice edit\n");
+      const conflict = run(root, "--dry-run", null, options);
+      assert.ok(conflict.value.conflicts.includes("docs/skills/vendor/decal-project-pack/NOTICE"));
+      assert.equal(await readFile(notice, "utf8"), "User notice edit\n");
+    } finally { await rm(root, { recursive: true, force: true }); }
+  }
+});
+
+test("schema 2 rejects missing, expanded and legacy-disguised required-file rules", async () => {
+  for (const requiredFiles of [[], ["LICENSE"], ["LICENSE", "NOTICE", "extra.md"]]) {
+    const invalid = sealPackage({ ...packageValue, requiredFiles });
+    const invalidPath = path.join(fixtureRoot, "invalid-notices.json");
+    await writeFile(invalidPath, stableJson(invalid));
+    const result = run(fixtureRoot, "--dry-run", null, { packagePath: invalidPath });
+    assert.notEqual(result.status, 0);
+  }
+  const invalidPath = path.join(fixtureRoot, "legacy-notices.json");
+  await writeFile(invalidPath, stableJson(sealPackage({ ...packageValue, schemaVersion: 1 })));
+  assert.notEqual(run(fixtureRoot, "--dry-run", null, { packagePath: invalidPath }).status, 0);
 });
 
 test.after(async () => {
