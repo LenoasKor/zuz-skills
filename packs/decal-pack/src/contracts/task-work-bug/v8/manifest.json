@@ -8,9 +8,9 @@
     "strict-json.mjs": "f9d9ac37e79a267bb6cbc73d6bc93e309fe945433a1ce5ba8c9001bcb888f4a8",
     "task-lifecycle.mjs": "2aa140b2c25ece96a3c9a0a97bf3fba26593b4dabfc18861b12b22d19a48a728",
     "task-policy.mjs": "6f1de76df42ea169275cf65faa0b1a1437feaa094781d9f84c141df7c55fabcf",
-    "transaction.mjs": "99af72d120e97b0138bb599d57f4862bcac995c6acd9b517584f569f001b0c97",
+    "transaction.mjs": "67ca3d2ea5addc7028925a48cfcc9c08ece78284a4e1ffa374d5da0851c79b24",
     "verify-contract.mjs": "46b50783334499694bd917930d8b64344f03d0de40d05fe7bc3ebe8afbd623b7",
-    "version-profile.mjs": "338b8a09c36d31151fa2c05993501427235a08c89e5fc24f3ba2ebac714d7407",
+    "version-profile.mjs": "242663ff8e6a62a3e41d836837796e2f93c30eec4f9a0a71e2020a9c5a983ded",
     "work-bug-policy.mjs": "af5009a985ddced3c7d3ff11ef8cbd2d6b24665534a25fc07e5d1dd4cee271ef",
     "work-item-lifecycle.mjs": "589db73ab8f683ba7712b4971acbab17bc9551fa4e82a162ebde8946b247daa5"
   },

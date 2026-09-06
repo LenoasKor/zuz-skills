@@ -4,7 +4,7 @@ import { lstat, open, readFile, realpath, rename, unlink } from "node:fs/promise
 import path from "node:path";
 import { promisify } from "node:util";
 import { resolveCanonicalDefaultBranch } from "../v7/default-branch.mjs";
-import { digest, fail, relativePath, safeFile } from "./version-profile.mjs";
+import { digest, fail, MAX_FILE_BYTES, relativePath, safeFile } from "./version-profile.mjs";
 import { parseStrictJson } from "./strict-json.mjs";
 import { verifyContract } from "./verify-contract.mjs";
 
@@ -77,12 +77,30 @@ async function durableReplace(root, relative, source) {
 
 async function writeMarker(root, marker, first = false) {
   const target = path.join(root, PENDING);
-  if (!first) return durableReplace(root, PENDING, JSON.stringify(marker, null, 2) + "\n");
+  const source = serializeMarker(marker);
+  if (!first) return durableReplace(root, PENDING, source);
   // Profile loading has already required a plain .decal parent.
   await safeFile(root, ".decal/settlement-profile.json");
   const handle = await open(target, "wx", 0o600);
-  try { await handle.writeFile(JSON.stringify(marker, null, 2) + "\n"); await handle.sync(); }
+  try { await handle.writeFile(source); await handle.sync(); }
   finally { await handle.close(); }
+}
+
+function createMarker(plan, approvedDigest) {
+  return {
+    schema: SCHEMA, owner: "zuz.its.portable/v8", transactionId: randomUUID(),
+    operation: plan.operation, recordId: plan.recordId, phase: "preparing", baseHead: plan.baseHead,
+    createdAt: new Date().toISOString(), intentDigest: approvedDigest,
+    root: plan.root, message: plan.message, reads: plan.reads, entries: plan.entries,
+  };
+}
+
+function serializeMarker(marker) {
+  const source = JSON.stringify(marker, null, 2) + "\n";
+  // Account for both before/after content, UTF-8 and JSON escaping. A journal
+  // must be readable by the same safeFile boundary used during recovery.
+  if (Buffer.byteLength(source) > MAX_FILE_BYTES) fail("settlement_journal_too_large");
+  return source;
 }
 
 function validateEntries(entries) {
@@ -130,6 +148,7 @@ export async function validatePlan(plan) {
     if (typeof entry.source !== "string" || typeof entry.next !== "string"
         || digest(entry.source) !== entry.before || digest(entry.next) !== entry.after) fail("invalid_plan_content");
   }
+  serializeMarker(createMarker(plan, planDigest(plan)));
   await checkInputs(plan);
   return { ...plan, approvalDigest: planDigest(plan) };
 }
@@ -159,8 +178,10 @@ async function finalizeLocked(root) {
   const marker = parseStrictJson(await readFile(await safeFile(root, PENDING), "utf8"));
   if (marker.schema !== SCHEMA || marker.owner !== "zuz.its.portable/v8"
       || marker.phase !== "sealed" || !/^sha256:[a-f0-9]{64}$/u.test(marker.intentDigest)
-      || !/^[a-f0-9]{40,64}$/u.test(marker.baseHead)) fail("manual_recovery_required");
+      || !/^[a-f0-9]{40,64}$/u.test(marker.baseHead) || marker.root !== root
+      || !Array.isArray(marker.reads) || !Array.isArray(marker.entries)) fail("manual_recovery_required");
   validateEntries(marker.entries);
+  if (planDigest(marker) !== marker.intentDigest) fail("manual_recovery_required");
   const head = await gitBoundary(root);
   if (head === marker.baseHead) fail("settlement_commit_required");
   await git(root, ["merge-base", "--is-ancestor", marker.baseHead, head]);
@@ -185,13 +206,7 @@ export async function executePlan(plan, approvedDigest) {
     await validatePlan(plan);
     const changed = plan.entries.filter((entry) => entry.before !== entry.after);
     if (!changed.length) return { state: "unchanged" };
-    const marker = {
-      schema: SCHEMA, owner: "zuz.its.portable/v8", transactionId: randomUUID(),
-      operation: plan.operation, recordId: plan.recordId, phase: "preparing", baseHead: plan.baseHead,
-      createdAt: new Date().toISOString(), intentDigest: approvedDigest,
-      root: plan.root, message: plan.message, reads: plan.reads,
-      entries: plan.entries,
-    };
+    const marker = createMarker(plan, approvedDigest);
     await writeMarker(plan.root, marker, true);
     // Once preparing exists, failures preserve the journal and remaining bytes.
     // Do not automatically reset a shared index or overwrite interleaved edits.

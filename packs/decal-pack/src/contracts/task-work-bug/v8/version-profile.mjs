@@ -5,6 +5,7 @@ import { parseStrictJson } from "./strict-json.mjs";
 
 export const PROFILE_SCHEMA = "zuz.its.settlement-profile/v1";
 export const PROFILE_PATH = ".decal/settlement-profile.json";
+export const MAX_FILE_BYTES = 16 * 1024 * 1024;
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/u;
 const ID = /^[a-z][a-z0-9-]{0,63}$/u;
 
@@ -48,7 +49,7 @@ export async function safeFile(root, relative) {
     if (stat.isSymbolicLink() || (index === parts.length - 1 ? !stat.isFile() : !stat.isDirectory())) {
       fail("unsafe_file", relative);
     }
-    if (index === parts.length - 1 && (stat.nlink !== 1 || stat.size > 16 * 1024 * 1024)) {
+    if (index === parts.length - 1 && (stat.nlink !== 1 || stat.size > MAX_FILE_BYTES)) {
       fail("unsafe_file", relative);
     }
   }

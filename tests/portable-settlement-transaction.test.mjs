@@ -107,5 +107,34 @@ test("failed commit leaves sealed recovery evidence, no reset", async () => {
   // Simulate the user-approved exact commit after the local hook is repaired.
   await writeFile(hook, "#!/bin/sh\nexit 0\n", { mode: 0o755 });
   await git(root, ["commit", "--only", "-m", plan.message, "-m", `Zuz-ITS-Settlement: ${planDigest(plan)}`, "--", "record.md", "VERSION"]);
+  const markerPath = path.join(root, ".decal/settlement-pending-v1.json");
+  const originalMarker = await readFile(markerPath, "utf8");
+  for (const change of [{ root: `${root}-forged` }, { message: "forged intent" }, { reads: [] }]) {
+    const forged = JSON.stringify({ ...JSON.parse(originalMarker), ...change });
+    await writeFile(markerPath, forged);
+    await assert.rejects(finalizeSettlement(root), { code: "manual_recovery_required" });
+    assert.equal(await readFile(markerPath, "utf8"), forged);
+  }
+  await writeFile(markerPath, originalMarker);
   assert.equal((await finalizeSettlement(root)).state, "committed");
+});
+
+test("oversized escaped recovery journal is rejected before any write or lock", async () => {
+  const { root, plan } = await fixture();
+  // Each file is below 16 MiB, but before + after JSON escapes exceed it.
+  const source = "\n".repeat(5 * 1024 * 1024);
+  await writeFile(path.join(root, "record.md"), source);
+  await git(root, ["add", "record.md"]);
+  await git(root, ["commit", "-m", "large fixture"]);
+  plan.baseHead = await gitBoundary(root);
+  plan.entries[0] = { path: "record.md", source, next: `${source}after`, before: digest(source), after: digest(`${source}after`) };
+  const before = await git(root, ["status", "--porcelain"]);
+  await assert.rejects(validatePlan(plan), { code: "settlement_journal_too_large" });
+  await assert.rejects(executePlan(plan, planDigest(plan)), { code: "settlement_journal_too_large" });
+  assert.equal(await readFile(path.join(root, "record.md"), "utf8"), source);
+  assert.equal(await readFile(path.join(root, "VERSION"), "utf8"), "0.1.2\n");
+  assert.equal(await git(root, ["status", "--porcelain"]), before);
+  for (const relative of [".decal/settlement-pending-v1.json", ".decal-slice-completion.lock"]) {
+    await assert.rejects(lstat(path.join(root, relative)), { code: "ENOENT" });
+  }
 });

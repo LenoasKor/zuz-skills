@@ -20,7 +20,7 @@ upstream worktree, not in the shared index.
 
 ## Verified
 
-- `npm test`: 87 tests passed, 0 failed. Includes existing registration,
+- `npm test`: 88 tests passed, 0 failed. Includes existing registration,
   installer and source tests plus the portable settlement suite.
 - `npm run verify:source`: 31 skills / 3 opt-in modules accepted.
 - `node packs/decal-pack/src/contracts/task-work-bug/v8/verify-contract.mjs`:
@@ -79,3 +79,21 @@ authenticate a CI service or execute the claimed tests.
    projects to skill_sync. Do not close real user tickets as a test.
 5. Report actual consumer adoption separately from source publication and settle
    Task 691 only after its remaining delivery/verification criteria are met.
+
+## Delivery review checkpoint
+
+- Implementation checkpoint: `7f70ae823898269954259e0e171729d87d156c74`.
+- The first 2.1.0 archive contained 31 skills / 182 files. It was a local
+  candidate only and is superseded by the safety changes below, not published.
+- Recovery journals are now size-checked during preview and again before write,
+  including both file versions, UTF-8 and JSON escaping. An oversized plan cannot
+  leave a journal the recovery reader itself would refuse. Finalization also
+  validates the bound root and recomputed intent digest before removing evidence.
+- Focused transaction/recovery: 13 passed; full frozen-source run: 88 passed.
+  A 5 MiB escaped fixture exceeds the aggregate journal limit and preserves
+  HEAD, target bytes and absence of locks/pending markers. Forged root/message/
+  read-set journals remain in place and cannot finalize an otherwise exact commit.
+- Task 686 has no approved alternative stage source for projects without a
+  Decal registry. Do not invent that build/deploy product policy in Task 691 or
+  make the standalone settlement runner depend on its reader. Reader source
+  supply remains a separately owned Task 686 change pending that scope review.
