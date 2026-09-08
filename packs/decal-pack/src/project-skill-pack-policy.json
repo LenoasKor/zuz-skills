@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "packId": "decal-project-pack",
-  "packVersion": "2.1.1",
-  "zuzItsContract": "zuz.its/v2",
+  "packVersion": "2.2.0",
+  "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 1,
     "modes": ["initial-pack-bootstrap", "update"],

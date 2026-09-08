@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   portable: true
 ---
 
@@ -65,16 +65,16 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/v7/`, use it instead of hand-writing a record. The
+When the repository ships `contracts/task-work-bug/v9/`, use it instead of hand-writing a record. The
 dry-run returns no final ID. Approval authorizes the writer to resolve an allowed `origin/HEAD` or one
 unambiguous local `main`/`master`, issue the ID on that canonical default branch, validate the record,
 commit exactly one path, and return its receipt.
 
 ```sh
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```
@@ -82,13 +82,13 @@ node contracts/task-work-bug/v7/register-ticket.mjs \
 Lifecycle steps use the same revision binding. Bug starts at `new → confirmed → in_progress` and then follows the
 shared `development_complete → release_ready → closed` flow.
 
-If the project explicitly adopts the packaged v8 runner, read `contracts/task-work-bug/v8/README.md`
-and validate its manifest. Use `v8/work-item-lifecycle.mjs` for normal forward transitions and
-`v8/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
+If the project explicitly adopts the packaged v9 runner, read `contracts/task-work-bug/v9/README.md`
+and validate its manifest. Use `v9/work-item-lifecycle.mjs` for normal forward transitions and
+`v9/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
 Task, not separately. The approved project profile must name its version sources. Preserve existing
 repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
-writer after a v8 rejection. The following v5 path is only for an older, explicitly pinned installation:
+writer after a v9 rejection. The following v5 path is only for an older, explicitly pinned installation:
 
 ```sh
 node contracts/task-work-bug/v5/transition-work-item.mjs \

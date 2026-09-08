@@ -94,6 +94,8 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
     assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("registration-v6")), false, fixture.id);
     assert.equal(fixtureValue.requiredCases.some((requiredCase) => requiredCase.includes("ticket-registration-v7")), true, fixture.id);
     assert.equal(fixtureValue.requiredCases.includes("ticket-registration-v7-supports-unambiguous-main-and-master"), true, fixture.id);
+    assert.equal(fixtureValue.requiredCases.includes("ticket-registration-v9-issues-unpadded-keys"), true, fixture.id);
+    assert.equal(fixtureValue.requiredCases.includes("zuz-its-v3-resolves-legacy-padded-aliases"), true, fixture.id);
     assert.equal(fixtureValue.requiredCases.includes("pack-installation-plan-is-canonical-digest-approved-and-recomputed"), true, fixture.id);
     assert.equal(fixtureValue.requiredCases.includes("managed-pack-update-preserves-conflicts-and-obsolete-files"), true, fixture.id);
   }
@@ -119,8 +121,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const revision = "d".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
-  assert.equal(packageValue.compatibility.portableSettlement, "task-work-bug/v8");
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v9");
+  assert.equal(packageValue.compatibility.portableSettlement, "task-work-bug/v9");
   const settlement = packageValue.executionPolicies.portableSettlement;
   assert.equal(settlement.automaticProfileInstallation, false);
   assert.equal(settlement.nativeFallback, false);
@@ -131,7 +133,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   }
   assert.equal(packageValue.compatibility.minimumHosts.decal, "0.406.0");
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-task-batch.mjs"));
-  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"));
+  assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v9/register-ticket.mjs"));
   assert.equal(packageValue.executionPolicies.repositoryAuthority.crossProjectAccess, "explicit-current-user-approval");
   assert.deepEqual(packageValue.executionPolicies.repositoryAuthority.approvalBinding, ["repository-root", "operation-scope", "current-task"]);
   assert.equal(packageValue.executionPolicies.settlementCommit.externalHost, "explicit-settlement-request-authorizes-exact-settlement-commit");
@@ -149,11 +151,11 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.9.1",
-    "decal-work": "1.6.1",
-    "decal-bug": "1.6.1",
-    "decal-incident": "1.1.2",
-    "zuz-its": "1.1.2",
+    "decal-task": "1.10.0",
+    "decal-work": "1.7.0",
+    "decal-bug": "1.7.0",
+    "decal-incident": "1.2.0",
+    "zuz-its": "1.2.0",
     "decal-slice": "0.4.8",
     "decal-slice-maintenance": "0.7.2",
     "decal-slice-smoke": "0.5.1",
@@ -173,7 +175,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.9\.1"/);
+      assert.match(content, /version: "1\.10\.0"/);
       assert.match(content, /task-work-bug\/v7\/register-task-batch\.mjs/);
     }
   }
@@ -226,18 +228,18 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", async () => {
+test("Pack 2.2 adds unpadded zuz ITS keys without replacing legacy contracts", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.1.1");
+  assert.equal(packageValue.packVersion, "2.2.0");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
-  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v7");
-  assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v2");
+  assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v9");
+  assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v3");
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v1/manifest.json"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v6/register-task-batch.mjs"), true);
-  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-ticket.mjs"), true);
+  assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v9/register-ticket.mjs"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v1/project.mjs"), true);
   assert.equal(packageValue.files.some((file) => file.sourcePath === "contracts/zuz-its/v2/register-incident.mjs"), true);
   assert.equal(packageValue.skills.some((skill) => skill.id === "zuz-its"), true);
@@ -246,7 +248,7 @@ test("Pack 2 adds ZUZ ITS without replacing the legacy Task Work Bug contract", 
   assert.ok(itsSkill);
   const itsSource = Buffer.from(itsSkill.contentBase64, "base64").toString("utf8");
   assert.match(itsSource, /Work \/ 소작업: a lightweight but still formally ticketed execution unit/u);
-  assert.match(itsSource, /@incident:INC-###/u);
+  assert.match(itsSource, /@incident:INC-2/u);
 });
 
 test.after(async () => {

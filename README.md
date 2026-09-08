@@ -19,7 +19,7 @@ First-party contents are licensed under Apache-2.0. Decal Pack 2.0.2 remains the
 
 The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
 
-Portable v7 writers resolve an unambiguous `main` or `master` directly. Native canonical-branch parity requires Decal 0.406.0 or newer; older Decal hosts must not claim full 2.0.2 Native compatibility.
+Portable v7 keeps Task batch registration, while v9 issues new Work·Bug·Incident keys without leading zeroes and resolves padded legacy aliases. Native canonical-branch parity requires Decal 0.406.0 or newer.
 
 ## Decal Pack
 

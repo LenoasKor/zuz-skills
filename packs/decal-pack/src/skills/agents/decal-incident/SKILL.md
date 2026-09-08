@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.1.2"
+  version: "1.2.0"
   portable: true
 ---
 
@@ -36,25 +36,25 @@ Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonica
 ## Before changing files
 
 1. Resolve and verify the current Git root and repository identity.
-2. Read repository instructions and `contracts/zuz-its/v1` plus `contracts/zuz-its/v2`.
+2. Read repository instructions and the current `contracts/zuz-its/v3` contract while preserving v1 and v2 as immutable compatibility inputs.
 3. Preserve existing Task·Work·Bug records and search current Incident records before reserving an ID.
 4. Capture the observed impact, affected services, occurrence and detection times, classification tags, response state, and evidence.
 5. Preserve unrelated dirty files and reject symlink, path escape, duplicate identity, or stale revision targets.
 
 ## Portable writer
 
-Outside Decal, use the v7 common ticket writer. First preview the semantic candidate; the final `INC-###`
+Outside Decal, use the v9 common ticket writer. First preview the semantic candidate; the final `INC-<number>`
 identity remains pending until approval:
 
 ```sh
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 ```
 
 Only after the current user approves that exact scope, write the same intent with the returned digest:
 
 ```sh
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```
@@ -64,10 +64,10 @@ commits the Incident under the shared repository lock. Feature branches, detache
 and ambiguous local `main` plus `master` are rejected. The approval includes only that exact registration
 commit, not push, merge, deploy, lifecycle completion, or settlement.
 
-Use `contracts/zuz-its/v2/transition-incident.mjs` for lifecycle changes. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
+Use `contracts/zuz-its/v3/transition-incident.mjs` for lifecycle changes. It accepts padded legacy aliases but displays the unpadded key. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
 
 In a Decal-owned session, prefer its advertised Native candidate and lifecycle capability. If Native is unavailable in an external Codex, Claude, Gemini, or ACP session, use the portable flow instead of refusing the entire ITS task.
 
 ## Chat reference
 
-Use `@incident:INC-###` or `@incident:INC-###[title]` when referencing the Incident in a Decal conversation. Never guess a missing ID.
+Use `@incident:INC-7` or `@incident:INC-7[title]` when referencing the Incident in a Decal conversation. Never guess a missing ID.

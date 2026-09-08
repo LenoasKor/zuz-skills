@@ -20,6 +20,9 @@
     "task-registry-initialization-is-explicit-and-fail-closed",
     "ticket-registration-v7-is-semantic-approved-and-atomic",
     "ticket-registration-v7-supports-unambiguous-main-and-master",
+    "ticket-registration-v9-issues-unpadded-keys",
+    "zuz-its-v3-resolves-legacy-padded-aliases",
+    "padded-and-unpadded-physical-collision-fails-closed",
     "zuz-its-preserves-task-work-bug-identities",
     "work-remains-a-ticket",
     "incident-writer-and-chat-references-are-portable"

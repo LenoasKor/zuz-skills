@@ -1,0 +1,23 @@
+{
+  "schema": "decal.task-work-bug.contract/v9",
+  "contractId": "decal.task-work-bug/v9",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v8",
+    "manifestSha256": "5a15801488dde89b0fa187cb9dcdeffa7f8fbb73fcb9a7c9bb2aee7eeca62957"
+  },
+  "taskWriter": "contracts/task-work-bug/v7/register-task-batch.mjs",
+  "ticketWriter": "contracts/task-work-bug/v9/register-ticket.mjs",
+  "registrationIntentSchema": "decal.zuz-its.ticket-registration-intent/v9",
+  "identity": {
+    "canonical": "unpadded-positive-decimal",
+    "legacyPaddedAliases": true,
+    "renameExistingRecords": false,
+    "aliasCollision": "fail-closed"
+  },
+  "portableSettlement": {
+    "workItemLifecycle": "contracts/task-work-bug/v9/work-item-lifecycle.mjs",
+    "standaloneSettlement": "contracts/task-work-bug/v9/settle-work-item.mjs",
+    "taskLifecycle": "contracts/task-work-bug/v9/task-lifecycle.mjs",
+    "finalizer": "contracts/task-work-bug/v9/finalize.mjs"
+  }
+}

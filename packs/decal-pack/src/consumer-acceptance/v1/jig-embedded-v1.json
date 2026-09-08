@@ -14,6 +14,9 @@
     "task-registry-initialization-is-explicit-and-fail-closed",
     "ticket-registration-v7-contract-is-pinned",
     "ticket-registration-v7-supports-unambiguous-main-and-master",
+    "ticket-registration-v9-issues-unpadded-keys",
+    "zuz-its-v3-resolves-legacy-padded-aliases",
+    "padded-and-unpadded-physical-collision-fails-closed",
     "zuz-its-contract-is-exactly-pinned",
     "work-remains-a-ticket",
     "existing-jig-task-ledger-is-not-rewritten"

@@ -1,0 +1,9 @@
+{
+  "input": [
+    ["task", "007"],
+    ["work", "WORK-007"],
+    ["bug", "BUG-0007"],
+    ["incident", "INC-7"]
+  ],
+  "expected": ["TASK-7", "WORK-7", "BUG-7", "INC-7"]
+}

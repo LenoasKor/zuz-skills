@@ -2,7 +2,7 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.6.1"
+  version: "1.7.0"
   portable: true
 ---
 
@@ -37,7 +37,7 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 2. Compare the repository product identity in its instructions or manifest with any project, product, or repository named by the user. If they differ, or the target identity cannot be proven, stop before reading Work records or changing files. Contract source ownership does not move the Work record to Decal or another upstream repository.
 3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own Task·Work·Bug authoring profile when its instructions name one.
 4. Read the current schema and lifecycle contract under `contracts/task-work-bug/`, plus any linked Task.
-5. Search canonical Work records for duplicates, but do not reserve a final `WORK-###` ID in the agent. The approved canonical-default-branch writer assigns it under the shared lock.
+5. Search canonical Work records for numeric duplicates, including padded legacy aliases, but do not reserve a final `WORK-<number>` ID in the agent. The approved canonical-default-branch writer assigns it under the shared lock.
 6. Derive version settlement fields with the repository helper when one exists. Do not invent `null`, version, release mode, or source revision values.
 
 ## Host routing
@@ -67,16 +67,16 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/v7/`, use it instead of hand-writing a record. The
+When the repository ships `contracts/task-work-bug/v9/`, use it instead of hand-writing a record. The
 dry-run returns no final ID. Approval authorizes the writer to resolve an allowed `origin/HEAD` or one
 unambiguous local `main`/`master`, issue the ID on that canonical default branch, validate the record,
 commit exactly one path, and return its receipt.
 
 ```sh
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 
-node contracts/task-work-bug/v7/register-ticket.mjs \
+node contracts/task-work-bug/v9/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```
@@ -84,13 +84,13 @@ node contracts/task-work-bug/v7/register-ticket.mjs \
 Lifecycle steps use the same revision binding. Work starts at `new → planned → in_progress` and then follows the
 shared `development_complete → release_ready → closed` flow.
 
-If the project explicitly adopts the packaged v8 runner, read `contracts/task-work-bug/v8/README.md`
-and validate its manifest. Use `v8/work-item-lifecycle.mjs` for normal forward transitions and
-`v8/settle-work-item.mjs --kind work` for closed standalone settlement. Preview, approve, and apply
+If the project explicitly adopts the packaged v9 runner, read `contracts/task-work-bug/v9/README.md`
+and validate its manifest. Use `v9/work-item-lifecycle.mjs` for normal forward transitions and
+`v9/settle-work-item.mjs --kind work` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
 Task, not separately. The approved project profile must name its version sources. Preserve existing
 repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
-writer after a v8 rejection. The following v5 path is only for an older, explicitly pinned installation:
+writer after a v9 rejection. The following v5 path is only for an older, explicitly pinned installation:
 
 ```sh
 node contracts/task-work-bug/v5/transition-work-item.mjs \
