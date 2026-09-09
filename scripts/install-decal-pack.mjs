@@ -400,6 +400,7 @@ async function assertItsRemovalIsIdle(root) {
   const markers = [
     ".decal/settlement-pending-v1.json",
     ".decal/task-registration-pending-v7.json",
+    ".decal/its-ticket-registration-pending-v1.json",
     ".decal/task-registration-pending-v9.json",
     ".decal/task-registration-pending-v10.json",
     ".decal/ticket-registration-pending-v9.json",

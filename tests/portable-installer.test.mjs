@@ -341,7 +341,7 @@ test("ITS removal blocks modified managed tools and active ITS journals", async 
     try {
       await installSelection(root, ["development-core", "zuz-its"], ["codex"]);
       if (scenario === "modified") await writeFile(path.join(root, "skills/decal-task/SKILL.md"), "user modification\n");
-      else await writeFile(path.join(root, ".decal/settlement-pending-v1.json"), "{}\n");
+      else await writeFile(path.join(root, ".decal/its-ticket-registration-pending-v1.json"), "{}\n");
       const removal = run(root, "--dry-run", null, { modules: ["development-core"], providers: ["codex"] });
       if (scenario === "modified") {
         assert.equal(removal.status, 0);
@@ -350,7 +350,7 @@ test("ITS removal blocks modified managed tools and active ITS journals", async 
       } else {
         assert.equal(removal.status, 2);
         assert.equal(removal.value.code, "its_operation_in_progress");
-        assert.deepEqual(removal.value.detail, [".decal/settlement-pending-v1.json"]);
+        assert.deepEqual(removal.value.detail, [".decal/its-ticket-registration-pending-v1.json"]);
       }
     } finally {
       await rm(root, { recursive: true, force: true });
