@@ -23,7 +23,7 @@
 - 새 기능이면 Task, 유계 개선이면 Work, 기존 계약과 다른 결함이면 Bug를 각 대상 저장소 규약에 먼저 등록한다.
 - Pack source 변경과 소비 프로젝트 변경은 서로 다른 저장소 작업이다. 한 저장소의 티켓이나 승인으로 다른 저장소 파일을 조용히 수정하지 않는다.
 - 이미 발행한 계약·tag·Release의 bytes는 수정하지 않는다. 호환 보강은 새 계약 버전과 새 Pack 버전으로 추가한다.
-- Pack SemVer는 기존 설치와 호환되는 결함 복원은 patch, 새로운 선택 기능·모듈은 minor, 호환을 깨는 계약은 major를 기본으로 한다.
+- Pack SemVer는 기존 설치와 호환되는 결함 복원은 patch, 기존 모듈 안의 선택 기능 추가는 minor, 설치 구성을 새 모듈로 분리하거나 기존 기본 선택을 바꾸는 변화는 major를 기본으로 한다.
 - 폐기할 release는 삭제하거나 같은 tag로 교체하지 않고 revocation 또는 deprecated 상태를 새 manifest에 기록한다.
 
 ## 2. `zuz-skills` 정본 수정
@@ -33,6 +33,7 @@
 - 스킬 문서를 바꾸면 해당 스킬 version과 `minimumCompatible`을 함께 갱신한다.
 - 계약을 추가하면 이전 공개 계약 bytes를 유지하고 새 `contracts/.../vN`을 만든다.
 - `packVersion`, `compatibility`, `capabilities`, 실행 정책을 실제 변화와 맞춘다.
+- 각 모듈의 독립 `version`, `digest`, 파일 수가 manifest에 결속되는지 확인한다.
 - Codex·Claude·Gemini·ACP가 같은 사용자 의미를 갖는지 확인한다.
 - Decal·Primer·Jig와 네 공급자 acceptance fixture에 새 필수 동작을 추가한다.
 - LICENSE·NOTICE와 Apache-2.0 경계를 유지한다.
@@ -118,13 +119,17 @@ Showcase처럼 Pack 전체를 고정 내장하지 않고 일반 프로젝트 설
 
 ## 9. 일반 설치 프로젝트 갱신
 
-각 프로젝트에서 먼저 installer dry-run을 실행하고 그 프로젝트의 기존 lock과 선택 module/provider를 유지한다.
+각 프로젝트에서 먼저 installer dry-run을 실행하고 그 프로젝트의 기존 lock과 선택 module/provider를 유지한다. 모듈 구성을 바꾸려면 같은 installer의 `change-modules` 계획을 별도로 미리 보고 적용한다.
 
 - `current`: 쓰지 않는다.
 - `update_available`: exact 계획 digest를 승인된 설치 동작으로 적용한다.
 - `modified`: 자동 덮어쓰지 않고 diff와 수동 선택을 안내한다.
 - `incompatible` 또는 `security_blocked`: 해당 portable 기능만 fail-closed한다.
-- obsolete 관리 파일은 자동 삭제하지 않고 만료·미사용 상태로 보고한다.
+- 더 이상 선택하지 않은 모듈의 수정 없는 관리 파일은 발견 경로 밖 `.decal/retired/decal-project-pack/`으로 옮긴다.
+- 사용자 수정본·symlink·활성 등록/정산 journal이 있으면 제거하지 않고 차단 사유를 보고한다.
+- `zuz-its` 제거는 기존 Task·Work·Bug·Incident 문서를 한 byte도 바꾸지 않는다.
+- `zuz-its` 재설치는 기존 기록 채택 목록을 preview에 표시한 뒤에만 도구를 복원한다.
+- 현 Pack에서 출처를 판별할 수 없는 obsolete 관리 파일은 자동 삭제하지 않고 만료·미사용 상태로 보고한다.
 
 갱신 뒤 lock의 Pack version과 `contracts/task-work-bug/v10/verify-contract.mjs` 같은 새 필수 파일을 확인하고 installer dry-run이 다시 `current`인지 검증한다.
 
@@ -180,6 +185,7 @@ v10 broker는 동일 저장소에서 이미 canonical `main` 또는 `master`를 
 - Store import를 빼먹어 공개 카드가 이전 version에 머묾
 - Primer·Jig의 hard-coded tag/digest와 fixture를 일부만 갱신함
 - 일반 프로젝트의 수정된 스킬을 새 Pack으로 덮어씀
+- ITS 제거를 기록 문서 삭제로 오해하거나, 활성 정산 중 도구를 먼저 제거함
 - Pack version과 Decal/Primer/Jig 제품 SemVer를 같은 것으로 취급함
 - feature worktree를 main으로 바꾸거나 기본 폴더를 detached 상태로 남김
 - 기존 release를 삭제하거나 같은 tag의 bytes를 교체함

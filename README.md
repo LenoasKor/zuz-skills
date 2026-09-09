@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 2.2.1 is the current published release. It adds the v10 main-worktree registration broker while preserving the published v1-v9 contract bytes.
+First-party contents are licensed under Apache-2.0. Decal Pack 2.2.1 is the current published release. Pack 3.0.0 is the source candidate that separates general development tools from optional zuz ITS while preserving the published v1-v10 contract bytes.
 
 - source tag/release: `decal-pack-v2.2.1`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
@@ -25,13 +25,16 @@ For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig �
 
 ## Decal Pack
 
-The source lives under [`packs/decal-pack`](packs/decal-pack). The pack contains:
+The source lives under [`packs/decal-pack`](packs/decal-pack). Pack 3 contains:
 
-- `portable-core`: status, build, debugging, safe Git, handoff, workspace, and motion guidance;
-- `task-work-bug`: optional zuz ITS Task·Work·Issue skills, legacy Task·Work·Bug contracts, and additive Incident support;
+- `development-core`: status, build, debugging, safe Git, handoff, and workspace guidance;
+- `zuz-its`: optional zuz ITS Task·Work·Bug·Incident skills and the pinned `task-work-bug/v1` through `v10` compatibility contracts;
+- `design-motion`: optional animation design, implementation, and review guidance;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 
-Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. The installer selects modules/providers explicitly and returns an `installationPlanDigest` bound to the canonical project root, immutable package/manifest identity, selection, and exact file digests. `--write` requires that digest and recomputes the plan under the installation lock. Existing lock-managed bytes can be updated transactionally; modified files and selection changes block the entire write, while obsolete managed files are reported and preserved.
+Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. The installer selects modules/providers explicitly and returns an `installationPlanDigest` bound to the canonical project root, immutable package/manifest identity, selection, and exact file digests. `--write` requires that digest and recomputes the plan under the installation lock.
+
+Module changes use the same preview-first transaction. Removing `zuz-its` moves unmodified Pack-managed ITS tools out of discovery into `.decal/retired/decal-project-pack/`; it never deletes or rewrites existing Task, Work, Bug, or Incident records. Modified or symlinked managed files and an active registration/settlement journal block removal. Reinstalling `zuz-its` previews the existing records that will be adopted before restoring the tools.
 
 ## Commands
 
@@ -57,7 +60,7 @@ The tool also acquires the shared repository lock and rechecks index, category a
 
 The fix remains an unpublished source candidate. Hub/STANZA and other installed projects have not been repaired by these tests.
 
-Every selected configuration includes `docs/skills/vendor/decal-project-pack/LICENSE` and `NOTICE` in its preview, approval digest, installation receipt and rollback transaction. This does not select `portable-core` or initialize ITS. Modified notice files block installation just like other modified files. Schema 1 archives remain readable with their original behavior; schema 1 consumers reject the new archive instead of silently omitting required files. Task 665 tracks the coordinated consumer/review/publishing work; 2.0.3 is not published yet.
+Every selected configuration includes `docs/skills/vendor/decal-project-pack/LICENSE` and `NOTICE` in its preview, approval digest, installation receipt and rollback transaction. This does not select `development-core` or initialize ITS. Modified notice files block installation just like other modified files. Schema 1 archives remain readable with their original behavior; schema 1 consumers reject the new archive instead of silently omitting required files. Task 665 tracks the coordinated consumer/review/publishing work; Pack 3.0.0 is not published yet.
 
 ```sh
 npm test

@@ -10,7 +10,7 @@ const artifactPath = (suffix) => join(repositoryRoot, `dist/decal-pack-${sourceD
 
 test("source registry is complete and opt-in", () => {
   const output = execFileSync(process.execPath, [join(repositoryRoot, "scripts/verify-decal-pack-source.mjs")], { encoding: "utf8" });
-  assert.match(output, /31 skills across 3 modules/);
+  assert.match(output, /31 skills across 4 modules/);
 });
 
 test("first-party source is Apache-2.0 and public release is unblocked", async () => {
@@ -99,6 +99,13 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
     assert.equal(fixtureValue.requiredCases.includes("zuz-its-v3-resolves-legacy-padded-aliases"), true, fixture.id);
     assert.equal(fixtureValue.requiredCases.includes("pack-installation-plan-is-canonical-digest-approved-and-recomputed"), true, fixture.id);
     assert.equal(fixtureValue.requiredCases.includes("managed-pack-update-preserves-conflicts-and-obsolete-files"), true, fixture.id);
+    for (const requiredCase of [
+      "pack-modules-have-version-and-digest",
+      "development-core-does-not-install-zuz-its",
+      "zuz-its-removal-retires-pristine-tools-and-preserves-records",
+      "zuz-its-reinstall-previews-existing-record-adoption",
+      "active-zuz-its-journal-blocks-removal",
+    ]) assert.equal(fixtureValue.requiredCases.includes(requiredCase), true, `${fixture.id}: ${requiredCase}`);
   }
 });
 
@@ -130,7 +137,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(settlement.repositoryEngine, "preserve-and-delegate");
   assert.equal(settlement.profile, ".decal/settlement-profile.json");
   for (const key of ["manifestValidator", "taskLifecycle", "workItemLifecycle", "standaloneSettlement", "finalizer", "recovery"]) {
-    assert.ok(packageValue.files.some((file) => file.sourcePath === settlement[key] && file.moduleId === "task-work-bug"), key);
+    assert.ok(packageValue.files.some((file) => file.sourcePath === settlement[key] && file.moduleId === "zuz-its"), key);
   }
   assert.equal(packageValue.compatibility.minimumHosts.decal, "0.406.0");
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/v7/register-task-batch.mjs"));
@@ -147,10 +154,17 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.summaryRepairWriter, "contracts/task-work-bug/repair-task-registry-summary.mjs");
   assert.ok(packageValue.files.some((file) => file.sourcePath === "contracts/task-work-bug/repair-task-registry-summary.mjs"));
   assert.equal(packageValue.executionPolicies.taskRegistryInitialization.automaticInstall, false);
-  assert.deepEqual(packageValue.executionPolicies.packInstallation.modes, ["initial-pack-bootstrap", "update"]);
+  assert.deepEqual(packageValue.executionPolicies.packInstallation.modes, ["initial-pack-bootstrap", "update", "change-modules"]);
   assert.equal(packageValue.executionPolicies.packInstallation.approvalArgument, "--approved-plan-digest");
   assert.equal(packageValue.executionPolicies.packInstallation.modifiedFiles, "preserve-and-block-entire-write");
-  assert.equal(packageValue.executionPolicies.packInstallation.obsoleteManagedFiles, "report-and-preserve");
+  assert.equal(packageValue.executionPolicies.packInstallation.obsoleteManagedFiles, "retire-pristine-and-preserve-modified");
+  assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
+    { id: "development-core", version: "1.0.0" },
+    { id: "zuz-its", version: "1.0.0" },
+    { id: "design-motion", version: "1.0.0" },
+    { id: "decal-maintainer", version: "1.0.0" },
+  ]);
+  assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
@@ -231,11 +245,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 2.2.1 adds main-worktree registration without replacing legacy contracts", async () => {
+test("Pack 3.0.0 keeps v10 registration while modularizing its delivery", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "2.2.1");
+  assert.equal(packageValue.packVersion, "3.0.0");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");

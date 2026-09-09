@@ -20,7 +20,7 @@ if (descriptor.executionPolicies?.portableSettlement?.automaticProfileInstallati
 if (descriptor.defaultSelected !== false) failures.push("Pack must never be selected by default");
 if (descriptor.publicReleaseBlocked !== (descriptor.firstPartyLicense === "UNLICENSED")) failures.push("public release block must match first-party license state");
 if (policy.packId !== descriptor.packId || policy.packVersion !== descriptor.packVersion) failures.push("project skill Pack policy identity must match source descriptor");
-if (descriptor.compatibility?.minimumHosts?.decal !== "0.406.0") failures.push("Pack 2.0.2 Native parity requires Decal 0.406.0");
+if (descriptor.compatibility?.minimumHosts?.decal !== "0.406.0") failures.push("Pack 3 Native parity requires Decal 0.406.0");
 if (descriptor.executionPolicies?.repositoryAuthority?.crossProjectAccess !== "explicit-current-user-approval") failures.push("cross-project access must require explicit current-user approval");
 if (descriptor.executionPolicies?.repositoryAuthority?.identityProbe !== "root-and-product-identity-only") failures.push("cross-project pre-approval probe must be identity-only");
 if (descriptor.executionPolicies?.settlementCommit?.externalHost !== "explicit-settlement-request-authorizes-exact-settlement-commit") failures.push("external settlement must include its exact commit checkpoint");
@@ -31,14 +31,14 @@ if (descriptor.executionPolicies?.taskRegistryInitialization?.writer !== "contra
 if (descriptor.executionPolicies?.taskRegistryInitialization?.summaryRepairWriter !== "contracts/task-work-bug/repair-task-registry-summary.mjs") failures.push("Task registry summary repair path must be canonical");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.automaticInstall !== false) failures.push("Pack installation must not initialize a Task registry");
 const expectedPackInstallation = {
-  schemaVersion: 1,
-  modes: ["initial-pack-bootstrap", "update"],
+  schemaVersion: 2,
+  modes: ["initial-pack-bootstrap", "update", "change-modules"],
   approvalArgument: "--approved-plan-digest",
   approvalBinding: ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
-  existingLock: "plain-v1-same-pack-and-selection",
+  existingLock: "plain-v2-module-state",
   modifiedFiles: "preserve-and-block-entire-write",
-  obsoleteManagedFiles: "report-and-preserve",
-  rollbackScope: ["create", "update", "installation-lock"],
+  obsoleteManagedFiles: "retire-pristine-and-preserve-modified",
+  rollbackScope: ["create", "update", "restore", "retire", "installation-lock"],
 };
 if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");
 if (stableJson(policy.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("project skill Pack installation policy must match source descriptor");
@@ -49,6 +49,7 @@ const membership = new Map();
 for (const module of descriptor.modules ?? []) {
   if (moduleIds.has(module.id)) failures.push(`duplicate module:${module.id}`);
   moduleIds.add(module.id);
+  if (!semver.test(module.version ?? "")) failures.push(`module version must be SemVer:${module.id}`);
   if (module.defaultSelected !== false) failures.push(`module selected by default:${module.id}`);
   if (module.projectInitialization !== false) failures.push(`module initializes project state:${module.id}`);
   for (const skillId of module.skillIds ?? []) {

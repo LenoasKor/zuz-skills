@@ -40,9 +40,10 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "title", "description", "defaultSelected", "projectInitialization", "skillIds"],
+        "required": ["id", "version", "title", "description", "defaultSelected", "projectInitialization", "skillIds"],
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+          "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
           "title": { "type": "string", "minLength": 1 },
           "description": { "type": "string", "minLength": 1 },
           "defaultSelected": { "const": false },
@@ -106,14 +107,14 @@
           "additionalProperties": false,
           "required": ["schemaVersion", "modes", "approvalArgument", "approvalBinding", "existingLock", "modifiedFiles", "obsoleteManagedFiles", "rollbackScope"],
           "properties": {
-            "schemaVersion": { "const": 1 },
-            "modes": { "const": ["initial-pack-bootstrap", "update"] },
+            "schemaVersion": { "const": 2 },
+            "modes": { "const": ["initial-pack-bootstrap", "update", "change-modules"] },
             "approvalArgument": { "const": "--approved-plan-digest" },
             "approvalBinding": { "const": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"] },
-            "existingLock": { "const": "plain-v1-same-pack-and-selection" },
+            "existingLock": { "const": "plain-v2-module-state" },
             "modifiedFiles": { "const": "preserve-and-block-entire-write" },
-            "obsoleteManagedFiles": { "const": "report-and-preserve" },
-            "rollbackScope": { "const": ["create", "update", "installation-lock"] }
+            "obsoleteManagedFiles": { "const": "retire-pristine-and-preserve-modified" },
+            "rollbackScope": { "const": ["create", "update", "restore", "retire", "installation-lock"] }
           }
         }
       }

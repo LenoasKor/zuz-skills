@@ -1,17 +1,17 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "2.2.1",
+  "packVersion": "3.0.0",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
-    "schemaVersion": 1,
-    "modes": ["initial-pack-bootstrap", "update"],
+    "schemaVersion": 2,
+    "modes": ["initial-pack-bootstrap", "update", "change-modules"],
     "approvalArgument": "--approved-plan-digest",
     "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
-    "existingLock": "plain-v1-same-pack-and-selection",
+    "existingLock": "plain-v2-module-state",
     "modifiedFiles": "preserve-and-block-entire-write",
-    "obsoleteManagedFiles": "report-and-preserve",
-    "rollbackScope": ["create", "update", "installation-lock"]
+    "obsoleteManagedFiles": "retire-pristine-and-preserve-modified",
+    "rollbackScope": ["create", "update", "restore", "retire", "installation-lock"]
   },
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [

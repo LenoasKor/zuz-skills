@@ -111,7 +111,11 @@ for (const absolute of await walkFiles()) {
   const relativePath = portablePath(sourceRoot, absolute);
   assertSafeRelativePath(relativePath);
   const bytes = await readFile(absolute);
-  let moduleId = relativePath.startsWith("contracts/") ? "task-work-bug" : relativePath.startsWith("vendor/") ? "portable-core" : "portable-core";
+  let moduleId = relativePath.startsWith("contracts/")
+    ? "zuz-its"
+    : relativePath.startsWith("vendor/emil-kowalski-animation/")
+      ? "design-motion"
+      : "development-core";
   let promptIdentity = null;
   if (relativePath.startsWith("skills/prompts/") && relativePath.endsWith(".md") && !relativePath.includes("/resources/")) {
     const identity = parsePromptMetadata(bytes.toString("utf8"), relativePath);
@@ -173,6 +177,22 @@ const consumerAcceptanceFixtures = descriptor.consumerAcceptance.map((id) => {
   return { id, sourcePath: file.sourcePath, sha256: file.sha256, size: file.size };
 });
 if (acceptanceFiles.size !== consumerAcceptanceFixtures.length) throw new Error("undeclared-consumer-acceptance-fixture");
+const modules = descriptor.modules.map((module) => {
+  const moduleFiles = files
+    .filter((file) => file.moduleId === module.id)
+    .map(({ sourcePath, sha256: fileSha256, size, installTargets }) => ({
+      sourcePath,
+      sha256: fileSha256,
+      size,
+      installTargets,
+    }));
+  if (moduleFiles.length === 0) throw new Error(`empty-module:${module.id}`);
+  return {
+    ...module,
+    digest: sha256(stableJson({ module, files: moduleFiles })),
+    fileCount: moduleFiles.length,
+  };
+});
 const unsignedManifest = {
   schemaVersion: 2,
   packageType: "zuz-portable-pack",
@@ -181,7 +201,7 @@ const unsignedManifest = {
   sourceRepository: "https://github.com/LenoasKor/zuz-skills",
   sourceRevision,
   generatedFrom: "packs/decal-pack/pack.source.json",
-  modules: descriptor.modules,
+  modules,
   requiredFiles: descriptor.requiredFiles,
   compatibility: descriptor.compatibility,
   capabilities: descriptor.capabilities,

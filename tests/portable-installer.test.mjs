@@ -33,6 +33,18 @@ function oldPackageFixture() {
   old.schemaVersion = 1;
   delete old.requiredFiles;
   old.sourceRevision = "e".repeat(40);
+  const motion = old.modules.find((module) => module.id === "design-motion");
+  old.modules = old.modules
+    .filter((module) => module.id !== "design-motion")
+    .map((module) => ({
+      ...module,
+      id: module.id === "development-core" ? "portable-core" : module.id === "zuz-its" ? "task-work-bug" : module.id,
+      skillIds: module.id === "development-core" ? [...module.skillIds, ...(motion?.skillIds ?? [])].sort() : module.skillIds,
+    }));
+  for (const file of old.files) {
+    if (file.moduleId === "development-core" || file.moduleId === "design-motion") file.moduleId = "portable-core";
+    if (file.moduleId === "zuz-its") file.moduleId = "task-work-bug";
+  }
   const changed = old.files.find((file) => file.sourcePath === "skills/agents/decal-task/SKILL.md");
   assert.ok(changed);
   const changedBytes = Buffer.from(`${Buffer.from(changed.contentBase64, "base64").toString("utf8")}\n<!-- Pack 2.0.0 fixture -->\n`);
@@ -59,7 +71,7 @@ await writeFile(oldPackagePath, `${stableJson(oldPackageFixture())}\n`);
 function run(root, mode, approved = null, options = {}) {
   const selectedPackage = options.packagePath ?? packagePath;
   const providers = options.providers ?? ["codex", "claude"];
-  const modules = options.modules ?? ["task-work-bug"];
+  const modules = options.modules ?? ["zuz-its"];
   const invocation = [installer, "--package", selectedPackage, "--root", root];
   for (const moduleId of modules) invocation.push("--module", moduleId);
   for (const provider of providers) invocation.push("--provider", provider);
@@ -70,11 +82,20 @@ function run(root, mode, approved = null, options = {}) {
 }
 
 async function installOld(root) {
-  const preview = run(root, "--dry-run", null, { packagePath: oldPackagePath });
+  const preview = run(root, "--dry-run", null, { packagePath: oldPackagePath, modules: ["task-work-bug"] });
   assert.equal(preview.status, 0, preview.stderr);
-  const installed = run(root, "--write", preview.value.installationPlanDigest, { packagePath: oldPackagePath });
+  const installed = run(root, "--write", preview.value.installationPlanDigest, { packagePath: oldPackagePath, modules: ["task-work-bug"] });
   assert.equal(installed.status, 0, installed.stderr);
   return installed;
+}
+
+async function installSelection(root, modules, providers = ["codex", "claude"]) {
+  const preview = run(root, "--dry-run", null, { modules, providers });
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.notEqual(preview.value.status, "blocked", JSON.stringify(preview.value.conflictDetails));
+  const installed = run(root, "--write", preview.value.installationPlanDigest, { modules, providers });
+  assert.equal(installed.status, 0, `${installed.stderr}\n${installed.stdout}`);
+  return { preview, installed };
 }
 
 async function readOrAbsent(target) {
@@ -89,7 +110,7 @@ async function readOrAbsent(target) {
 test("installed Pack carries the runner for all providers and settles a Showcase-shaped product without Decal", async () => {
   const root = await realpath(await mkdtemp(path.join(tmpdir(), "zuz-pack-settlement-smoke-")));
   const providers = ["codex", "claude", "gemini", "acp"];
-  const modules = ["portable-core", "task-work-bug"];
+  const modules = ["development-core", "zuz-its"];
   const preview = run(root, "--dry-run", null, { providers, modules });
   assert.equal(preview.status, 0);
   assert.ok(preview.value.writeSet.includes("contracts/task-work-bug/v8/manifest.json"));
@@ -212,7 +233,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock updates managed bytes to 2.2.1 and preserves obsolete files", async () => {
+test("Pack 2.0.0 lock upgrades to 3.0.0 and preserves unknown obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -221,7 +242,7 @@ test("Pack 2.0.0 lock updates managed bytes to 2.2.1 and preserves obsolete file
     const preview = run(root, "--dry-run");
     assert.equal(preview.status, 0, preview.stderr);
     assert.equal(preview.value.status, "planned");
-    assert.equal(preview.value.mode, "update");
+    assert.equal(preview.value.mode, "change-modules");
     assert.equal(preview.value.previousRelease.packVersion, "2.0.0");
     assert.ok(preview.value.updateCount >= 2);
     assert.ok(preview.value.createCount >= 1);
@@ -231,8 +252,8 @@ test("Pack 2.0.0 lock updates managed bytes to 2.2.1 and preserves obsolete file
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.2.1");
-    assert.equal(lock.mode, "update");
+    assert.equal(lock.packVersion, "3.0.0");
+    assert.equal(lock.mode, "change-modules");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");
     assert.equal(lock.previousRelease.packageSha256, sha256(await readFile(oldPackagePath)));
@@ -247,7 +268,97 @@ test("Pack 2.0.0 lock updates managed bytes to 2.2.1 and preserves obsolete file
   }
 });
 
-test("managed modifications and selection changes fail closed without partial update", async () => {
+test("development core installs without ITS contracts or ticket skills", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-core-only-"));
+  try {
+    const modules = ["development-core"];
+    const { preview } = await installSelection(root, modules, ["codex"]);
+    assert.deepEqual(preview.value.modules, modules);
+    assert.equal(preview.value.plannedFiles.some((file) => file.path.startsWith("contracts/task-work-bug/")), false);
+    assert.equal(preview.value.plannedFiles.some((file) => file.path === "skills/decal-task/SKILL.md"), false);
+    assert.equal(await readOrAbsent(path.join(root, "contracts/task-work-bug/v10/register-ticket.mjs")), null);
+    assert.equal(await readOrAbsent(path.join(root, "skills/decal-task/SKILL.md")), null);
+    const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
+    assert.equal(lock.moduleStates.find((module) => module.id === "development-core").status, "installed");
+    assert.equal(lock.moduleStates.find((module) => module.id === "zuz-its").status, "removed");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("ITS removal retires pristine tools, preserves records, and reinstall previews adoption", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-its-lifecycle-"));
+  const fullModules = ["development-core", "zuz-its"];
+  const coreModules = ["development-core"];
+  try {
+    await installSelection(root, fullModules, ["codex"]);
+    await mkdir(path.join(root, "docs/tasks"), { recursive: true });
+    await mkdir(path.join(root, "docs/work-items/bugs"), { recursive: true });
+    const records = new Map([
+      ["docs/tasks/index.md", Buffer.from("# existing task registry\n")],
+      ["docs/work-items/bugs/BUG-7.md", Buffer.from("existing bug record: keep byte-for-byte\n")],
+    ]);
+    for (const [relative, bytes] of records) await writeFile(path.join(root, relative), bytes);
+    const managedItsPath = "skills/decal-task/SKILL.md";
+    const managedItsBefore = await readFile(path.join(root, managedItsPath));
+
+    const removal = run(root, "--dry-run", null, { modules: coreModules, providers: ["codex"] });
+    assert.equal(removal.status, 0, removal.stderr);
+    assert.equal(removal.value.status, "planned");
+    assert.equal(removal.value.mode, "change-modules");
+    assert.ok(removal.value.retireCount > 0);
+    assert.ok(removal.value.retirementEntries.some((entry) => entry.path === managedItsPath));
+    const removed = run(root, "--write", removal.value.installationPlanDigest, { modules: coreModules, providers: ["codex"] });
+    assert.equal(removed.status, 0, `${removed.stderr}\n${removed.stdout}`);
+    assert.equal(await readOrAbsent(path.join(root, managedItsPath)), null);
+    const retiredItsPath = path.join(root, ".decal/retired/decal-project-pack/zuz-its", managedItsPath);
+    assert.deepEqual(await readFile(retiredItsPath), managedItsBefore);
+    for (const [relative, bytes] of records) assert.deepEqual(await readFile(path.join(root, relative)), bytes);
+    const removedLock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
+    assert.deepEqual(removedLock.modules, coreModules);
+    assert.equal(removedLock.moduleStates.find((module) => module.id === "zuz-its").status, "removed");
+
+    const reinstall = run(root, "--dry-run", null, { modules: fullModules, providers: ["codex"] });
+    assert.equal(reinstall.status, 0, reinstall.stderr);
+    assert.equal(reinstall.value.status, "planned");
+    assert.equal(reinstall.value.adoption.required, true);
+    assert.ok(reinstall.value.adoption.preservedPaths.includes("docs/tasks/index.md"));
+    assert.ok(reinstall.value.adoption.preservedPaths.includes("docs/work-items/bugs"));
+    assert.ok(reinstall.value.restoreCount > 0);
+    const restored = run(root, "--write", reinstall.value.installationPlanDigest, { modules: fullModules, providers: ["codex"] });
+    assert.equal(restored.status, 0, `${restored.stderr}\n${restored.stdout}`);
+    assert.deepEqual(await readFile(path.join(root, managedItsPath)), managedItsBefore);
+    assert.equal(await readOrAbsent(retiredItsPath), null);
+    for (const [relative, bytes] of records) assert.deepEqual(await readFile(path.join(root, relative)), bytes);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("ITS removal blocks modified managed tools and active ITS journals", async () => {
+  for (const scenario of ["modified", "journal"]) {
+    const root = await mkdtemp(path.join(tmpdir(), `zuz-pack-its-block-${scenario}-`));
+    try {
+      await installSelection(root, ["development-core", "zuz-its"], ["codex"]);
+      if (scenario === "modified") await writeFile(path.join(root, "skills/decal-task/SKILL.md"), "user modification\n");
+      else await writeFile(path.join(root, ".decal/settlement-pending-v1.json"), "{}\n");
+      const removal = run(root, "--dry-run", null, { modules: ["development-core"], providers: ["codex"] });
+      if (scenario === "modified") {
+        assert.equal(removal.status, 0);
+        assert.equal(removal.value.status, "blocked");
+        assert.ok(removal.value.conflicts.includes("skills/decal-task/SKILL.md"));
+      } else {
+        assert.equal(removal.status, 2);
+        assert.equal(removal.value.code, "its_operation_in_progress");
+        assert.deepEqual(removal.value.detail, [".decal/settlement-pending-v1.json"]);
+      }
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  }
+});
+
+test("managed modifications fail closed while selection changes use an explicit module plan", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-modified-"));
   try {
     await installOld(root);
@@ -267,8 +378,10 @@ test("managed modifications and selection changes fail closed without partial up
     assert.deepEqual(await readFile(comparisonPath), comparisonBefore);
     assert.deepEqual(await readFile(path.join(root, ".decal/decal-pack.lock.json")), lockBefore);
     const selection = run(root, "--dry-run", null, { providers: ["codex"] });
-    assert.equal(selection.status, 2);
-    assert.equal(selection.value.code, "selection_change_requires_separate_flow");
+    assert.equal(selection.status, 0);
+    assert.equal(selection.value.mode, "change-modules");
+    assert.equal(selection.value.status, "blocked");
+    assert.ok(selection.value.conflicts.includes("skills/decal-task/SKILL.md"));
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -291,7 +404,7 @@ test("write rejects a stale installation plan before creating Pack state", async
   }
 });
 
-test("existing lock must be a plain valid v1 receipt for the same Pack", { skip: process.platform === "win32" }, async () => {
+test("existing lock must be a plain valid receipt for the same Pack", { skip: process.platform === "win32" }, async () => {
   for (const [label, prepare, code] of [
     ["symlink", async (root) => {
       const external = path.join(root, "external-lock.json");
@@ -306,7 +419,7 @@ test("existing lock must be a plain valid v1 receipt for the same Pack", { skip:
         packVersion: "2.0.0",
         sourceRevision: "e".repeat(40),
         manifestSha256: "a".repeat(64),
-        modules: ["task-work-bug"],
+        modules: ["zuz-its"],
         providers: ["codex", "claude"],
         files: [],
       };
@@ -340,7 +453,7 @@ test("update rollback restores every managed file and the previous lock", async 
       installPackage({
         packagePath,
         rootValue: root,
-        modules: ["task-work-bug"],
+        modules: ["zuz-its"],
         providers: ["codex", "claude"],
         approvedPlanDigest: preview.value.installationPlanDigest,
         testFailAt: "after_all_writes",
@@ -366,10 +479,10 @@ test("ITS-only installs carry mandatory notices for every provider, without core
   for (const provider of ["codex", "claude", "gemini", "acp"]) {
     const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-notices-"));
     try {
-      const options = { modules: ["task-work-bug"], providers: [provider] };
+      const options = { modules: ["zuz-its"], providers: [provider] };
       const preview = run(root, "--dry-run", null, options);
       assert.equal(preview.status, 0, preview.stdout);
-      assert.deepEqual(preview.value.modules, ["task-work-bug"]);
+      assert.deepEqual(preview.value.modules, ["zuz-its"]);
       assert.deepEqual(preview.value.plannedFiles.filter((file) => file.required).map((file) => file.path), [
         "docs/skills/vendor/decal-project-pack/LICENSE", "docs/skills/vendor/decal-project-pack/NOTICE",
       ]);

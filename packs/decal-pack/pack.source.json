@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "2.2.1",
+  "packVersion": "3.0.0",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": ["LICENSE", "NOTICE"],
@@ -12,31 +12,30 @@
   "publicReleaseBlocked": false,
   "modules": [
     {
-      "id": "portable-core",
+      "id": "development-core",
+      "version": "1.0.0",
       "title": "기본 개발 도구",
       "description": "상태 확인, 빌드, 디버깅, 안전한 Git 작업, 작업 공간, 인계와 모션 지침",
       "defaultSelected": false,
       "projectInitialization": false,
       "skillIds": [
-        "decal-animate",
         "decal-build",
         "decal-commit-ready",
         "decal-debug",
         "decal-deploy",
         "decal-handoff",
         "decal-healthcheck",
-        "decal-improve-animations",
         "decal-orient",
         "decal-pull-ready",
         "decal-push-ready",
-        "decal-review-animations",
         "decal-risk-review",
         "decal-status-summary",
         "decal-task-space"
       ]
     },
     {
-      "id": "task-work-bug",
+      "id": "zuz-its",
+      "version": "1.0.0",
       "title": "zuz ITS · Task·Work·Issue",
       "description": "기존 Task·Work·Bug 호환을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,
@@ -59,7 +58,21 @@
       ]
     },
     {
+      "id": "design-motion",
+      "version": "1.0.0",
+      "title": "디자인·모션 도구",
+      "description": "인터페이스 애니메이션 구현·검토·개선과 검증된 모션 참고 자료",
+      "defaultSelected": false,
+      "projectInitialization": false,
+      "skillIds": [
+        "decal-animate",
+        "decal-improve-animations",
+        "decal-review-animations"
+      ]
+    },
+    {
       "id": "decal-maintainer",
+      "version": "1.0.0",
       "title": "Decal 저장소 유지보수",
       "description": "Decal 저장소의 개발 앱과 A/B 테스트 빌드 전용 도구",
       "defaultSelected": false,
@@ -94,12 +107,12 @@
     "contracts": {
       "sourcePrefix": "src/contracts/",
       "target": "contracts/{relativePath}",
-      "moduleId": "task-work-bug"
+      "moduleId": "zuz-its"
     },
     "vendorNotices": {
       "sourcePrefix": "src/vendor/",
       "target": "docs/skills/vendor/{relativePath}",
-      "moduleId": "portable-core"
+      "moduleId": "design-motion"
     }
   },
   "compatibility": {
@@ -188,14 +201,14 @@
       "automaticInstall": false
     },
     "packInstallation": {
-      "schemaVersion": 1,
-      "modes": ["initial-pack-bootstrap", "update"],
+      "schemaVersion": 2,
+      "modes": ["initial-pack-bootstrap", "update", "change-modules"],
       "approvalArgument": "--approved-plan-digest",
       "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
-      "existingLock": "plain-v1-same-pack-and-selection",
+      "existingLock": "plain-v2-module-state",
       "modifiedFiles": "preserve-and-block-entire-write",
-      "obsoleteManagedFiles": "report-and-preserve",
-      "rollbackScope": ["create", "update", "installation-lock"]
+      "obsoleteManagedFiles": "retire-pristine-and-preserve-modified",
+      "rollbackScope": ["create", "update", "restore", "retire", "installation-lock"]
     }
   },
   "revocations": {
