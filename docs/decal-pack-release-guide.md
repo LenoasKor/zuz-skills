@@ -128,6 +128,26 @@ Showcase처럼 Pack 전체를 고정 내장하지 않고 일반 프로젝트 설
 
 갱신 뒤 lock의 Pack version과 `contracts/task-work-bug/v10/verify-contract.mjs` 같은 새 필수 파일을 확인하고 installer dry-run이 다시 `current`인지 검증한다.
 
+### 필수 전파 매트릭스
+
+현재 Decal Pack 릴리스는 아래 8개 프로젝트를 필수 소비자로 확인한다. 한 곳이라도 결과가 없으면
+전파 완료로 보고하지 않는다.
+
+| 소비 프로젝트 | 적용 방식 | 필수 확인 |
+| --- | --- | --- |
+| Decal | 전체 내장본 + 저장소 ITS 스킬 | Pack snapshot, Native 설치 목록, v10 계약 |
+| Primer | 전체 고정 사본 + 선택 소비 projection | manifest/package digest, consumer fixture, v10 계약 |
+| Jig | 전체 고정 사본 + 선택 소비 projection | source ledger, consumer fixture, v10 계약 |
+| Showcase | 프로젝트 ITS 소비본 | 네 공급자 스킬, v9/v10, zuz ITS v3 |
+| zuz.dev Mobile | 프로젝트 ITS 소비본 | 네 공급자 스킬, v9/v10, zuz ITS v3 |
+| zuz.dev Hub | 프로젝트 ITS 소비본 | 프로젝트 전용 구계약 보존, 필요한 후속 계약, v10 |
+| 살림비서 | 설치 lock 기반 관리본 | lock의 version/digest, 모든 관리 파일 digest, v10 |
+| STANZA | 프로젝트 ITS 소비본 | 네 공급자 스킬, v9/v10, zuz ITS v3 |
+
+각 결과에는 적용 branch와 commit을 기록한다. 작업 중 feature branch에만 적용된 경우에는 해당
+Pack 전용 commit을 canonical main에도 별도로 반영·검증하거나, main 미반영을 명시적인 미완료로
+남긴다. 활성 feature worktree를 main으로 바꾸는 방식은 사용하지 않는다.
+
 ## 10. worktree와 ITS 발급 안전 규칙
 
 feature 또는 detached worktree에서 티켓을 등록할 때 현재 작업공간을 main으로 switch/detach하지 않는다. 임시 main worktree를 만들고 나중에 반납하는 방식도 사용하지 않는다.
