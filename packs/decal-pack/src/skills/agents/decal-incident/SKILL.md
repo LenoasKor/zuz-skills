@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.3.0"
+  version: "1.3.1"
   portable: true
 ---
 
@@ -37,7 +37,7 @@ Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonica
 
 1. Resolve and verify the current Git root and repository identity.
 2. Read repository instructions and the current `contracts/zuz-its/v3` contract while preserving v1 and v2 as immutable compatibility inputs.
-3. Preserve existing Task·Work·Bug records and search current Incident records before reserving an ID.
+3. Preserve existing zuz ITS records and search current Incident records before reserving an ID.
 4. Capture the observed impact, affected services, occurrence and detection times, classification tags, response state, and evidence.
 5. Preserve unrelated dirty files and reject symlink, path escape, duplicate identity, or stale revision targets.
 

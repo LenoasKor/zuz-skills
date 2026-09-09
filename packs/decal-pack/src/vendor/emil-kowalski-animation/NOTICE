@@ -9,5 +9,5 @@ Decal adaptation:
 - `animate` -> `decal-animate`
 - `review-animations` -> `decal-review-animations`
 - `improve-animations` -> `decal-improve-animations`
-- Decal adds its Task/Work/Bug lifecycle, high-frequency professional-tool motion posture,
+- Decal adds its zuz ITS lifecycle, high-frequency professional-tool motion posture,
   provider-neutral companion lookup, and removes the upstream private `plans/` lifecycle.

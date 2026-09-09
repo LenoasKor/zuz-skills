@@ -233,7 +233,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock upgrades to 3.0.0 and preserves unknown obsolete files", async () => {
+test("Pack 2.0.0 lock upgrades to 3.0.1 and preserves unknown obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -252,7 +252,7 @@ test("Pack 2.0.0 lock upgrades to 3.0.0 and preserves unknown obsolete files", a
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "3.0.0");
+    assert.equal(lock.packVersion, "3.0.1");
     assert.equal(lock.mode, "change-modules");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");

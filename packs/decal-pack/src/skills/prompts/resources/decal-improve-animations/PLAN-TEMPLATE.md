@@ -70,4 +70,4 @@ imitate (token names, file placement, prop patterns):
 - Pull every value from [AUDIT.md](AUDIT.md) — never approximate from memory.
 - The feel check is not optional. Motion can be mechanically correct and still feel wrong; give the executor (or the human reviewing the executor's diff) concrete things to watch for in slow motion.
 - Suggest **Bug** when observed behavior violates an existing motion or accessibility contract, **Work** for a small existing-interaction improvement, and **Task** for a new interaction or broad redesign.
-- A suggestion is not registration authority. Register or implement only after the user requests or approves the exact scope under the project's Task/Work/Bug rules.
+- A suggestion is not registration authority. Register or implement only after the user requests or approves the exact scope under the project's zuz ITS rules.

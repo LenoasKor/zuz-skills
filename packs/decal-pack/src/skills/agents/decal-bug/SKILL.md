@@ -2,13 +2,13 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.8.0"
+  version: "1.8.1"
   portable: true
 ---
 
 # Decal Bug
 
-Manage an observed defect using the repository's canonical Task·Work·Bug contract.
+Manage an observed defect using the repository's canonical zuz ITS contract.
 
 ## Repository authority boundary
 
@@ -35,7 +35,7 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 
 1. Resolve the process working directory and, in Git repositories, `git rev-parse --show-toplevel`. Read the repository instructions from that resolved root only.
 2. Compare the repository product identity in its instructions or manifest with any project, product, or repository named by the user. If they differ, or the target identity cannot be proven, stop before reading Bug records or changing files. Contract source ownership does not move the Bug record to Decal or another upstream repository.
-3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own Task·Work·Bug authoring profile when its instructions name one.
+3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own zuz ITS authoring profile when its instructions name one.
 4. Read the current Bug schema and lifecycle contract under `contracts/task-work-bug/`, plus linked Tasks or Work.
 5. Capture the observed result, expected result, evidence, and a testable cause. Search existing Bug records for duplicates, but do not reserve a final `BUG-###` ID in the agent.
 6. If restoring the existing contract requires a new product behavior or broad redesign, preserve the Bug as evidence and link a separate Task rather than silently expanding it.

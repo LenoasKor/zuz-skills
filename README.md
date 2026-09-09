@@ -11,15 +11,15 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 2.2.1 is the current published release. Pack 3.0.0 is the source candidate that separates general development tools from optional zuz ITS while preserving the published v1-v10 contract bytes.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.0.1 is the current release line. It separates general development tools from optional zuz ITS while preserving the published v1-v10 contract bytes.
 
-- source tag/release: `decal-pack-v2.2.1`
+- source tag/release: `decal-pack-v3.0.1`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
 The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
 
-Portable v10 routes Task·Work·Bug·Incident registration from a linked worktree to the repository's existing canonical main worktree without changing either checkout. Task semantics remain v7, Work·Bug·Incident key semantics and lifecycle/settlement remain v9. Native canonical-branch parity requires Decal 0.406.0 or newer.
+Portable v10 routes zuz ITS Task, Work, Bug, and Incident registration from a linked worktree to the repository's existing canonical main worktree without changing either checkout. Task semantics remain v7, Work·Bug·Incident key semantics and lifecycle/settlement remain v9. Native canonical-branch parity requires Decal 0.406.0 or newer.
 
 For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig → installed-project rollout, follow [the Decal Pack release guide](docs/decal-pack-release-guide.md).
 
@@ -28,11 +28,11 @@ For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig �
 The source lives under [`packs/decal-pack`](packs/decal-pack). Pack 3 contains:
 
 - `development-core`: status, build, debugging, safe Git, handoff, and workspace guidance;
-- `zuz-its`: optional zuz ITS Task·Work·Bug·Incident skills and the pinned `task-work-bug/v1` through `v10` compatibility contracts;
+- `zuz-its`: optional zuz ITS ticket skills and the pinned `task-work-bug/v1` through `v10` compatibility contracts;
 - `design-motion`: optional animation design, implementation, and review guidance;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 
-Installing the pack never initializes Task·Work·Bug records or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. The installer selects modules/providers explicitly and returns an `installationPlanDigest` bound to the canonical project root, immutable package/manifest identity, selection, and exact file digests. `--write` requires that digest and recomputes the plan under the installation lock.
+Installing the pack never initializes a zuz ITS registry or Jig automatically. When a verified project has no Task registry, `contracts/task-work-bug/initialize-task-registry.mjs` provides a separate dry-run/revision-bound initializer that requires explicit repository-scoped user approval. The installer selects modules/providers explicitly and returns an `installationPlanDigest` bound to the canonical project root, immutable package/manifest identity, selection, and exact file digests. `--write` requires that digest and recomputes the plan under the installation lock.
 
 Module changes use the same preview-first transaction. Removing `zuz-its` moves unmodified Pack-managed ITS tools out of discovery into `.decal/retired/decal-project-pack/`; it never deletes or rewrites existing Task, Work, Bug, or Incident records. Modified or symlinked managed files and an active registration/settlement journal block removal. Reinstalling `zuz-its` previews the existing records that will be adopted before restoring the tools.
 
@@ -60,7 +60,7 @@ The tool also acquires the shared repository lock and rechecks index, category a
 
 The fix remains an unpublished source candidate. Hub/STANZA and other installed projects have not been repaired by these tests.
 
-Every selected configuration includes `docs/skills/vendor/decal-project-pack/LICENSE` and `NOTICE` in its preview, approval digest, installation receipt and rollback transaction. This does not select `development-core` or initialize ITS. Modified notice files block installation just like other modified files. Schema 1 archives remain readable with their original behavior; schema 1 consumers reject the new archive instead of silently omitting required files. Task 665 tracks the coordinated consumer/review/publishing work; Pack 3.0.0 is not published yet.
+Every selected configuration includes `docs/skills/vendor/decal-project-pack/LICENSE` and `NOTICE` in its preview, approval digest, installation receipt and rollback transaction. This does not select `development-core` or initialize ITS. Modified notice files block installation just like other modified files. Schema 1 archives remain readable with their original behavior; schema 1 consumers reject the new archive instead of silently omitting required files. Task 665 tracks the coordinated consumer/review/publishing work; Pack 3.x publishing remains a separate verified release step.
 
 ```sh
 npm test
@@ -71,4 +71,4 @@ The build is deterministic for the same source revision and source bytes. Genera
 
 Prompt-based tools are preserved as shared documentation and are also emitted as Agent Skills in the native Codex, Claude, Gemini, and ACP project paths. This keeps the same Pack usable with or without Decal.
 
-When Decal Native is unavailable, the installed skills continue through their documented portable CLI fallback. Only the missing Native panel or permission helper is unavailable; the Task·Work·Bug workflow itself must not be rejected merely because the current host is Codex, Claude, Gemini, or ACP outside Decal.
+When Decal Native is unavailable, the installed skills continue through their documented portable CLI fallback. Only the missing Native panel or permission helper is unavailable; the zuz ITS workflow itself must not be rejected merely because the current host is Codex, Claude, Gemini, or ACP outside Decal.

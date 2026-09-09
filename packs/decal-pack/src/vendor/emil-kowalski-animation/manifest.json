@@ -11,7 +11,7 @@
       "upstream": "skills/animate/SKILL.md",
       "decal": "assets/skills/decal-animate.md",
       "resources": ["RECIPES.md"],
-      "adaptations": ["Decal frontmatter", "Task/Work/Bug gate", "high-frequency product posture", "provider-neutral resource lookup"]
+      "adaptations": ["Decal frontmatter", "zuz ITS gate", "high-frequency product posture", "provider-neutral resource lookup"]
     },
     {
       "upstream": "skills/review-animations/SKILL.md",
@@ -23,7 +23,7 @@
       "upstream": "skills/improve-animations/SKILL.md",
       "decal": "assets/skills/decal-improve-animations.md",
       "resources": ["AUDIT.md", "PLAN-TEMPLATE.md"],
-      "adaptations": ["Decal frontmatter", "read-only response output", "Task/Work/Bug handoff", "removed plans lifecycle", "delegation authorization gate"]
+      "adaptations": ["Decal frontmatter", "read-only response output", "zuz ITS handoff", "removed plans lifecycle", "delegation authorization gate"]
     }
   ],
   "verbatimResources": [

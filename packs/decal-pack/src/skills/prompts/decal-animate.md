@@ -1,7 +1,7 @@
 ---
 id: decal-animate
 label: 데칼 애니메이션 구현 · animate
-version: 1.0.0
+version: 1.0.1
 risk: project_write
 group: Motion
 target: active-cli
@@ -17,7 +17,7 @@ A construction skill. It does ONE thing: turn a request for motion into an imple
 ## Decal Integration Rules
 
 - Treat this as the `decal-animate` role. Use `decal-review-animations` for a motion diff review and `decal-improve-animations` for a codebase audit.
-- Before changing project files, follow the project's Task/Work/Bug registration and approval rules. This skill never creates an unregistered side workflow and never broadens commit, push, deployment, or external-action authority.
+- Before changing project files, follow the project's zuz ITS registration and approval rules. This skill never creates an unregistered side workflow and never broadens commit, push, deployment, or external-action authority.
 - Decal is a high-frequency professional tool. Prefer crisp, responsive, restrained motion; frequent keyboard, palette, list, and session actions normally stay instant.
 - Reuse the project's existing motion tokens and libraries. Do not add a dependency unless the requested change genuinely requires it and the project approval rules permit it.
 - When a request matches a common component, load the allowlisted `RECIPES.md` companion with `decal_ui.read_canonical_skill({ skillId: "decal-animate", resourcePath: "RECIPES.md" })`. If that read-only tool is unavailable, continue from this document and the project's own conventions without inventing a resource path.

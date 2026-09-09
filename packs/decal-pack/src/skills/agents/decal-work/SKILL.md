@@ -2,13 +2,13 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.8.0"
+  version: "1.8.1"
   portable: true
 ---
 
 # Decal Work
 
-Manage a bounded Work item using the repository's canonical Task·Work·Bug contract.
+Manage a bounded Work item using the repository's canonical zuz ITS contract.
 
 ## Repository authority boundary
 
@@ -35,7 +35,7 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 
 1. Resolve the process working directory and, in Git repositories, `git rev-parse --show-toplevel`. Read the repository instructions from that resolved root only.
 2. Compare the repository product identity in its instructions or manifest with any project, product, or repository named by the user. If they differ, or the target identity cannot be proven, stop before reading Work records or changing files. Contract source ownership does not move the Work record to Decal or another upstream repository.
-3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own Task·Work·Bug authoring profile when its instructions name one.
+3. Multiple repositories are in scope only when the user explicitly includes each one and each root is independently verified. Preserve the repository's own zuz ITS authoring profile when its instructions name one.
 4. Read the current schema and lifecycle contract under `contracts/task-work-bug/`, plus any linked Task.
 5. Search canonical Work records for numeric duplicates, including padded legacy aliases, but do not reserve a final `WORK-<number>` ID in the agent. The approved canonical-default-branch writer assigns it under the shared lock.
 6. Derive version settlement fields with the repository helper when one exists. Do not invent `null`, version, release mode, or source revision values.

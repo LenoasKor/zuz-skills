@@ -103,7 +103,7 @@ npm run test:portable-task-work-bug-skills
 
 새 contract 파일이 생겼다면 `src-tauri/src/project_skill_installation.rs`의 설치 목록과 관련 검증을 함께 갱신한다. Pack manifest만 바꾸고 설치 목록을 빠뜨리면 앱 화면에는 새 version이 보여도 생성 프로젝트에는 계약이 누락된다.
 
-그 뒤 TypeScript build와 관련 Rust 설치 테스트를 통과시킨다. Decal 제품 SemVer 영향은 Pack version과 별도로 해당 Task·Work·Bug 정책에서 판정한다.
+그 뒤 TypeScript build와 관련 Rust 설치 테스트를 통과시킨다. Decal 제품 SemVer 영향은 Pack version과 별도로 해당 zuz ITS 티켓 정책에서 판정한다.
 
 ## 8. Primer·Jig 고정 소비본 갱신
 
@@ -127,7 +127,7 @@ Showcase처럼 Pack 전체를 고정 내장하지 않고 일반 프로젝트 설
 - `incompatible` 또는 `security_blocked`: 해당 portable 기능만 fail-closed한다.
 - 더 이상 선택하지 않은 모듈의 수정 없는 관리 파일은 발견 경로 밖 `.decal/retired/decal-project-pack/`으로 옮긴다.
 - 사용자 수정본·symlink·활성 등록/정산 journal이 있으면 제거하지 않고 차단 사유를 보고한다.
-- `zuz-its` 제거는 기존 Task·Work·Bug·Incident 문서를 한 byte도 바꾸지 않는다.
+- `zuz-its` 제거는 기존 zuz ITS 티켓 문서를 한 byte도 바꾸지 않는다.
 - `zuz-its` 재설치는 기존 기록 채택 목록을 preview에 표시한 뒤에만 도구를 복원한다.
 - 현 Pack에서 출처를 판별할 수 없는 obsolete 관리 파일은 자동 삭제하지 않고 만료·미사용 상태로 보고한다.
 
@@ -174,7 +174,7 @@ v10 broker는 동일 저장소에서 이미 canonical `main` 또는 `master`를 
 - Primer·Jig 채택 commit 또는 명시적인 미완료 사유
 - 일반 설치 프로젝트별 `current`/`modified`/차단 결과
 - 사용자 수정본·다른 세션 dirty 파일을 보존했다는 확인
-- Task·Work·Bug lifecycle, 제품 version 적용 여부와 남은 Smoke
+- zuz ITS lifecycle, 제품 version 적용 여부와 남은 Smoke
 
 모든 필수 소비자가 확인되기 전에 source build 성공만으로 “배포 완료”라고 보고하지 않는다.
 

@@ -2,13 +2,13 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.11.0"
+  version: "1.11.1"
   portable: true
 ---
 
 # Decal Task
 
-Manage a project Task using the repository's canonical Task·Work·Bug contract.
+Manage a project Task using the repository's canonical zuz ITS contract.
 
 ## Repository authority boundary
 
