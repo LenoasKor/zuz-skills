@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   portable: true
 ---
 
@@ -60,6 +60,6 @@ Never guess a missing ticket. Search the canonical repository records first. If 
 ## Contract routing
 
 - Read current identity and Incident alias rules from `contracts/zuz-its/v3`; v1 and v2 remain immutable compatibility contracts.
-- Preserve `contracts/task-work-bug/v1` through `v8` as pinned compatibility dependencies. Use the v7 Task batch writer and the v9 common writer for new Work, Bug, and Incident registration.
+- Preserve `contracts/task-work-bug/v1` through `v9` as pinned compatibility dependencies. Use the v10 main-authority broker for Task, Work, Bug, and Incident registration. It delegates the existing v7/v9 transaction to the one existing canonical default-branch worktree without changing the caller's worktree.
 - Use v9 lifecycle and settlement runners. They accept legacy padded aliases, preserve physical filenames, and fail closed if padded and unpadded records collide.
 - Use the more specific `decal-task`, `decal-work`, `decal-bug`, or `decal-incident` skill when creating or changing a ticket.

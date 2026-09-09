@@ -18,6 +18,7 @@
     "ticket-registration-v7-routes-to-native-host-transaction",
     "ticket-registration-v7-supports-unambiguous-main-and-master",
     "ticket-registration-v9-issues-unpadded-keys",
+    "ticket-registration-v10-preserves-native-host-authority-and-portable-worktree-parity",
     "zuz-its-v3-resolves-legacy-padded-aliases",
     "padded-and-unpadded-physical-collision-fails-closed",
     "decal-native-canonical-branch-parity-requires-0.406.0",

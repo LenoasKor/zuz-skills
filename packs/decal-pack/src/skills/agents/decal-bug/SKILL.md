@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.7.0"
+  version: "1.8.0"
   portable: true
 ---
 
@@ -65,16 +65,17 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/v9/`, use it instead of hand-writing a record. The
-dry-run returns no final ID. Approval authorizes the writer to resolve an allowed `origin/HEAD` or one
-unambiguous local `main`/`master`, issue the ID on that canonical default branch, validate the record,
-commit exactly one path, and return its receipt.
+When the repository ships `contracts/task-work-bug/v10/`, use it instead of hand-writing a record. The
+dry-run returns no final ID. From a linked feature or detached worktree, the broker locates the one
+existing canonical `main`/`master` worktree and runs the unchanged v9 writer there. It never switches,
+detaches, creates, or removes a worktree. Missing, ambiguous, or changing main authority fails closed.
+The receipt reports both the requesting worktree and the authority worktree.
 
 ```sh
-node contracts/task-work-bug/v9/register-ticket.mjs \
+node contracts/task-work-bug/v10/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 
-node contracts/task-work-bug/v9/register-ticket.mjs \
+node contracts/task-work-bug/v10/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```

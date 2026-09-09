@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   portable: true
 ---
 
@@ -43,26 +43,28 @@ Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonica
 
 ## Portable writer
 
-Outside Decal, use the v9 common ticket writer. First preview the semantic candidate; the final `INC-<number>`
+Outside Decal, use the v10 main-authority broker. It preserves the v9 semantic intent while allowing a
+linked feature or detached worktree to request registration. First preview the semantic candidate; the final `INC-<number>`
 identity remains pending until approval:
 
 ```sh
-node contracts/task-work-bug/v9/register-ticket.mjs \
+node contracts/task-work-bug/v10/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json --dry-run
 ```
 
 Only after the current user approves that exact scope, write the same intent with the returned digest:
 
 ```sh
-node contracts/task-work-bug/v9/register-ticket.mjs \
+node contracts/task-work-bug/v10/register-ticket.mjs \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```
 
-The writer resolves an allowed `origin/HEAD` or one unambiguous local `main`/`master`, then allocates and
-commits the Incident under the shared repository lock. Feature branches, detached HEAD, missing candidates,
-and ambiguous local `main` plus `master` are rejected. The approval includes only that exact registration
-commit, not push, merge, deploy, lifecycle completion, or settlement.
+The broker resolves an allowed `origin/HEAD` or one unambiguous local `main`/`master`, then locates the one
+existing worktree that owns that branch and allocates the Incident there under the shared repository lock.
+It never changes the caller's branch or worktree. Missing, ambiguous, mismatched, or changing authority is
+rejected. The approval includes only that exact registration commit, not push, merge, deploy, lifecycle
+completion, or settlement.
 
 Use `contracts/zuz-its/v3/transition-incident.mjs` for lifecycle changes. It accepts padded legacy aliases but displays the unpadded key. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
 

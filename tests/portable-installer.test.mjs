@@ -212,7 +212,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock updates managed bytes to 2.2.0 and preserves obsolete files", async () => {
+test("Pack 2.0.0 lock updates managed bytes to 2.2.1 and preserves obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -231,7 +231,7 @@ test("Pack 2.0.0 lock updates managed bytes to 2.2.0 and preserves obsolete file
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "2.2.0");
+    assert.equal(lock.packVersion, "2.2.1");
     assert.equal(lock.mode, "update");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");

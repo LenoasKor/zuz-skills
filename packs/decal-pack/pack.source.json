@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "2.2.0",
+  "packVersion": "2.2.1",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": ["LICENSE", "NOTICE"],
@@ -103,7 +103,7 @@
     }
   },
   "compatibility": {
-    "portableContract": "task-work-bug/v9",
+    "portableContract": "task-work-bug/v10",
     "portableSettlement": "task-work-bug/v9",
     "zuzItsContract": "zuz.its/v3",
     "minimumHosts": {
@@ -128,6 +128,12 @@
     {
       "id": "portable-cli-fallback",
       "scope": "skill",
+      "providers": ["codex", "claude", "gemini", "acp"],
+      "required": true
+    },
+    {
+      "id": "main-worktree-registration-broker",
+      "scope": "contract",
       "providers": ["codex", "claude", "gemini", "acp"],
       "required": true
     },

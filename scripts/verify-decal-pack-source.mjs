@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { portablePath, loadSourceDescriptor, parseAgentMetadata, parsePromptMetadata, sourceRoot, stableJson, walkFiles } from "./pack-lib.mjs";
-import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/v9/verify-contract.mjs";
+import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/v10/verify-contract.mjs";
 
 const descriptor = await loadSourceDescriptor();
 const failures = [];
@@ -12,6 +12,7 @@ if (descriptor.schemaVersion !== 1) failures.push("schemaVersion must be 1");
 if (stableJson(descriptor.requiredFiles) !== stableJson(["LICENSE", "NOTICE"])) failures.push("LICENSE and NOTICE must be mandatory shared files");
 if (descriptor.packId !== "decal-project-pack") failures.push("packId must preserve the installed decal-project-pack identity");
 if (!semver.test(descriptor.packVersion ?? "")) failures.push("packVersion must be SemVer");
+if (descriptor.compatibility?.portableContract !== "task-work-bug/v10") failures.push("portable registration contract must use the main-worktree broker");
 if (descriptor.compatibility?.portableSettlement !== "task-work-bug/v9") failures.push("portable settlement contract must be explicit");
 if (descriptor.executionPolicies?.portableSettlement?.automaticProfileInstallation !== false
     || descriptor.executionPolicies?.portableSettlement?.nativeFallback !== false

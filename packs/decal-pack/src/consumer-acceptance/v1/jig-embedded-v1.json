@@ -15,6 +15,7 @@
     "ticket-registration-v7-contract-is-pinned",
     "ticket-registration-v7-supports-unambiguous-main-and-master",
     "ticket-registration-v9-issues-unpadded-keys",
+    "ticket-registration-v10-delegates-to-existing-main-worktree-without-switching-caller",
     "zuz-its-v3-resolves-legacy-padded-aliases",
     "padded-and-unpadded-physical-collision-fails-closed",
     "zuz-its-contract-is-exactly-pinned",
