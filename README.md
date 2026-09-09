@@ -11,15 +11,17 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 2.0.2 remains the published release. The 2.0.3 candidate adds mandatory shared LICENSE/NOTICE files and uses archive schema 2; consumers must support schema 2 before adopting it. No published 2.0.2 bytes are replaced.
+First-party contents are licensed under Apache-2.0. Decal Pack 2.2.1 is the current published release. It adds the v10 main-worktree registration broker while preserving the published v1-v9 contract bytes.
 
-- source tag/release: `decal-pack-v2.0.2` (published only after review)
+- source tag/release: `decal-pack-v2.2.1`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
 The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
 
-Portable v7 keeps Task batch registration, while v9 issues new Work·Bug·Incident keys without leading zeroes and resolves padded legacy aliases. Native canonical-branch parity requires Decal 0.406.0 or newer.
+Portable v10 routes Task·Work·Bug·Incident registration from a linked worktree to the repository's existing canonical main worktree without changing either checkout. Task semantics remain v7, Work·Bug·Incident key semantics and lifecycle/settlement remain v9. Native canonical-branch parity requires Decal 0.406.0 or newer.
+
+For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig → installed-project rollout, follow [the Decal Pack release guide](docs/decal-pack-release-guide.md).
 
 ## Decal Pack
 
