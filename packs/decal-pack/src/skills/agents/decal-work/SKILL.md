@@ -2,7 +2,7 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.8.1"
+  version: "1.8.2"
   portable: true
 ---
 
@@ -51,6 +51,8 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 Use Work for a bounded improvement that is not an observed product defect: wording or style adjustments, small refactors, focused test or documentation reinforcement, and other finite execution units. Link an existing parent Task through `taskRefs` when applicable. Do not use Work to hide a broad feature or a defect with an independently testable cause.
 
 Register before implementation with observed context, desired outcome, completion criteria, expected write-set, version/Remote impact, release mode, and parent Task references.
+
+While the Work is earlier than `development_complete`, test failures found while implementing or verifying its existing scope are normal development feedback. Fix them within the Work and, when useful, record the cause, correction, and rerun evidence in its work log. Do not automatically create a Bug. Split out a Bug or Incident only for a regression observed after development completion, a defect with an independent cause/scope/closure outside the Work, or a security, data-loss, or live-service condition that requires separate tracking.
 
 ## Canonical location
 

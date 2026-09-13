@@ -2,7 +2,7 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.11.1"
+  version: "1.11.2"
   portable: true
 ---
 
@@ -56,6 +56,8 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 Use a Task for a new feature, a broad redesign, or work spanning multiple product surfaces, protocols, storage contracts, or release units. Use Work for a bounded improvement and Bug for an observed defect that restores an existing contract.
 
 Register before implementation. Record scope, exclusions, completion criteria, dependencies, version impact, Remote parity, expected write-set, context budget, and the planned `App.tsx` impact when the repository requires them.
+
+While the Task is earlier than `development_complete`, test failures found while implementing or verifying its existing scope are normal development feedback. Fix them within the Task and, when useful, record the cause, correction, and rerun evidence in its work log. Do not automatically create a Bug. Split out a Bug or Incident only for a regression observed after development completion, a defect with an independent cause/scope/closure outside the Task, or a security, data-loss, or live-service condition that requires separate tracking.
 
 ## Safety and completion
 

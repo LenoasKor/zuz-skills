@@ -105,6 +105,8 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
       "zuz-its-removal-retires-pristine-tools-and-preserves-records",
       "zuz-its-reinstall-previews-existing-record-adoption",
       "active-zuz-its-journal-blocks-removal",
+      "general-build-does-not-require-project-release-stage",
+      "pre-development-complete-test-failures-stay-in-active-record",
     ]) assert.equal(fixtureValue.requiredCases.includes(requiredCase), true, `${fixture.id}: ${requiredCase}`);
   }
 });
@@ -159,20 +161,20 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.modifiedFiles, "preserve-and-block-entire-write");
   assert.equal(packageValue.executionPolicies.packInstallation.obsoleteManagedFiles, "retire-pristine-and-preserve-modified");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.0.1" },
-    { id: "zuz-its", version: "1.0.1" },
+    { id: "development-core", version: "1.0.2" },
+    { id: "zuz-its", version: "1.0.2" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.0.1" },
+    { id: "decal-maintainer", version: "1.0.2" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.11.1",
-    "decal-work": "1.8.1",
-    "decal-bug": "1.8.1",
+    "decal-task": "1.11.2",
+    "decal-work": "1.8.2",
+    "decal-bug": "1.8.2",
     "decal-incident": "1.3.1",
-    "zuz-its": "1.3.0",
+    "zuz-its": "1.3.1",
     "decal-slice": "0.4.8",
     "decal-slice-maintenance": "0.7.3",
     "decal-slice-smoke": "0.5.2",
@@ -181,8 +183,32 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
     assert.equal(packageValue.skills.find((skill) => skill.id === id)?.version, version, id);
   }
+  for (const id of ["decal-task", "decal-work", "decal-bug", "zuz-its"]) {
+    const file = packageValue.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
+    const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.match(content, /earlier than `development_complete`|reaches `development_complete`/u, id);
+    assert.match(content, /Do not automatically create a Bug|do not automatically issue another Bug|Do not create a new Bug merely/u, id);
+  }
+  for (const id of ["decal-build", "decal-deploy", "decaldev-rebuild-relaunch", "decaldev-rebuild-relaunch-worktree"]) {
+    const skill = packageValue.skills.find((candidate) => candidate.id === id);
+    assert.equal(skill?.kind, "prompt", id);
+    const file = packageValue.files.find((candidate) => candidate.sourcePath === skill.sourcePath);
+    const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.match(content, /Showcase 빌드 등록·테스트 흐름/u, id);
+    assert.doesNotMatch(content, /단계가 unset|프로젝트 출시 단계를 먼저 확인/u, id);
+  }
   const packPolicy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
   assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.7.1");
+  for (const [id, version] of Object.entries({
+    "decal-build": "0.3.1",
+    "decal-deploy": "0.3.1",
+    "decal-task": "1.11.2",
+    "decal-work": "1.8.2",
+    "decal-bug": "1.8.2",
+    "zuz-its": "1.3.1",
+    "decaldev-rebuild-relaunch": "0.9.1",
+    "decaldev-rebuild-relaunch-worktree": "0.3.2",
+  })) assert.equal(packPolicy.minimumCompatible[id], version, id);
 
   for (const id of ["decal-task", "decal-work", "decal-bug"]) {
     const file = packageValue.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
@@ -192,7 +218,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.11\.1"/);
+      assert.match(content, /version: "1\.11\.2"/);
       assert.match(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
     }
   }
@@ -245,11 +271,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.0.1 keeps v10 registration while modularizing its delivery", async () => {
+test("Pack 3.0.2 keeps v10 registration while modularizing its delivery", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.0.1");
+  assert.equal(packageValue.packVersion, "3.0.2");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");

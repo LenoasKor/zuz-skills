@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.3.0"
+  version: "1.3.1"
   portable: true
 ---
 
@@ -41,6 +41,7 @@ Task Space, session work activity, Office work, Jig planning, and Slice implemen
 - Use Work when it is a smaller execution item or subtask that still benefits from a stable `WORK-###` reference.
 - Use Bug for an observed product defect whose intended behavior already exists.
 - Use Incident for a real operational outage or service degradation. A Bug may cause an Incident, but neither automatically creates the other.
+- Before the active Task, Work, or Bug reaches `development_complete`, treat test failures inside its implementation and verification scope as development feedback. Fix them in the active record and add cause/correction/rerun notes only when useful; do not automatically issue another Bug. Separate tracking begins for post-development-completion regressions, independently scoped defects, or security, data-loss, and live-service conditions that require their own Bug or Incident.
 
 Preserve the repository's current statuses and lifecycle. Do not invent a Slice object, rewrite IDs, or force a separate Task for every Issue.
 

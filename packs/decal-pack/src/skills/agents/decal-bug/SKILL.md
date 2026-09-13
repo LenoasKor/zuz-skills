@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.8.1"
+  version: "1.8.2"
   portable: true
 ---
 
@@ -49,6 +49,8 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 ## Bug record
 
 Register before modifying product files. Include the observation, expected behavior, cause or diagnostic plan, Remote parity, completion criteria, expected write-set, version impact, release mode, and parent Task references.
+
+Do not create a new Bug merely because a test fails while an existing Task, Work, or Bug is still earlier than `development_complete`. If the failure belongs to that record's current implementation or verification scope, fix it there and, when useful, record the cause, correction, and rerun evidence as trial-and-error history. Create a separate Bug or Incident only for a regression observed after development completion, a defect with an independent cause/scope/closure outside the active record, or a security, data-loss, or live-service condition that requires separate tracking.
 
 ## Canonical location
 
