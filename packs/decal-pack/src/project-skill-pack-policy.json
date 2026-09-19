@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.0.2",
+  "packVersion": "3.0.3",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 2,
@@ -21,7 +21,7 @@
   },
   "minimumCompatible": {
     "decal-commit-ready": "0.9.1",
-    "decal-build": "0.3.1",
+    "decal-build": "0.3.2",
     "decal-deploy": "0.3.1",
     "decal-task": "1.11.2",
     "decal-work": "1.8.2",

@@ -29,6 +29,7 @@
     "decal-native-canonical-branch-parity-requires-0.406.0",
     "zuz-its-preserves-task-work-bug-identities",
     "general-build-does-not-require-project-release-stage",
+    "showcase-release-stage-setting-discovers-capability-before-refusal",
     "pre-development-complete-test-failures-stay-in-active-record",
     "work-remains-a-ticket",
     "incident-and-chat-reference-semantics-match-remote"
