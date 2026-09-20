@@ -76,6 +76,7 @@ function run(root, mode, approved = null, options = {}) {
   for (const moduleId of modules) invocation.push("--module", moduleId);
   for (const provider of providers) invocation.push("--provider", provider);
   invocation.push(mode);
+  if (options.commit && mode === "--write") invocation.push("--commit");
   if (approved) invocation.push("--approved-plan-digest", approved);
   const result = spawnSync(process.execPath, invocation, { encoding: "utf8" });
   return { ...result, value: JSON.parse(result.stdout) };
@@ -189,7 +190,7 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
     assert.equal(rejected.status, 2);
     assert.equal(rejected.value.code, "approval_plan_digest_mismatch");
     const installed = run(root, "--write", preview.value.installationPlanDigest);
-    assert.equal(installed.status, 0, installed.stderr);
+    assert.equal(installed.status, 0, `${installed.stderr}\n${installed.stdout}`);
     assert.equal(installed.value.status, "installed");
     assert.equal(await readFile(path.join(root, ".claude/skills/deploy/SKILL.md"), "utf8"), "user deploy skill\n");
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
@@ -233,7 +234,94 @@ test("initial bootstrap binds canonical root, release, selection, and exact file
   }
 });
 
-test("Pack 2.0.0 lock upgrades to 3.0.3 and preserves unknown obsolete files", async () => {
+test("ITS installation owns only its dedicated rule block and preserves repository rules", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-rules-"));
+  try {
+    const repositoryRules = "# Repository rules\n\nKeep this line byte-for-byte.\n";
+    await writeFile(path.join(root, "AGENTS.md"), repositoryRules);
+    const { preview } = await installSelection(root, ["zuz-its"], ["codex"]);
+    assert.deepEqual(preview.value.plannedRuleFiles.map((file) => file.path), ["AGENTS.md", "CLAUDE.md"]);
+    const agents = await readFile(path.join(root, "AGENTS.md"), "utf8");
+    const claude = await readFile(path.join(root, "CLAUDE.md"), "utf8");
+    for (const source of [agents, claude]) {
+      assert.equal(source.match(/<!-- decal-pack-rules:start -->/gu)?.length, 1);
+      assert.match(source, /외부 개발환경도 작업을 거부하지 않고/u);
+    }
+    assert.ok(agents.startsWith(repositoryRules));
+
+    const outsideEdit = agents.replace("Keep this line byte-for-byte.", "Repository-owned edit is preserved.");
+    await writeFile(path.join(root, "AGENTS.md"), outsideEdit);
+    assert.equal(run(root, "--dry-run", null, { modules: ["zuz-its"], providers: ["codex"] }).value.status, "current");
+
+    await writeFile(path.join(root, "AGENTS.md"), outsideEdit.replace("외부 개발환경도 작업을 거부하지 않고", "사용자가 수정한 블록"));
+    const blocked = run(root, "--dry-run", null, { modules: ["zuz-its"], providers: ["codex"] });
+    assert.equal(blocked.value.status, "blocked");
+    assert.equal(blocked.value.conflictDetails.find((item) => item.path === "AGENTS.md")?.reason, "managed_rule_block_modified");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("opt-in commit settles only the Pack write-set and leaves unrelated worktree changes", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-exact-commit-"));
+  try {
+    const git = (gitArgs) => execFileSync("git", gitArgs, { cwd: root, encoding: "utf8" }).trim();
+    git(["init", "-b", "main"]);
+    git(["config", "user.name", "Fixture"]);
+    git(["config", "user.email", "fixture@example.invalid"]);
+    await writeFile(path.join(root, "unrelated.txt"), "before\n");
+    git(["add", "unrelated.txt"]);
+    git(["commit", "-m", "fixture: baseline"]);
+    await writeFile(path.join(root, "unrelated.txt"), "after\n");
+
+    const options = { modules: ["zuz-its"], providers: ["codex"], commit: true };
+    const preview = run(root, "--dry-run", null, options);
+    const installed = run(root, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(installed.status, 0, installed.stderr);
+    assert.equal(installed.value.gitOutcome, "committed");
+    assert.match(installed.value.commit.commitSha, /^[0-9a-f]{40}$/u);
+    assert.match(installed.value.commit.writeSetDigest, /^sha256:[0-9a-f]{64}$/u);
+    assert.deepEqual(
+      git(["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", "HEAD"]).split("\n").sort(),
+      [...preview.value.writeSet].sort(),
+    );
+    assert.equal(git(["status", "--short"]), "M unrelated.txt");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("commit request reports typed non-git and staged-change outcomes without ignoring Pack files", async () => {
+  const nonGit = await mkdtemp(path.join(tmpdir(), "zuz-pack-non-git-"));
+  const staged = await mkdtemp(path.join(tmpdir(), "zuz-pack-staged-"));
+  try {
+    let options = { modules: ["zuz-its"], providers: ["codex"], commit: true };
+    let preview = run(nonGit, "--dry-run", null, options);
+    let installed = run(nonGit, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(installed.status, 0, `${installed.stderr}\n${installed.stdout}`);
+    assert.equal(installed.value.gitOutcome, "installed_not_git");
+
+    const git = (gitArgs) => execFileSync("git", gitArgs, { cwd: staged, encoding: "utf8" }).trim();
+    git(["init", "-b", "main"]);
+    git(["config", "user.name", "Fixture"]);
+    git(["config", "user.email", "fixture@example.invalid"]);
+    await writeFile(path.join(staged, "staged.txt"), "baseline\n");
+    git(["add", "staged.txt"]);
+    git(["commit", "-m", "fixture: baseline"]);
+    await writeFile(path.join(staged, "staged.txt"), "staged change\n");
+    git(["add", "staged.txt"]);
+    preview = run(staged, "--dry-run", null, options);
+    installed = run(staged, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(installed.value.gitOutcome, "installed_commit_required");
+    assert.equal(installed.value.gitBlockReason, "git_staged_changes");
+    assert.equal(git(["diff", "--cached", "--name-only"]), "staged.txt");
+  } finally {
+    await rm(nonGit, { recursive: true, force: true });
+    await rm(staged, { recursive: true, force: true });
+  }
+});
+
+test("Pack 2.0.0 lock upgrades to the current candidate and preserves unknown obsolete files", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-update-"));
   try {
     await installOld(root);
@@ -252,7 +340,7 @@ test("Pack 2.0.0 lock upgrades to 3.0.3 and preserves unknown obsolete files", a
     assert.equal(updated.value.status, "updated");
     assert.deepEqual(await readFile(obsolete), obsoleteBefore);
     const lock = JSON.parse(await readFile(path.join(root, ".decal/decal-pack.lock.json"), "utf8"));
-    assert.equal(lock.packVersion, "3.0.3");
+    assert.equal(lock.packVersion, sourceDescriptor.packVersion);
     assert.equal(lock.mode, "change-modules");
     assert.equal(lock.installationPlanDigest, preview.value.installationPlanDigest);
     assert.equal(lock.previousRelease.packVersion, "2.0.0");

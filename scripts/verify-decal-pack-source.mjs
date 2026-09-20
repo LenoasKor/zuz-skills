@@ -31,13 +31,16 @@ if (descriptor.executionPolicies?.taskRegistryInitialization?.writer !== "contra
 if (descriptor.executionPolicies?.taskRegistryInitialization?.summaryRepairWriter !== "contracts/task-work-bug/repair-task-registry-summary.mjs") failures.push("Task registry summary repair path must be canonical");
 if (descriptor.executionPolicies?.taskRegistryInitialization?.automaticInstall !== false) failures.push("Pack installation must not initialize a Task registry");
 const expectedPackInstallation = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   modes: ["initial-pack-bootstrap", "update", "change-modules"],
   approvalArgument: "--approved-plan-digest",
-  approvalBinding: ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
-  existingLock: "plain-v2-module-state",
+  approvalBinding: ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests", "managed-rule-blocks"],
+  existingLock: "plain-v2-module-and-rule-state",
   modifiedFiles: "preserve-and-block-entire-write",
   obsoleteManagedFiles: "retire-pristine-and-preserve-modified",
+  managedRuleFiles: "dedicated-marker-preserve-outside-block-and-block-modified",
+  gitSettlement: "opt-in-exact-write-set-commit",
+  gitBlockedResult: "installation-preserved-and-typed",
   rollbackScope: ["create", "update", "restore", "retire", "installation-lock"],
 };
 if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");

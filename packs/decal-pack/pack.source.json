@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "3.0.3",
+  "packVersion": "3.1.0",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": ["LICENSE", "NOTICE"],
@@ -35,7 +35,7 @@
     },
     {
       "id": "zuz-its",
-      "version": "1.0.2",
+      "version": "1.1.0",
       "title": "zuz ITS · Task·Work·Issue",
       "description": "기존 Task·Work·Bug 자료의 호환성을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,
@@ -201,13 +201,16 @@
       "automaticInstall": false
     },
     "packInstallation": {
-      "schemaVersion": 2,
+      "schemaVersion": 3,
       "modes": ["initial-pack-bootstrap", "update", "change-modules"],
       "approvalArgument": "--approved-plan-digest",
-      "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"],
-      "existingLock": "plain-v2-module-state",
+      "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests", "managed-rule-blocks"],
+      "existingLock": "plain-v2-module-and-rule-state",
       "modifiedFiles": "preserve-and-block-entire-write",
       "obsoleteManagedFiles": "retire-pristine-and-preserve-modified",
+      "managedRuleFiles": "dedicated-marker-preserve-outside-block-and-block-modified",
+      "gitSettlement": "opt-in-exact-write-set-commit",
+      "gitBlockedResult": "installation-preserved-and-typed",
       "rollbackScope": ["create", "update", "restore", "retire", "installation-lock"]
     }
   },

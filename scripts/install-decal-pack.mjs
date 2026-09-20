@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { createHash, randomUUID } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import {
+  copyFile,
   link,
   lstat,
   mkdir,
@@ -27,6 +29,22 @@ const LOCK_SCHEMA_V1 = "zuz.decal-pack.installation-lock/v1";
 const LOCK_SCHEMA = "zuz.decal-pack.installation-lock/v2";
 const RETIRED_ROOT_RELATIVE = ".decal/retired/decal-project-pack";
 const KNOWN_PROVIDERS = new Set(["codex", "claude", "gemini", "acp"]);
+const PACK_RULE_FILES = ["AGENTS.md", "CLAUDE.md"];
+const PACK_RULES_BLOCK_START = "<!-- decal-pack-rules:start -->";
+const PACK_RULES_BLOCK_END = "<!-- decal-pack-rules:end -->";
+
+function decalPackRulesBlock() {
+  const body = [
+    "## Decal Pack 변경 등록 규칙",
+    "",
+    "- 프로젝트 코드·문서·설정·자산·Git 또는 배포 상태를 바꾸기 전에 `Task`, `Work`, `Bug` 중 정확히 하나를 주 작업 정본으로 선택하고 등록합니다.",
+    "- 읽기 전용 질의·브리핑·조사는 등록 없이 진행할 수 있지만, 실제 변경으로 전환하는 순간 먼저 등록합니다.",
+    "- 요청 범위를 정확히 포함하는 기존 정본이 있으면 재사용하고 중복 등록하지 않습니다.",
+    "- 사용자가 `등록`이라고 말하지 않아도 AI가 변경 업무를 식별하면 종류·제목·분류 근거·상위 Task·범위를 먼저 제안합니다.",
+    "- Decal Native 기능이 없는 외부 개발환경도 작업을 거부하지 않고 설치된 portable zuz ITS 스킬과 계약의 외부 host fallback으로 등록·진행합니다.",
+  ].join("\n");
+  return `${PACK_RULES_BLOCK_START}\n<!-- schema: zuz.decal-pack.project-rules/v1; content-sha256: ${sha256(Buffer.from(body))} -->\n${body}\n${PACK_RULES_BLOCK_END}`;
+}
 
 function fail(code, detail = null) {
   const error = new Error(code);
@@ -246,6 +264,7 @@ function validateInstallationLock(value, expectedPackId) {
   if (value.obsoleteManagedFiles !== undefined && !Array.isArray(value.obsoleteManagedFiles)) fail("unsupported_installation_lock");
   if (value.retiredFiles !== undefined && !Array.isArray(value.retiredFiles)) fail("unsupported_installation_lock");
   if (value.moduleStates !== undefined && !Array.isArray(value.moduleStates)) fail("unsupported_installation_lock");
+  if (value.ruleFiles !== undefined && !Array.isArray(value.ruleFiles)) fail("unsupported_installation_lock");
   for (const module of value.moduleStates ?? []) {
     if (
       !module
@@ -297,6 +316,16 @@ function validateInstallationLock(value, expectedPackId) {
     if (!file.retiredPath.startsWith(`${RETIRED_ROOT_RELATIVE}/`)) fail("unsupported_installation_lock");
     seen.add(file.path);
   }
+  const seenRuleFiles = new Set();
+  for (const file of value.ruleFiles ?? []) {
+    if (
+      !file
+      || !PACK_RULE_FILES.includes(file.path)
+      || !/^[0-9a-f]{64}$/u.test(file.blockSha256 ?? "")
+      || seenRuleFiles.has(file.path)
+    ) fail("unsupported_installation_lock");
+    seenRuleFiles.add(file.path);
+  }
   return value;
 }
 
@@ -323,6 +352,80 @@ async function currentFile(root, relative) {
     if (error?.code === "ENOENT") return { target, exists: false, bytes: null, sha256: null };
     throw error;
   }
+}
+
+function uniquePackRulesBlock(source, relative) {
+  const starts = source.split(PACK_RULES_BLOCK_START).length - 1;
+  const ends = source.split(PACK_RULES_BLOCK_END).length - 1;
+  if (starts === 0 && ends === 0) return null;
+  if (starts !== 1 || ends !== 1) fail("managed_rule_block_invalid", relative);
+  const start = source.indexOf(PACK_RULES_BLOCK_START);
+  const end = source.indexOf(PACK_RULES_BLOCK_END, start) + PACK_RULES_BLOCK_END.length;
+  if (end < start + PACK_RULES_BLOCK_START.length) fail("managed_rule_block_invalid", relative);
+  return { start, end, block: source.slice(start, end) };
+}
+
+function appendPackRulesBlock(source, block) {
+  if (!source) return `${block}\n`;
+  const separator = source.endsWith("\n\n") ? "" : source.endsWith("\n") ? "\n" : "\n\n";
+  return `${source}${separator}${block}\n`;
+}
+
+async function plannedPackRuleFiles(root, hasIts, lock) {
+  const desiredBlock = decalPackRulesBlock();
+  const desiredBlockSha256 = sha256(Buffer.from(desiredBlock));
+  const previous = new Map((lock?.value.ruleFiles ?? []).map((file) => [file.path, file]));
+  const entries = [];
+  const conflicts = [];
+  for (const relative of PACK_RULE_FILES) {
+    const current = await currentFile(root, relative);
+    let source = "";
+    if (current.exists) {
+      source = current.bytes.toString("utf8");
+      if (!Buffer.from(source).equals(current.bytes)) fail("managed_rule_file_not_utf8", relative);
+    }
+    const found = uniquePackRulesBlock(source, relative);
+    const prior = previous.get(relative) ?? null;
+    let next = source;
+    let reason = null;
+    if (found) {
+      const blockSha256 = sha256(Buffer.from(found.block));
+      if (prior ? blockSha256 !== prior.blockSha256 : blockSha256 !== desiredBlockSha256) {
+        reason = prior ? "managed_rule_block_modified" : "unmanaged_rule_block_present";
+      } else if (hasIts) {
+        next = `${source.slice(0, found.start)}${desiredBlock}${source.slice(found.end)}`;
+      } else if (prior) {
+        next = `${source.slice(0, found.start)}${source.slice(found.end)}`;
+      } else {
+        reason = "unmanaged_rule_block_present";
+      }
+    } else if (prior) {
+      reason = "managed_rule_block_missing";
+    } else if (hasIts) {
+      next = appendPackRulesBlock(source, desiredBlock);
+    }
+    if (reason) {
+      conflicts.push({
+        path: relative,
+        reason,
+        currentSha256: current.sha256,
+        previousSha256: prior?.blockSha256 ?? null,
+        desiredSha256: hasIts ? desiredBlockSha256 : null,
+      });
+      continue;
+    }
+    const bytes = Buffer.from(next);
+    entries.push({
+      path: relative,
+      target: current.target,
+      state: bytes.equals(current.bytes ?? Buffer.alloc(0)) ? "unchanged" : current.exists ? "update" : "create",
+      currentSha256: current.sha256,
+      sha256: sha256(bytes),
+      bytes,
+      blockSha256: hasIts ? desiredBlockSha256 : null,
+    });
+  }
+  return { entries, conflicts };
 }
 
 function desiredFiles(packageValue, modules, providers) {
@@ -447,6 +550,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   const hadIts = lockedModules.some((moduleId) => moduleId === "task-work-bug" || moduleId === "zuz-its");
   const hasIts = modules.includes("zuz-its");
   if (hadIts && !hasIts) await assertItsRemovalIsIdle(root);
+  const rulePlan = await plannedPackRuleFiles(root, hasIts, lock);
 
   const mode = !lock ? "initial-pack-bootstrap" : selectionChanged ? "change-modules" : "update";
   const previousManagedFiles = [
@@ -554,6 +658,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       previousSha256: entry.sha256,
       desiredSha256: null,
     })));
+  conflictDetails.push(...rulePlan.conflicts);
   const release = releaseIdentity(packageValue, packageSha256);
   const priorRelease = previousRelease(lock);
   const releaseAlreadyCurrent = Boolean(lock)
@@ -562,18 +667,24 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     && lock.value.sourceRevision === packageValue.sourceRevision
     && lock.value.manifestSha256 === packageValue.manifestSha256
     && lock.value.packageSha256 === packageSha256
+    && stableJson(lock.value.ruleFiles ?? []) === stableJson(
+      rulePlan.entries.filter((entry) => entry.blockSha256).map((entry) => ({ path: entry.path, blockSha256: entry.blockSha256 })),
+    )
     && new Set(["initial-pack-bootstrap", "update", "change-modules"]).has(lock.value.mode)
     && /^sha256:[0-9a-f]{64}$/u.test(lock.value.installationPlanDigest ?? "");
   const status = conflictDetails.length > 0
     ? "blocked"
     : releaseAlreadyCurrent
       && entries.every((entry) => entry.state === "unchanged")
+      && rulePlan.entries.every((entry) => entry.state === "unchanged")
       ? "current"
       : "planned";
   const writeSet = status === "current"
     ? []
     : [
       ...entries.filter((entry) => new Set(["create", "update", "restore"]).has(entry.state)).map((entry) => entry.path),
+      ...entries.filter((entry) => entry.state === "restore").map((entry) => entry.retiredPath),
+      ...rulePlan.entries.filter((entry) => new Set(["create", "update"]).has(entry.state)).map((entry) => entry.path),
       ...retirementEntries.flatMap((entry) => [entry.path, entry.retiredPath]),
       INSTALLATION_LOCK_RELATIVE,
     ];
@@ -602,6 +713,13 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     moduleStates,
     providers,
     plannedFiles,
+    plannedRuleFiles: rulePlan.entries.map(({ path: filePath, state, currentSha256, sha256: desiredSha256, blockSha256 }) => ({
+      path: filePath,
+      state,
+      currentSha256,
+      desiredSha256,
+      blockSha256,
+    })),
     obsoleteManagedFiles,
     retirementEntries: retirementEntries.map(({ target: _target, retiredTarget: _retiredTarget, ...entry }) => entry),
     adoption: { required: addingIts && adoptionPaths.length > 0, preservedPaths: adoptionPaths },
@@ -622,6 +740,9 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     moduleStates,
     providers,
     files: entries.map(({ path: filePath, provider, sha256: digest }) => ({ path: filePath, provider, sha256: digest })),
+    ruleFiles: rulePlan.entries
+      .filter((entry) => entry.blockSha256)
+      .map((entry) => ({ path: entry.path, blockSha256: entry.blockSha256 })),
     obsoleteManagedFiles: obsoleteManagedFiles.filter((entry) => !entry.retiredPath && !entry.moduleId),
     retiredFiles: [
       ...(lock?.value.retiredFiles ?? []).filter((file) => !desiredPaths.has(file.path)),
@@ -635,12 +756,27 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     ],
   };
   const lockBytes = Buffer.from(`${JSON.stringify(lockValue, null, 2)}\n`);
+  const commitExpected = new Map();
+  for (const entry of entries.filter((item) => new Set(["create", "update", "restore"]).has(item.state))) {
+    commitExpected.set(entry.path, entry.sha256);
+    if (entry.state === "restore") commitExpected.set(entry.retiredPath, null);
+  }
+  for (const entry of rulePlan.entries.filter((item) => new Set(["create", "update"]).has(item.state))) {
+    commitExpected.set(entry.path, entry.sha256);
+  }
+  for (const entry of retirementEntries) {
+    commitExpected.set(entry.path, null);
+    commitExpected.set(entry.retiredPath, entry.sha256);
+  }
+  commitExpected.set(INSTALLATION_LOCK_RELATIVE, sha256(lockBytes));
   return {
     packageValue,
     root,
     lock,
     lockBytes,
+    commitExpected: [...commitExpected].map(([filePath, digest]) => ({ path: filePath, sha256: digest })),
     entries,
+    ruleEntries: rulePlan.entries,
     retirementEntries,
     public: {
       schema: PLAN_SCHEMA,
@@ -662,12 +798,14 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       restoreCount: entries.filter((entry) => entry.state === "restore").length,
       retireCount: retirementEntries.length,
       unchangedCount: entries.filter((entry) => entry.state === "unchanged").length,
+      ruleFileChangeCount: rulePlan.entries.filter((entry) => entry.state !== "unchanged").length,
       conflicts: conflictDetails.map((entry) => entry.path),
       conflictDetails,
       obsoleteManagedFiles,
       retirementEntries: retirementEntries.map(({ target: _target, retiredTarget: _retiredTarget, ...entry }) => entry),
       adoption: { required: addingIts && adoptionPaths.length > 0, preservedPaths: adoptionPaths },
       plannedFiles,
+      plannedRuleFiles: approvalBinding.plannedRuleFiles,
       writeSet,
       lockPath: INSTALLATION_LOCK_RELATIVE,
     },
@@ -835,6 +973,164 @@ async function applyTransaction(root, writes, testFailAt = null) {
   }
 }
 
+function runGit(root, gitArgs) {
+  return spawnSync("git", gitArgs, { cwd: root, encoding: "utf8" });
+}
+
+function gitText(root, gitArgs) {
+  const result = runGit(root, gitArgs);
+  if (result.status !== 0) fail("git_command_failed", { args: gitArgs, stderr: result.stderr.trim() });
+  return result.stdout.trim();
+}
+
+async function gitCommitBlockReason(root) {
+  const topLevel = runGit(root, ["rev-parse", "--show-toplevel"]);
+  if (topLevel.status !== 0) return "not_git_repository";
+  if (await realpath(topLevel.stdout.trim()).catch(() => null) !== root) return "git_root_mismatch";
+  for (const name of ["MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD", "rebase-merge", "rebase-apply"]) {
+    const gitPath = runGit(root, ["rev-parse", "--git-path", name]);
+    if (gitPath.status !== 0) return "git_state_unavailable";
+    if (await metadata(path.resolve(root, gitPath.stdout.trim()))) return "git_operation_in_progress";
+  }
+  const unmerged = runGit(root, ["diff", "--name-only", "--diff-filter=U", "-z"]);
+  if (unmerged.status !== 0) return "git_state_unavailable";
+  if (unmerged.stdout.length > 0) return "git_unmerged_paths";
+  const staged = runGit(root, ["diff", "--cached", "--quiet", "--"]);
+  if (![0, 1].includes(staged.status)) return "git_state_unavailable";
+  if (staged.status === 1) return "git_staged_changes";
+  for (const hook of ["pre-commit", "prepare-commit-msg", "commit-msg", "post-commit"]) {
+    const hookPath = runGit(root, ["rev-parse", "--git-path", `hooks/${hook}`]);
+    if (hookPath.status !== 0) return "git_state_unavailable";
+    if (await metadata(path.resolve(root, hookPath.stdout.trim()))) return "git_hooks_unsupported";
+  }
+  return null;
+}
+
+async function settleExactPackCommit(root, plan) {
+  const blockReason = await gitCommitBlockReason(root).catch(() => "git_state_unavailable");
+  if (blockReason === "not_git_repository") {
+    return { gitOutcome: "installed_not_git", gitBlockReason: blockReason, commit: null };
+  }
+  if (blockReason) {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: blockReason, commit: null };
+  }
+  const paths = [...new Set(plan.public.writeSet)].sort((left, right) => left.localeCompare(right));
+  for (const expected of plan.commitExpected) {
+    const observed = await currentFile(root, expected.path);
+    if (observed.sha256 !== expected.sha256) {
+      return { gitOutcome: "installed_commit_required", gitBlockReason: "git_target_changed", commit: null };
+    }
+  }
+  const renameProbe = runGit(root, ["diff", "--name-status", "-z", "-M", "-C", "HEAD", "--", ...paths]);
+  if (renameProbe.status !== 0 || /(?:^|\0)[RC][0-9]*\0/u.test(renameProbe.stdout)) {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: "git_rename_copy_ambiguous", commit: null };
+  }
+  let beforeHead;
+  let beforeBranch;
+  try {
+    beforeHead = gitText(root, ["rev-parse", "HEAD"]);
+    beforeBranch = gitText(root, ["symbolic-ref", "--quiet", "--short", "HEAD"]);
+  } catch {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: "git_head_unavailable", commit: null };
+  }
+  if (!beforeBranch) {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: "git_detached_head", commit: null };
+  }
+  let indexPathText;
+  try {
+    indexPathText = gitText(root, ["rev-parse", "--git-path", "index"]);
+  } catch {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: "git_state_unavailable", commit: null };
+  }
+  const indexPath = path.resolve(root, indexPathText);
+  const indexBackup = `${indexPath}.decal-pack-${randomUUID()}.bak`;
+  const indexExisted = Boolean(await metadata(indexPath));
+  if (indexExisted) {
+    try {
+      await copyFile(indexPath, indexBackup);
+    } catch {
+      return { gitOutcome: "installed_commit_required", gitBlockReason: "git_index_backup_failed", commit: null };
+    }
+  }
+  const restoreIndex = async () => {
+    if (indexExisted) await copyFile(indexBackup, indexPath);
+    else await rm(indexPath, { force: true });
+  };
+  let createdCommitSha = null;
+  try {
+    const untracked = [];
+    for (const relative of paths) {
+      const tracked = runGit(root, ["ls-files", "--error-unmatch", "--", relative]);
+      if (tracked.status !== 0 && (await currentFile(root, relative)).exists) untracked.push(relative);
+    }
+    if (untracked.length > 0) {
+      const intent = runGit(root, ["add", "--intent-to-add", "--", ...untracked]);
+      if (intent.status !== 0) fail("git_intent_to_add_failed", intent.stderr.trim());
+    }
+    const commitMessage = `chore(decal-pack): install ${plan.public.packVersion}`;
+    const committed = runGit(root, ["commit", "--only", "-m", commitMessage, "--", ...paths]);
+    if (committed.status !== 0) fail("git_commit_failed", committed.stderr.trim());
+    const commitSha = gitText(root, ["rev-parse", "HEAD"]);
+    createdCommitSha = commitSha;
+    const treeSha = gitText(root, ["rev-parse", "HEAD^{tree}"]);
+    const branch = gitText(root, ["symbolic-ref", "--quiet", "--short", "HEAD"]);
+    const actual = gitText(root, ["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", commitSha])
+      .split("\n").filter(Boolean).sort((left, right) => left.localeCompare(right));
+    if (branch !== beforeBranch || stableJson(actual) !== stableJson(paths)) {
+      const rollback = runGit(root, ["update-ref", "HEAD", beforeHead, commitSha]);
+      await restoreIndex();
+      if (rollback.status !== 0) fail("git_commit_rollback_failed");
+      createdCommitSha = null;
+      return { gitOutcome: "installed_commit_required", gitBlockReason: "git_unexpected_commit_scope", commit: null };
+    }
+    for (const expected of plan.commitExpected) {
+      const object = `${commitSha}:${expected.path}`;
+      if (expected.sha256 === null) {
+        if (runGit(root, ["cat-file", "-e", object]).status === 0) fail("git_committed_content_mismatch", expected.path);
+      } else {
+        const committedBytes = spawnSync("git", ["show", object], { cwd: root, encoding: null });
+        if (committedBytes.status !== 0 || sha256(committedBytes.stdout) !== expected.sha256) {
+          fail("git_committed_content_mismatch", expected.path);
+        }
+      }
+    }
+    const receipt = {
+      files: plan.commitExpected,
+      writeSetDigest: prefixedSha256(stableJson(plan.commitExpected)),
+    };
+    return {
+      gitOutcome: "committed",
+      gitBlockReason: null,
+      commit: {
+        schema: "zuz.decal-pack.git-settlement/v1",
+        commitSha,
+        treeSha,
+        branch,
+        baseHead: beforeHead,
+        writeSetDigest: receipt.writeSetDigest,
+        files: receipt.files,
+        packVersion: plan.public.packVersion,
+        packageSha256: plan.public.packageSha256,
+      },
+    };
+  } catch (error) {
+    if (createdCommitSha) {
+      const rollback = runGit(root, ["update-ref", "HEAD", beforeHead, createdCommitSha]);
+      if (rollback.status !== 0) {
+        return { gitOutcome: "installed_commit_required", gitBlockReason: "git_commit_rollback_failed", commit: null };
+      }
+    }
+    await restoreIndex().catch(() => undefined);
+    return {
+      gitOutcome: "installed_commit_required",
+      gitBlockReason: error?.code ?? "git_commit_failed",
+      commit: null,
+    };
+  } finally {
+    await rm(indexBackup, { force: true }).catch(() => undefined);
+  }
+}
+
 export async function planInstallation(options) {
   return (await createInstallationPlan(options)).public;
 }
@@ -845,6 +1141,7 @@ export async function installPackage({
   modules,
   providers,
   approvedPlanDigest,
+  commit = false,
   testFailAt = null,
 }) {
   const root = await canonicalProjectRoot(rootValue);
@@ -853,7 +1150,9 @@ export async function installPackage({
     const plan = await createInstallationPlan({ packagePath, rootValue: root, modules, providers });
     if (approvedPlanDigest !== plan.public.installationPlanDigest) fail("approval_plan_digest_mismatch");
     if (plan.public.status === "blocked") fail("conflict_detected", plan.public.conflictDetails);
-    if (plan.public.status === "current") return plan.public;
+    if (plan.public.status === "current") {
+      return { ...plan.public, gitOutcome: commit ? "not_required" : "not_requested", gitBlockReason: null, commit: null };
+    }
     const writes = plan.entries
       .filter((entry) => new Set(["create", "update", "restore"]).has(entry.state))
       .map((entry) => ({
@@ -866,6 +1165,16 @@ export async function installPackage({
         retiredTarget: entry.retiredPath ? path.join(root, ...entry.retiredPath.split("/")) : null,
         bytes: entry.bytes,
       }));
+    writes.push(...plan.ruleEntries
+      .filter((entry) => new Set(["create", "update"]).has(entry.state))
+      .map((entry) => ({
+        relative: entry.path,
+        target: entry.target,
+        state: entry.state,
+        beforeSha256: entry.currentSha256,
+        afterSha256: entry.sha256,
+        bytes: entry.bytes,
+      })));
     writes.push(...plan.retirementEntries.map((entry) => ({
       relative: entry.path,
       target: entry.target,
@@ -884,7 +1193,14 @@ export async function installPackage({
       bytes: plan.lockBytes,
     });
     await applyTransaction(root, writes, testFailAt);
-    return { ...plan.public, status: plan.public.mode === "initial-pack-bootstrap" ? "installed" : "updated" };
+    const gitResult = commit
+      ? await settleExactPackCommit(root, plan)
+      : { gitOutcome: "not_requested", gitBlockReason: null, commit: null };
+    return {
+      ...plan.public,
+      status: plan.public.mode === "initial-pack-bootstrap" ? "installed" : "updated",
+      ...gitResult,
+    };
   } finally {
     await release();
   }
@@ -897,7 +1213,8 @@ async function main() {
     const rootValue = parsed.get("--root");
     const dryRun = parsed.has("--dry-run");
     const write = parsed.has("--write");
-    if (typeof packagePath !== "string" || typeof rootValue !== "string" || dryRun === write) fail("usage_error");
+    const commit = parsed.has("--commit");
+    if (typeof packagePath !== "string" || typeof rootValue !== "string" || dryRun === write || (commit && !write)) fail("usage_error");
     const options = {
       packagePath,
       rootValue,
@@ -906,7 +1223,7 @@ async function main() {
     };
     const result = dryRun
       ? await planInstallation(options)
-      : await installPackage({ ...options, approvedPlanDigest: parsed.get("--approved-plan-digest") });
+      : await installPackage({ ...options, approvedPlanDigest: parsed.get("--approved-plan-digest"), commit });
     process.stdout.write(`${JSON.stringify(result)}\n`);
   } catch (error) {
     process.stdout.write(`${JSON.stringify({ schema: PLAN_SCHEMA, status: "rejected", code: error.code || "installation_failed", detail: error.detail ?? null })}\n`);

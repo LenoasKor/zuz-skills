@@ -161,9 +161,12 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.approvalArgument, "--approved-plan-digest");
   assert.equal(packageValue.executionPolicies.packInstallation.modifiedFiles, "preserve-and-block-entire-write");
   assert.equal(packageValue.executionPolicies.packInstallation.obsoleteManagedFiles, "retire-pristine-and-preserve-modified");
+  assert.equal(packageValue.executionPolicies.packInstallation.managedRuleFiles, "dedicated-marker-preserve-outside-block-and-block-modified");
+  assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
+  assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.0.3" },
-    { id: "zuz-its", version: "1.0.2" },
+    { id: "zuz-its", version: "1.1.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.0.2" },
   ]);
@@ -280,11 +283,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.0.3 keeps v10 registration while modularizing its delivery", async () => {
+test("Pack 3.1.0 keeps v10 registration while adding safe project-rule and Git settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.0.3");
+  assert.equal(packageValue.packVersion, "3.1.0");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");

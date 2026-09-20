@@ -105,15 +105,18 @@
         "packInstallation": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["schemaVersion", "modes", "approvalArgument", "approvalBinding", "existingLock", "modifiedFiles", "obsoleteManagedFiles", "rollbackScope"],
+          "required": ["schemaVersion", "modes", "approvalArgument", "approvalBinding", "existingLock", "modifiedFiles", "obsoleteManagedFiles", "managedRuleFiles", "gitSettlement", "gitBlockedResult", "rollbackScope"],
           "properties": {
-            "schemaVersion": { "const": 2 },
+            "schemaVersion": { "const": 3 },
             "modes": { "const": ["initial-pack-bootstrap", "update", "change-modules"] },
             "approvalArgument": { "const": "--approved-plan-digest" },
-            "approvalBinding": { "const": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests"] },
-            "existingLock": { "const": "plain-v2-module-state" },
+            "approvalBinding": { "const": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests", "managed-rule-blocks"] },
+            "existingLock": { "const": "plain-v2-module-and-rule-state" },
             "modifiedFiles": { "const": "preserve-and-block-entire-write" },
             "obsoleteManagedFiles": { "const": "retire-pristine-and-preserve-modified" },
+            "managedRuleFiles": { "const": "dedicated-marker-preserve-outside-block-and-block-modified" },
+            "gitSettlement": { "const": "opt-in-exact-write-set-commit" },
+            "gitBlockedResult": { "const": "installation-preserved-and-typed" },
             "rollbackScope": { "const": ["create", "update", "restore", "retire", "installation-lock"] }
           }
         }

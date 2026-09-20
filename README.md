@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.0.3 is the current release line. It keeps project release-stage questions inside the Showcase build-registration boundary, teaches external hosts to discover a supported stage-setting capability before refusing, separates general development tools from optional zuz ITS, and preserves the published v1-v10 contract bytes.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.0.3 is the latest released line. The next 3.1.0 candidate adds a dedicated, non-destructive project-rule block and an opt-in exact Git settlement for Pack installation while preserving unrelated worktree changes.
 
 - source tag/release: `decal-pack-v3.0.3`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
