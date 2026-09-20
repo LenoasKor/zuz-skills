@@ -535,6 +535,21 @@ function previousRelease(lock) {
   };
 }
 
+async function pristineDirtyManagedFiles(root, entries, previousByPath) {
+  const topLevel = runGit(root, ["rev-parse", "--show-toplevel"]);
+  if (topLevel.status !== 0) return [];
+  if (await realpath(topLevel.stdout.trim()).catch(() => null) !== root) return [];
+  const files = [];
+  for (const entry of entries) {
+    if (entry.state !== "unchanged" || !previousByPath.has(entry.path)) continue;
+    const committed = spawnSync("git", ["show", `HEAD:${entry.path}`], { cwd: root, encoding: null });
+    if (committed.status !== 0 || sha256(committed.stdout) !== entry.sha256) {
+      files.push({ path: entry.path, sha256: entry.sha256 });
+    }
+  }
+  return files.sort((left, right) => left.path.localeCompare(right.path));
+}
+
 async function createInstallationPlan({ packagePath, rootValue, modules: moduleInput, providers: providerInput }) {
   const root = await canonicalProjectRoot(rootValue);
   const { packageValue, packageSha256 } = await loadPackage(packagePath);
@@ -658,6 +673,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       desiredSha256: null,
     })));
   conflictDetails.push(...rulePlan.conflicts);
+  const gitSettlementFiles = await pristineDirtyManagedFiles(root, entries, previousByPath);
   const release = releaseIdentity(packageValue, packageSha256);
   const priorRelease = previousRelease(lock);
   const releaseAlreadyCurrent = Boolean(lock)
@@ -676,6 +692,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     : releaseAlreadyCurrent
       && entries.every((entry) => entry.state === "unchanged")
       && rulePlan.entries.every((entry) => entry.state === "unchanged")
+      && gitSettlementFiles.length === 0
       ? "current"
       : "planned";
   const writeSet = status === "current"
@@ -687,6 +704,10 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       ...retirementEntries.flatMap((entry) => [entry.path, entry.retiredPath]),
       INSTALLATION_LOCK_RELATIVE,
     ];
+  const gitWriteSet = status === "current"
+    ? []
+    : [...new Set([...writeSet, ...gitSettlementFiles.map((file) => file.path)])]
+      .sort((left, right) => left.localeCompare(right));
   const plannedFiles = entries.map(({ path: filePath, provider, required, sha256: desiredSha256, state, previousSha256, currentSha256, retiredPath: restoreFrom }) => ({
     path: filePath,
     required,
@@ -723,6 +744,8 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     retirementEntries: retirementEntries.map(({ target: _target, retiredTarget: _retiredTarget, ...entry }) => entry),
     adoption: { required: addingIts && adoptionPaths.length > 0, preservedPaths: adoptionPaths },
     writeSet,
+    gitSettlementFiles,
+    gitWriteSet,
   };
   const installationPlanDigest = prefixedSha256(stableJson(approvalBinding));
   const lockValue = {
@@ -767,6 +790,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     commitExpected.set(entry.path, null);
     commitExpected.set(entry.retiredPath, entry.sha256);
   }
+  for (const entry of gitSettlementFiles) commitExpected.set(entry.path, entry.sha256);
   commitExpected.set(INSTALLATION_LOCK_RELATIVE, sha256(lockBytes));
   return {
     packageValue,
@@ -806,6 +830,8 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
       plannedFiles,
       plannedRuleFiles: approvalBinding.plannedRuleFiles,
       writeSet,
+      gitSettlementFiles,
+      gitWriteSet,
       lockPath: INSTALLATION_LOCK_RELATIVE,
     },
   };
@@ -1017,7 +1043,7 @@ async function settleExactPackCommit(root, plan) {
   if (blockReason) {
     return { gitOutcome: "installed_commit_required", gitBlockReason: blockReason, commit: null };
   }
-  const paths = [...new Set(plan.public.writeSet)].sort((left, right) => left.localeCompare(right));
+  const paths = [...new Set(plan.public.gitWriteSet)].sort((left, right) => left.localeCompare(right));
   for (const expected of plan.commitExpected) {
     const observed = await currentFile(root, expected.path);
     if (observed.sha256 !== expected.sha256) {

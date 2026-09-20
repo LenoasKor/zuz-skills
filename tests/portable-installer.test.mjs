@@ -283,9 +283,55 @@ test("opt-in commit settles only the Pack write-set and leaves unrelated worktre
     assert.match(installed.value.commit.writeSetDigest, /^sha256:[0-9a-f]{64}$/u);
     assert.deepEqual(
       git(["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", "HEAD"]).split("\n").sort(),
-      [...preview.value.writeSet].sort(),
+      [...preview.value.gitWriteSet].sort(),
     );
     assert.equal(git(["diff", "--cached", "--name-only"]), "");
+    assert.equal(git(["status", "--short"]), "M unrelated.txt");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("next approved Pack commit settles previously uncommitted pristine managed files", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-pristine-carryover-"));
+  const previousPackagePath = path.join(fixtureRoot, "decal-pack-3.0.3.zuz-pack.json");
+  try {
+    const git = (gitArgs) => execFileSync("git", gitArgs, { cwd: root, encoding: "utf8" }).trim();
+    git(["init", "-b", "main"]);
+    git(["config", "user.name", "Fixture"]);
+    git(["config", "user.email", "fixture@example.invalid"]);
+    await writeFile(path.join(root, "unrelated.txt"), "before\n");
+    git(["add", "unrelated.txt"]);
+    git(["commit", "-m", "fixture: baseline"]);
+
+    const previousPackage = structuredClone(packageValue);
+    previousPackage.packVersion = "3.0.3";
+    await writeFile(previousPackagePath, `${stableJson(sealPackage(previousPackage))}\n`);
+    const previousOptions = {
+      packagePath: previousPackagePath,
+      modules: ["zuz-its"],
+      providers: ["codex"],
+    };
+    const previousPreview = run(root, "--dry-run", null, previousOptions);
+    const previousInstall = run(root, "--write", previousPreview.value.installationPlanDigest, previousOptions);
+    assert.equal(previousInstall.status, 0, `${previousInstall.stderr}\n${previousInstall.stdout}`);
+    git(["add", "AGENTS.md", "CLAUDE.md", ".decal/decal-pack.lock.json"]);
+    git(["commit", "-m", "fixture: track prior Pack control files"]);
+    await writeFile(path.join(root, "unrelated.txt"), "after\n");
+
+    const options = { modules: ["zuz-its"], providers: ["codex"], commit: true };
+    const preview = run(root, "--dry-run", null, options);
+    assert.equal(preview.value.status, "planned");
+    assert.equal(preview.value.updateCount, 0);
+    assert.ok(preview.value.gitSettlementFiles.length > 0);
+    assert.ok(preview.value.gitSettlementFiles.every((file) => preview.value.gitWriteSet.includes(file.path)));
+    const installed = run(root, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(installed.status, 0, `${installed.stderr}\n${installed.stdout}`);
+    assert.equal(installed.value.gitOutcome, "committed");
+    assert.deepEqual(
+      git(["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", "HEAD"]).split("\n").sort(),
+      [...preview.value.gitWriteSet].sort(),
+    );
     assert.equal(git(["status", "--short"]), "M unrelated.txt");
   } finally {
     await rm(root, { recursive: true, force: true });

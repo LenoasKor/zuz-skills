@@ -283,11 +283,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.1.0 keeps v10 registration while adding safe project-rule and Git settlement", async () => {
+test("Pack 3.1.1 keeps v10 registration while adding safe project-rule and Git settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.1.0");
+  assert.equal(packageValue.packVersion, "3.1.1");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
