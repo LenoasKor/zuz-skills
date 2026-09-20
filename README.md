@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.0 is the latest released line. The next 3.1.1 candidate keeps the dedicated, non-destructive project-rule block and extends opt-in Git settlement to pristine Pack-owned files left uncommitted by an earlier installation, while preserving user-modified and unrelated worktree changes.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.1 is the latest released line. The next 3.1.2 candidate makes a missing, null, or `unset` project release stage fall back to `pre_live` without prompting or stopping builds, while preserving explicit `live`, deployment authorization, user-modified rules, and unrelated worktree changes.
 
-- source tag/release: `decal-pack-v3.1.0`
+- source tag/release: `decal-pack-v3.1.1`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 

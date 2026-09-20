@@ -25,6 +25,7 @@
     "padded-and-unpadded-physical-collision-fails-closed",
     "zuz-its-contract-is-exactly-pinned",
     "general-build-does-not-require-project-release-stage",
+    "unset-release-stage-falls-back-to-pre-live-without-prompting",
     "showcase-release-stage-setting-discovers-capability-before-refusal",
     "pre-development-complete-test-failures-stay-in-active-record",
     "work-remains-a-ticket",

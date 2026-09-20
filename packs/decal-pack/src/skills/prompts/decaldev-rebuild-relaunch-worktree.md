@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch-worktree
 label: 데칼 A/B 워킹트리 테스트 빌드
-version: 0.3.2
+version: 0.3.3
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -17,6 +17,8 @@ macOS의 유효한 Decal linked worktree를 Launcher Hub의 고정 A/B 슬롯 �
 이 경로는 `main-latest`와 분리됩니다. Desktop/Remote 버전 파일, Git stage·commit, hosted Remote Preview를 변경하지 않으며 빌드 실패 시 해당 슬롯의 기존 테스트 앱을 유지합니다. A/B는 bundle identifier·로그인 callback·refresh credential service까지 분리됩니다.
 
 프로젝트 출시 단계는 Showcase 빌드 등록·테스트 흐름이 자체 경계에서 확인하며 이 A/B 테스트빌드의 입력이나 중단 조건이 아닙니다.
+
+출시 단계 판정이 필요한 연계 흐름에서 저장값이 누락·null·`unset`이면 묻거나 중단하지 않고 `pre_live`로 해석합니다. 이 폴백은 저장값을 바꾸거나 배포·정산 권한을 열지 않으며, 명시 저장된 `live`는 그대로 유지합니다.
 
 Decal 소유 세션은 `decal_ui.request_confirmation`을 사용하고, 외부 Codex/CLI host는 같은 대상·영향을 일반 텍스트로 승인받은 뒤 동일한 재검증 규칙으로 실행합니다.
 

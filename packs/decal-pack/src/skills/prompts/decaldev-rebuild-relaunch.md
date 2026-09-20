@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch
 label: 데칼 개발빌드 재시작
-version: 0.9.1
+version: 0.9.2
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -15,6 +15,8 @@ template: 이 스킬은 main 작업공간의 개발 앱 전용이며 linked work
 macOS와 Windows 디버그 빌드 전용 스킬입니다. Decal 소유 세션은 `decal_ui.request_confirmation`을 사용하고, 외부 Codex/CLI host는 같은 범위를 일반 텍스트로 승인받습니다.
 
 프로젝트 출시 단계는 Showcase 빌드 등록·테스트 흐름이 자체 경계에서 확인하며 이 개발빌드의 입력이나 중단 조건이 아닙니다.
+
+출시 단계 판정이 필요한 연계 흐름에서 저장값이 누락·null·`unset`이면 묻거나 중단하지 않고 `pre_live`로 해석합니다. 이 폴백은 저장값을 바꾸거나 배포·정산 권한을 열지 않으며, 명시 저장된 `live`는 그대로 유지합니다.
 
 - macOS: `scripts/open_latest_macos.sh`
 - Windows: `scripts/open_latest_windows.ps1`

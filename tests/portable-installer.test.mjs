@@ -246,6 +246,8 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     for (const source of [agents, claude]) {
       assert.equal(source.match(/<!-- decal-pack-rules:start -->/gu)?.length, 1);
       assert.match(source, /외부 개발환경도 작업을 거부하지 않고/u);
+      assert.match(source, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+      assert.match(source, /배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않/u);
     }
     assert.ok(agents.startsWith(repositoryRules));
 

@@ -165,7 +165,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.0.3" },
+    { id: "development-core", version: "1.0.4" },
     { id: "zuz-its", version: "1.1.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.0.2" },
@@ -199,7 +199,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     const file = packageValue.files.find((candidate) => candidate.sourcePath === skill.sourcePath);
     const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
     assert.match(content, /Showcase 빌드 등록·테스트 흐름/u, id);
-    assert.doesNotMatch(content, /단계가 unset|프로젝트 출시 단계를 먼저 확인/u, id);
+    assert.doesNotMatch(content, /프로젝트 출시 단계를 먼저 확인/u, id);
+    assert.match(content, /누락·null·`unset`.*`pre_live`/us, id);
+    assert.match(content, /배포.*권한/us, id);
   }
   const buildSkill = packageValue.skills.find((skill) => skill.id === "decal-build");
   const buildFile = packageValue.files.find((file) => file.sourcePath === buildSkill.sourcePath);
@@ -212,14 +214,14 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const packPolicy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
   assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.7.1");
   for (const [id, version] of Object.entries({
-    "decal-build": "0.3.2",
-    "decal-deploy": "0.3.1",
+    "decal-build": "0.3.3",
+    "decal-deploy": "0.3.2",
     "decal-task": "1.11.2",
     "decal-work": "1.8.2",
     "decal-bug": "1.8.2",
     "zuz-its": "1.3.1",
-    "decaldev-rebuild-relaunch": "0.9.1",
-    "decaldev-rebuild-relaunch-worktree": "0.3.2",
+    "decaldev-rebuild-relaunch": "0.9.2",
+    "decaldev-rebuild-relaunch-worktree": "0.3.3",
   })) assert.equal(packPolicy.minimumCompatible[id], version, id);
 
   for (const id of ["decal-task", "decal-work", "decal-bug"]) {
@@ -283,11 +285,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.1.1 keeps v10 registration while adding safe project-rule and Git settlement", async () => {
+test("Pack 3.1.2 keeps v10 registration and adds the safe unset release-stage fallback", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.1.1");
+  assert.equal(packageValue.packVersion, "3.1.2");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");

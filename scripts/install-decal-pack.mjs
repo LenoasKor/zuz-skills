@@ -41,6 +41,7 @@ function decalPackRulesBlock() {
     "- 요청 범위를 정확히 포함하는 기존 정본이 있으면 재사용하고 중복 등록하지 않습니다.",
     "- 사용자가 `등록`이라고 말하지 않아도 AI가 변경 업무를 식별하면 종류·제목·분류 근거·상위 Task·범위를 먼저 제안합니다.",
     "- Decal Native 기능이 없는 외부 개발환경도 작업을 거부하지 않고 설치된 portable zuz ITS 스킬과 계약의 외부 host fallback으로 등록·진행합니다.",
+    "- 프로젝트 출시 단계가 누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`로 해석합니다. 이 폴백은 저장값을 바꾸거나 배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않으며, `live`는 명시적으로 저장된 경우에만 사용합니다.",
   ].join("\n");
   return `${PACK_RULES_BLOCK_START}\n<!-- schema: zuz.decal-pack.project-rules/v1; content-sha256: ${sha256(Buffer.from(body))} -->\n${body}\n${PACK_RULES_BLOCK_END}`;
 }
