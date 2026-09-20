@@ -3,7 +3,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import {
-  copyFile,
   link,
   lstat,
   mkdir,
@@ -973,12 +972,16 @@ async function applyTransaction(root, writes, testFailAt = null) {
   }
 }
 
-function runGit(root, gitArgs) {
-  return spawnSync("git", gitArgs, { cwd: root, encoding: "utf8" });
+function runGit(root, gitArgs, environment = null) {
+  return spawnSync("git", gitArgs, {
+    cwd: root,
+    encoding: "utf8",
+    env: environment ? { ...process.env, ...environment } : process.env,
+  });
 }
 
-function gitText(root, gitArgs) {
-  const result = runGit(root, gitArgs);
+function gitText(root, gitArgs, environment = null) {
+  const result = runGit(root, gitArgs, environment);
   if (result.status !== 0) fail("git_command_failed", { args: gitArgs, stderr: result.stderr.trim() });
   return result.stdout.trim();
 }
@@ -1027,9 +1030,11 @@ async function settleExactPackCommit(root, plan) {
   }
   let beforeHead;
   let beforeBranch;
+  let beforeBranchRef;
   try {
     beforeHead = gitText(root, ["rev-parse", "HEAD"]);
     beforeBranch = gitText(root, ["symbolic-ref", "--quiet", "--short", "HEAD"]);
+    beforeBranchRef = gitText(root, ["symbolic-ref", "--quiet", "HEAD"]);
   } catch {
     return { gitOutcome: "installed_commit_required", gitBlockReason: "git_head_unavailable", commit: null };
   }
@@ -1043,46 +1048,22 @@ async function settleExactPackCommit(root, plan) {
     return { gitOutcome: "installed_commit_required", gitBlockReason: "git_state_unavailable", commit: null };
   }
   const indexPath = path.resolve(root, indexPathText);
-  const indexBackup = `${indexPath}.decal-pack-${randomUUID()}.bak`;
-  const indexExisted = Boolean(await metadata(indexPath));
-  if (indexExisted) {
-    try {
-      await copyFile(indexPath, indexBackup);
-    } catch {
-      return { gitOutcome: "installed_commit_required", gitBlockReason: "git_index_backup_failed", commit: null };
-    }
+  const temporaryIndex = `${indexPath}.decal-pack-${randomUUID()}.tmp`;
+  const temporaryEnvironment = { GIT_INDEX_FILE: temporaryIndex };
+  if (await metadata(temporaryIndex)) {
+    return { gitOutcome: "installed_commit_required", gitBlockReason: "git_temporary_index_exists", commit: null };
   }
-  const restoreIndex = async () => {
-    if (indexExisted) await copyFile(indexBackup, indexPath);
-    else await rm(indexPath, { force: true });
-  };
-  let createdCommitSha = null;
   try {
-    const untracked = [];
-    for (const relative of paths) {
-      const tracked = runGit(root, ["ls-files", "--error-unmatch", "--", relative]);
-      if (tracked.status !== 0 && (await currentFile(root, relative)).exists) untracked.push(relative);
-    }
-    if (untracked.length > 0) {
-      const intent = runGit(root, ["add", "--intent-to-add", "--", ...untracked]);
-      if (intent.status !== 0) fail("git_intent_to_add_failed", intent.stderr.trim());
-    }
+    const readTree = runGit(root, ["read-tree", beforeHead], temporaryEnvironment);
+    if (readTree.status !== 0) fail("git_temporary_index_failed", readTree.stderr.trim());
+    const staged = runGit(root, ["add", "--all", "--force", "--", ...paths], temporaryEnvironment);
+    if (staged.status !== 0) fail("git_temporary_index_failed", staged.stderr.trim());
+    const treeSha = gitText(root, ["write-tree"], temporaryEnvironment);
     const commitMessage = `chore(decal-pack): install ${plan.public.packVersion}`;
-    const committed = runGit(root, ["commit", "--only", "-m", commitMessage, "--", ...paths]);
-    if (committed.status !== 0) fail("git_commit_failed", committed.stderr.trim());
-    const commitSha = gitText(root, ["rev-parse", "HEAD"]);
-    createdCommitSha = commitSha;
-    const treeSha = gitText(root, ["rev-parse", "HEAD^{tree}"]);
-    const branch = gitText(root, ["symbolic-ref", "--quiet", "--short", "HEAD"]);
+    const commitSha = gitText(root, ["commit-tree", treeSha, "-p", beforeHead, "-m", commitMessage]);
     const actual = gitText(root, ["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", commitSha])
       .split("\n").filter(Boolean).sort((left, right) => left.localeCompare(right));
-    if (branch !== beforeBranch || stableJson(actual) !== stableJson(paths)) {
-      const rollback = runGit(root, ["update-ref", "HEAD", beforeHead, commitSha]);
-      await restoreIndex();
-      if (rollback.status !== 0) fail("git_commit_rollback_failed");
-      createdCommitSha = null;
-      return { gitOutcome: "installed_commit_required", gitBlockReason: "git_unexpected_commit_scope", commit: null };
-    }
+    if (stableJson(actual) !== stableJson(paths)) fail("git_unexpected_commit_scope");
     for (const expected of plan.commitExpected) {
       const object = `${commitSha}:${expected.path}`;
       if (expected.sha256 === null) {
@@ -1093,6 +1074,18 @@ async function settleExactPackCommit(root, plan) {
           fail("git_committed_content_mismatch", expected.path);
         }
       }
+    }
+    if (
+      gitText(root, ["rev-parse", "HEAD"]) !== beforeHead
+      || gitText(root, ["symbolic-ref", "--quiet", "HEAD"]) !== beforeBranchRef
+    ) fail("git_head_changed");
+    const advanced = runGit(root, ["update-ref", beforeBranchRef, commitSha, beforeHead]);
+    if (advanced.status !== 0) fail("git_head_changed", advanced.stderr.trim());
+    const refreshed = runGit(root, ["reset", "--quiet", commitSha, "--", ...paths]);
+    if (refreshed.status !== 0) {
+      const rollback = runGit(root, ["update-ref", beforeBranchRef, beforeHead, commitSha]);
+      if (rollback.status !== 0) fail("git_commit_cleanup_failed", rollback.stderr.trim());
+      fail("git_index_refresh_failed", refreshed.stderr.trim());
     }
     const receipt = {
       files: plan.commitExpected,
@@ -1105,7 +1098,7 @@ async function settleExactPackCommit(root, plan) {
         schema: "zuz.decal-pack.git-settlement/v1",
         commitSha,
         treeSha,
-        branch,
+        branch: beforeBranch,
         baseHead: beforeHead,
         writeSetDigest: receipt.writeSetDigest,
         files: receipt.files,
@@ -1114,20 +1107,14 @@ async function settleExactPackCommit(root, plan) {
       },
     };
   } catch (error) {
-    if (createdCommitSha) {
-      const rollback = runGit(root, ["update-ref", "HEAD", beforeHead, createdCommitSha]);
-      if (rollback.status !== 0) {
-        return { gitOutcome: "installed_commit_required", gitBlockReason: "git_commit_rollback_failed", commit: null };
-      }
-    }
-    await restoreIndex().catch(() => undefined);
     return {
       gitOutcome: "installed_commit_required",
       gitBlockReason: error?.code ?? "git_commit_failed",
       commit: null,
     };
   } finally {
-    await rm(indexBackup, { force: true }).catch(() => undefined);
+    await rm(temporaryIndex, { force: true }).catch(() => undefined);
+    await rm(`${temporaryIndex}.lock`, { force: true }).catch(() => undefined);
   }
 }
 

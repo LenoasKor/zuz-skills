@@ -285,6 +285,7 @@ test("opt-in commit settles only the Pack write-set and leaves unrelated worktre
       git(["diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r", "HEAD"]).split("\n").sort(),
       [...preview.value.writeSet].sort(),
     );
+    assert.equal(git(["diff", "--cached", "--name-only"]), "");
     assert.equal(git(["status", "--short"]), "M unrelated.txt");
   } finally {
     await rm(root, { recursive: true, force: true });
