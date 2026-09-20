@@ -31,6 +31,15 @@ const KNOWN_PROVIDERS = new Set(["codex", "claude", "gemini", "acp"]);
 const PACK_RULE_FILES = ["AGENTS.md", "CLAUDE.md"];
 const PACK_RULES_BLOCK_START = "<!-- decal-pack-rules:start -->";
 const PACK_RULES_BLOCK_END = "<!-- decal-pack-rules:end -->";
+const LEGACY_RELEASE_STAGE_RULES = [
+  "## Decal 프로젝트 출시 단계와 빌드 선택",
+  "",
+  "빌드 정책 버전은 `1`입니다. 세션의 `DECAL_PROJECT_RELEASE_LIFECYCLE_STAGE`와 `DECAL_PROJECT_BUILD_POLICY_VERSION`은 시작 시 snapshot이며 현재 정본이 아닙니다. 앱 빌드·적용·배포 직전 Decal의 읽기 전용 출시 context 도구로 현재 작업공간과 목적을 조회하고 stage·policyVersion·sourceRevision·workspaceKind·lane을 사용합니다. `DECAL_RELEASE_CONTEXT_READER`와 `DECAL_PROJECT_REGISTRY_PATH`가 제공되면 그 도구와 저장소를 사용합니다. 도구가 없으면 승인된 reader/Pack 갱신 또는 명시적으로 확인한 앱 채널의 조회 경로를 요청하며 환경값을 임의 주입하거나 세션 재시작을 요구하지 않습니다.",
+  "정본 조회 결과의 단계가 `unset`인 경우에만 실행용 앱 빌드를 멈추고 사용자가 Decal 프로젝트 설정에서 `출시 전` 또는 `운영 중`을 선택하게 합니다. Git·Task 상태·배포 이력으로 추정하지 않습니다.",
+  "앱 빌드 전에는 프로젝트 단계, 검증 목적, main/linked worktree, 선택한 `development | isolated_test | release_candidate | official_release | needs_stage` lane을 사용자에게 표시합니다.",
+  "`pre_live`는 명시적 릴리즈 조건 검증만 `release_candidate`, `live`는 공식 QA·최종 main 머지 후 검증·릴리즈 조건 검증만 `release_candidate`이며, 그 외에는 main `development` 또는 linked worktree `isolated_test`입니다.",
+  "실제 배포만 `official_release`이며 기존 정산 영수증·소스 결속·배포 승인을 요구합니다. 릴리즈 후보는 Build ID만 발급하고 SemVer·정산·설치·실행·배포 권한을 바꾸지 않습니다.",
+].join("\n");
 
 function decalPackRulesBlock() {
   const body = [
@@ -371,6 +380,22 @@ function appendPackRulesBlock(source, block) {
   return `${source}${separator}${block}\n`;
 }
 
+function retirePristineLegacyReleaseStageRules(source) {
+  const candidates = [LEGACY_RELEASE_STAGE_RULES, LEGACY_RELEASE_STAGE_RULES.replaceAll("\n", "\r\n")];
+  for (const candidate of candidates) {
+    const first = source.indexOf(candidate);
+    if (first === -1) continue;
+    if (source.indexOf(candidate, first + candidate.length) !== -1) fail("legacy_release_stage_rules_ambiguous");
+    let start = first;
+    let end = first + candidate.length;
+    const newline = candidate.includes("\r\n") ? "\r\n" : "\n";
+    if (source.slice(end, end + newline.length * 2) === `${newline}${newline}`) end += newline.length;
+    else if (source.slice(start - newline.length * 2, start) === `${newline}${newline}`) start -= newline.length;
+    return `${source.slice(0, start)}${source.slice(end)}`;
+  }
+  return source;
+}
+
 async function plannedPackRuleFiles(root, hasIts, lock) {
   const desiredBlock = decalPackRulesBlock();
   const desiredBlockSha256 = sha256(Buffer.from(desiredBlock));
@@ -384,6 +409,7 @@ async function plannedPackRuleFiles(root, hasIts, lock) {
       source = current.bytes.toString("utf8");
       if (!Buffer.from(source).equals(current.bytes)) fail("managed_rule_file_not_utf8", relative);
     }
+    if (hasIts) source = retirePristineLegacyReleaseStageRules(source);
     const found = uniquePackRulesBlock(source, relative);
     const prior = previous.get(relative) ?? null;
     let next = source;

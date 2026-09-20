@@ -264,6 +264,44 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
   }
 });
 
+test("ITS update retires only the pristine legacy unset-stop section", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-legacy-release-stage-"));
+  try {
+    const legacySection = [
+      "## Decal 프로젝트 출시 단계와 빌드 선택",
+      "",
+      "빌드 정책 버전은 `1`입니다. 세션의 `DECAL_PROJECT_RELEASE_LIFECYCLE_STAGE`와 `DECAL_PROJECT_BUILD_POLICY_VERSION`은 시작 시 snapshot이며 현재 정본이 아닙니다. 앱 빌드·적용·배포 직전 Decal의 읽기 전용 출시 context 도구로 현재 작업공간과 목적을 조회하고 stage·policyVersion·sourceRevision·workspaceKind·lane을 사용합니다. `DECAL_RELEASE_CONTEXT_READER`와 `DECAL_PROJECT_REGISTRY_PATH`가 제공되면 그 도구와 저장소를 사용합니다. 도구가 없으면 승인된 reader/Pack 갱신 또는 명시적으로 확인한 앱 채널의 조회 경로를 요청하며 환경값을 임의 주입하거나 세션 재시작을 요구하지 않습니다.",
+      "정본 조회 결과의 단계가 `unset`인 경우에만 실행용 앱 빌드를 멈추고 사용자가 Decal 프로젝트 설정에서 `출시 전` 또는 `운영 중`을 선택하게 합니다. Git·Task 상태·배포 이력으로 추정하지 않습니다.",
+      "앱 빌드 전에는 프로젝트 단계, 검증 목적, main/linked worktree, 선택한 `development | isolated_test | release_candidate | official_release | needs_stage` lane을 사용자에게 표시합니다.",
+      "`pre_live`는 명시적 릴리즈 조건 검증만 `release_candidate`, `live`는 공식 QA·최종 main 머지 후 검증·릴리즈 조건 검증만 `release_candidate`이며, 그 외에는 main `development` 또는 linked worktree `isolated_test`입니다.",
+      "실제 배포만 `official_release`이며 기존 정산 영수증·소스 결속·배포 승인을 요구합니다. 릴리즈 후보는 Build ID만 발급하고 SemVer·정산·설치·실행·배포 권한을 바꾸지 않습니다.",
+    ].join("\n");
+    const repositoryPrefix = "# Repository rules\n\nKeep this line byte-for-byte.\n\n";
+    const repositorySuffix = "\n<!-- agent-studio-skills:end -->\n";
+    await writeFile(path.join(root, "AGENTS.md"), `${repositoryPrefix}${legacySection}${repositorySuffix}`);
+    const { preview } = await installSelection(root, ["zuz-its"], ["codex"]);
+    assert.ok(preview.value.writeSet.includes("AGENTS.md"));
+    const agents = await readFile(path.join(root, "AGENTS.md"), "utf8");
+    assert.ok(agents.startsWith(repositoryPrefix));
+    assert.ok(agents.includes(repositorySuffix.trim()));
+    assert.doesNotMatch(agents, /실행용 앱 빌드를 멈추고/u);
+    assert.match(agents, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+
+    const customized = legacySection.replace("실행용 앱 빌드를 멈추고", "사용자 정의 검토를 수행하고");
+    const customRoot = await mkdtemp(path.join(tmpdir(), "zuz-pack-custom-release-stage-"));
+    try {
+      await writeFile(path.join(customRoot, "AGENTS.md"), `${repositoryPrefix}${customized}${repositorySuffix}`);
+      await installSelection(customRoot, ["zuz-its"], ["codex"]);
+      const customAgents = await readFile(path.join(customRoot, "AGENTS.md"), "utf8");
+      assert.match(customAgents, /사용자 정의 검토를 수행하고/u);
+    } finally {
+      await rm(customRoot, { recursive: true, force: true });
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("opt-in commit settles only the Pack write-set and leaves unrelated worktree changes", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-exact-commit-"));
   try {
