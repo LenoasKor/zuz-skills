@@ -2,7 +2,7 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.11.2"
+  version: "1.11.3"
   portable: true
 ---
 
@@ -40,6 +40,7 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 5. Require the repository-approved authoring profile and its pinned contract manifests. For the standard Project Pack this is `contracts/task-work-bug/v1` through `v10`; a repository-owned adapter is valid only when the repository instructions explicitly name it and it preserves the pinned consumer contracts. If the required chain or profile is absent, modified, symlinked, or newer than the available validator, stop before writing and request the repository's prescribed Pack or authoring update. Never infer a Task schema from the existing index alone.
 6. Run the verified profile's validator from the target root before creating, updating, or transitioning a Task. For the standard Project Pack use `node contracts/task-work-bug/v4/validate-task-index.mjs --root .`. A non-accepted result is a blocking condition; report its typed code and line without copying the malformed row. Its authoring status must be ready before registration.
 7. Search existing records before reserving an ID. Preserve unknown fields and user-authored sections.
+8. Before issuing a related Work or Bug within this Task, check its open children and same-day tickets. Reuse a matching Work's goal, acceptance criteria, and release unit or a matching Bug's cause, fix, and verification scope; record the reuse or separation reason. A new ID is for independent scope, not merely another step of this Task.
 
 ## Host routing
 
@@ -63,6 +64,7 @@ While the Task is earlier than `development_complete`, test failures found while
 
 - Preserve unrelated dirty files. Do not stage, stash, reset, or rewrite another session's work.
 - Recheck the source revision and target paths immediately before every lifecycle write.
+- Outside Decal, an ordinary Task status transition is a document-and-index commit checkpoint, not a prepared file left for a later session. Before invoking the repository's official transition command, confirm valid current-request, standing, or automatic commit approval for that repository and exact Task document/index; if absent, stop before writing. Recheck main/HEAD continuity, source status, staged/conflict state, and ongoing Git operations. Immediately validate and isolate-commit only the Task document and index, then confirm the resulting HEAD. If that commit fails, preserve the changes, report `transition prepared; commit pending` with the exit condition, and do not start overlapping registration or transition work. This does not authorize Native bypass, registration, Smoke, completion/settlement, push, merge, or deploy.
 - Outside Decal, an explicit request to settle or close the Task authorizes the immediate isolated commit of
   only the exact settlement write-set produced by that operation. Commit it before any other edit, then run
   the repository settlement finalizer. If commit or finalization is blocked, preserve the pending marker and

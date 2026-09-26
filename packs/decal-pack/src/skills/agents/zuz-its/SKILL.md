@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.3.2"
+  version: "1.3.3"
   portable: true
 ---
 
@@ -44,6 +44,8 @@ Task Space, session work activity, Office work, Jig planning, and Slice implemen
 - Before the active Task, Work, or Bug reaches `development_complete`, treat test failures inside its implementation and verification scope as development feedback. Fix them in the active record and add cause/correction/rerun notes only when useful; do not automatically issue another Bug. Separate tracking begins for post-development-completion regressions, independently scoped defects, or security, data-loss, and live-service conditions that require their own Bug or Incident.
 
 Preserve the repository's current statuses and lifecycle. Do not invent a Slice object, rewrite IDs, or force a separate Task for every Issue.
+
+Before proposing a new Work or Bug, check the active record, open records under the same parent Task, and especially records issued that day. Continue an existing Work when its goal, acceptance criteria, and release/settlement unit still cover the added step. Continue an existing Bug when the cause, fix, and verification scope match; similar symptoms or dates alone are not enough. Add evidence and work-log history to the original ID after source-revision recheck. Keep distinct kinds, causes, closure criteria, release units, post-completion regressions, and security/data-loss/service incidents separate. For a new candidate, identify the records considered and why none can be reused. Never delete or recycle an already issued duplicate ID; retain its duplicate relationship.
 
 ## Chat references
 

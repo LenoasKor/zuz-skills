@@ -45,7 +45,7 @@ const expectedPackInstallation = {
 };
 if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");
 if (stableJson(policy.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("project skill Pack installation policy must match source descriptor");
-if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.7.1") failures.push("canonical default branch maintenance requires decal-slice-maintenance 0.7.1");
+if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.7.4") failures.push("external transition commit checkpoint requires decal-slice-maintenance 0.7.4");
 
 const moduleIds = new Set();
 const membership = new Map();

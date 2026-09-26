@@ -35,7 +35,7 @@
     },
     {
       "id": "zuz-its",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "title": "zuz ITS · Task·Work·Issue",
       "description": "기존 Task·Work·Bug 자료의 호환성을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,

@@ -33,6 +33,8 @@
     "pre-live-work-bug-closes-without-release-ready-while-live-keeps-gate",
     "showcase-release-stage-setting-discovers-capability-before-refusal",
     "pre-development-complete-test-failures-stay-in-active-record",
+    "work-bug-reuse-before-new-ticket",
+    "external-task-transition-exact-commit-before-next-operation",
     "work-remains-a-ticket",
     "incident-and-chat-reference-semantics-match-remote"
   ]

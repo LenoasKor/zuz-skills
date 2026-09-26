@@ -108,6 +108,8 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
       "general-build-does-not-require-project-release-stage",
       "showcase-release-stage-setting-discovers-capability-before-refusal",
       "pre-development-complete-test-failures-stay-in-active-record",
+      "work-bug-reuse-before-new-ticket",
+      "external-task-transition-exact-commit-before-next-operation",
     ]) assert.equal(fixtureValue.requiredCases.includes(requiredCase), true, `${fixture.id}: ${requiredCase}`);
   }
 });
@@ -167,7 +169,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.0.4" },
-    { id: "zuz-its", version: "1.1.1" },
+    { id: "zuz-its", version: "1.1.2" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.0.2" },
   ]);
@@ -175,13 +177,13 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.11.2",
-    "decal-work": "1.8.3",
-    "decal-bug": "1.8.3",
+    "decal-task": "1.11.3",
+    "decal-work": "1.8.4",
+    "decal-bug": "1.8.4",
     "decal-incident": "1.3.1",
-    "zuz-its": "1.3.2",
-    "decal-slice": "0.4.8",
-    "decal-slice-maintenance": "0.7.3",
+    "zuz-its": "1.3.3",
+    "decal-slice": "0.4.9",
+    "decal-slice-maintenance": "0.7.4",
     "decal-slice-smoke": "0.5.2",
     "decal-commit-ready": "0.9.2",
   };
@@ -213,14 +215,14 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.match(buildContent, /읽기 전용 reader는 설정 도구가 아닙니다/u);
   assert.match(buildContent, /Decal 앱 데이터 파일을 직접 편집하지/u);
   const packPolicy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
-  assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.7.1");
+  assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.7.4");
   for (const [id, version] of Object.entries({
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
-    "decal-task": "1.11.2",
-    "decal-work": "1.8.3",
-    "decal-bug": "1.8.3",
-    "zuz-its": "1.3.2",
+    "decal-task": "1.11.3",
+    "decal-work": "1.8.4",
+    "decal-bug": "1.8.4",
+    "zuz-its": "1.3.3",
     "decaldev-rebuild-relaunch": "0.9.2",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
   })) assert.equal(packPolicy.minimumCompatible[id], version, id);
@@ -233,7 +235,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.11\.2"/);
+      assert.match(content, /version: "1\.11\.3"/);
       assert.match(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
     }
   }
@@ -272,6 +274,15 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
     assert.match(content, /Never self-authorize/);
     assert.match(content, /does not replace Native approval, registration-digest approval, or completion\/settlement gates/);
   }
+  for (const id of ["zuz-its", "decal-task", "decal-work", "decal-bug"]) {
+    const file = pack.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
+    const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.match(content, /same-day|same parent Task/u, id);
+    assert.match(content, /reuse|continue an existing|reuse a matching/iu, id);
+    assert.match(content, /source.revision/u, id);
+  }
+  const task = pack.files.find((candidate) => candidate.sourcePath === "skills/agents/decal-task/SKILL.md");
+  assert.match(Buffer.from(task.contentBase64, "base64").toString("utf8"), /transition prepared; commit pending/u);
   for (const [id, name] of [["decal-slice", "slice.md"], ["decal-slice-maintenance", "decal-slice-maintenance.md"]]) {
     const shared = pack.files.find((file) => file.sourcePath === `skills/prompts/${name}`);
     const agent = pack.files.find((file) => file.sourcePath === `generated/skills/${id}/SKILL.md`);
@@ -283,6 +294,8 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
     assert.match(template, /기존 사전·자동 승인/);
     assert.match(template, /저장소·브랜치·정확한 대상 파일과 변경 내용/);
     assert.doesNotMatch(source, /커밋은 별도 사용자 승인을 요구|외부 커밋은 정확한 경로의 별도 승인을 요구/);
+    assert.match(template, /register-task-batch/u);
+    if (id === "decal-slice-maintenance") assert.match(template, /전이 준비됨 · 커밋 대기/u);
   }
 });
 
