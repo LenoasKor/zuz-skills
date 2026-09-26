@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.3 is the latest released line. The next 3.1.4 candidate makes the portable Work·Bug lifecycle release-stage aware: verified `pre_live` and missing/null/`unset` fallback projects can close after completion evidence without stopping at `release_ready`, while explicit `live` keeps the release gate. It also requires externally hosted Task status transitions to commit their exact document/index checkpoint immediately when authorized and prioritizes reuse of matching open Work·Bug tickets before issuing another ID. Settlement, deployment, user-file, and authority boundaries remain separate.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.4 is the latest released line. The next 3.1.5 candidate requires externally hosted Task status transitions to commit their exact document/index checkpoint immediately when authorized and prioritizes reuse of matching open Work·Bug tickets before issuing another ID. The 3.1.4 release-stage-aware Work·Bug lifecycle and all settlement, deployment, user-file, and authority boundaries remain unchanged.
 
-- source tag/release: `decal-pack-v3.1.3`
+- source tag/release: `decal-pack-v3.1.4`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
