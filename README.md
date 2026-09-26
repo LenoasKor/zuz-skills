@@ -11,15 +11,15 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.1 is the latest released line. The next 3.1.2 candidate makes a missing, null, or `unset` project release stage fall back to `pre_live` without prompting or stopping builds, while preserving explicit `live`, deployment authorization, user-modified rules, and unrelated worktree changes.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.3 is the latest released line. The next 3.1.4 candidate makes the portable Work·Bug lifecycle release-stage aware: verified `pre_live` and missing/null/`unset` fallback projects can close after completion evidence without stopping at `release_ready`, while explicit `live` keeps the release gate and all settlement, deployment, user-file, and authority boundaries.
 
-- source tag/release: `decal-pack-v3.1.1`
+- source tag/release: `decal-pack-v3.1.3`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
 The GitHub release preserves the deterministic source manifest and package bytes. The Skill Store re-verifies those exact bytes, runs the isolated review, and publishes its own signed immutable release manifest.
 
-Portable v10 routes zuz ITS Task, Work, Bug, and Incident registration from a linked worktree to the repository's existing canonical main worktree without changing either checkout. Task semantics remain v7, Work·Bug·Incident key semantics and lifecycle/settlement remain v9. Native canonical-branch parity requires Decal 0.406.0 or newer.
+Portable v10 routes zuz ITS Task, Work, Bug, and Incident registration from a linked worktree to the repository's existing canonical main worktree without changing either checkout. Task semantics, Work·Bug·Incident key semantics, and settlement remain v9; the v11 lifecycle candidate adds the approval-bound pre-live/live Work·Bug branch without changing published v1-v10 bytes. Native canonical-branch parity requires Decal 0.406.0 or newer.
 
 For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig → installed-project rollout, follow [the Decal Pack release guide](docs/decal-pack-release-guide.md).
 
@@ -28,7 +28,7 @@ For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig �
 The source lives under [`packs/decal-pack`](packs/decal-pack). Pack 3 contains:
 
 - `development-core`: status, build, debugging, safe Git, handoff, and workspace guidance;
-- `zuz-its`: optional zuz ITS ticket skills and the pinned `task-work-bug/v1` through `v10` compatibility contracts;
+- `zuz-its`: optional zuz ITS ticket skills and the pinned `task-work-bug/v1` through `v11` compatibility contracts;
 - `design-motion`: optional animation design, implementation, and review guidance;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 

@@ -247,6 +247,7 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
       assert.equal(source.match(/<!-- decal-pack-rules:start -->/gu)?.length, 1);
       assert.match(source, /외부 개발환경도 작업을 거부하지 않고/u);
       assert.match(source, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+      assert.match(source, /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
       assert.match(source, /배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않/u);
     }
     assert.ok(agents.startsWith(repositoryRules));
@@ -286,6 +287,7 @@ test("ITS update retires only the pristine legacy unset-stop section", async () 
     assert.ok(agents.includes(repositorySuffix.trim()));
     assert.doesNotMatch(agents, /실행용 앱 빌드를 멈추고/u);
     assert.match(agents, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+    assert.match(agents, /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
 
     const customized = legacySection.replace("실행용 앱 빌드를 멈추고", "사용자 정의 검토를 수행하고");
     const customRoot = await mkdtemp(path.join(tmpdir(), "zuz-pack-custom-release-stage-"));

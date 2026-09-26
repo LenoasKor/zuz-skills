@@ -1,0 +1,29 @@
+{
+  "schema": "decal.task-work-bug.contract/v11",
+  "contractId": "decal.task-work-bug/v11",
+  "dependsOn": [
+    {
+      "contractId": "decal.task-work-bug/v9",
+      "manifestSha256": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+    },
+    {
+      "contractId": "decal.task-work-bug/v10",
+      "manifestSha256": "c3ae1dc001a39853f1d992f3a2341e11b20767c84a1c3c82a6d922d6cb2d7fab"
+    }
+  ],
+  "registrationBroker": "contracts/task-work-bug/v10",
+  "portableSettlement": {
+    "workItemLifecycle": "contracts/task-work-bug/v11/work-item-lifecycle.mjs",
+    "standaloneSettlement": "contracts/task-work-bug/v9/settle-work-item.mjs",
+    "taskLifecycle": "contracts/task-work-bug/v9/task-lifecycle.mjs",
+    "finalizer": "contracts/task-work-bug/v9/finalize.mjs",
+    "recovery": "contracts/task-work-bug/v9/recover.mjs"
+  },
+  "releaseStagePolicy": {
+    "requestSchema": "zuz.its.work-item-lifecycle-request/v2",
+    "fallback": "pre_live",
+    "liveFlow": ["development_complete", "release_ready", "closed"],
+    "preLiveFlow": ["development_complete", "closed"],
+    "unknownStage": "fail-closed"
+  }
+}

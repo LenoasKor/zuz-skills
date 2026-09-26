@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.8.2"
+  version: "1.8.3"
   portable: true
 ---
 
@@ -82,16 +82,21 @@ node contracts/task-work-bug/v10/register-ticket.mjs \
   --approved-digest sha256:<dry-run digest> --write
 ```
 
-Lifecycle steps use the same revision binding. Bug starts at `new → confirmed → in_progress` and then follows the
-shared `development_complete → release_ready → closed` flow.
+Lifecycle steps use the same revision binding. Bug starts at `new → confirmed → in_progress → development_complete`.
+When `contracts/task-work-bug/v11/` is installed, use its v2 lifecycle request and bind the currently observed
+project release stage to the preview digest. Explicit stored `live` follows `development_complete → release_ready
+→ closed`. Explicit stored `pre_live`, or a missing/null/legacy `unset` stage marked `defaulted`, closes normally
+from `development_complete` after the required verification and Smoke; do not create `release_ready`. Never infer
+`live`. This branch does not authorize settlement, deployment, cost, secrets, or external-service effects.
 
-If the project explicitly adopts the packaged v9 runner, read `contracts/task-work-bug/v9/README.md`
-and validate its manifest. Use `v9/work-item-lifecycle.mjs` for normal forward transitions and
+If the project explicitly adopts the packaged v11 runner, read `contracts/task-work-bug/v11/README.md`
+and validate its manifest. Use `v11/work-item-lifecycle.mjs` for release-stage-aware normal transitions and
 `v9/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
 Task, not separately. The approved project profile must name its version sources. Preserve existing
 repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
-writer after a v9 rejection. The following v5 path is only for an older, explicitly pinned installation:
+writer after a v11 rejection. A project that only has the published v9 runner retains its legacy
+`development_complete → release_ready → closed` flow until its Pack is updated. The following v5 path is only for an older, explicitly pinned installation:
 
 ```sh
 node contracts/task-work-bug/v5/transition-work-item.mjs \
