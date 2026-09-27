@@ -29,6 +29,7 @@
     "decal-native-canonical-branch-parity-requires-0.406.0",
     "zuz-its-preserves-task-work-bug-identities",
     "general-build-does-not-require-project-release-stage",
+    "remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch",
     "unset-release-stage-falls-back-to-pre-live-without-prompting",
     "pre-live-work-bug-closes-without-release-ready-while-live-keeps-gate",
     "showcase-release-stage-setting-discovers-capability-before-refusal",

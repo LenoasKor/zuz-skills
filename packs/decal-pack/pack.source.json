@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "packId": "decal-project-pack",
   "aliases": ["zuz.decal-pack"],
-  "packVersion": "3.1.5",
+  "packVersion": "3.1.6",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": ["LICENSE", "NOTICE"],
@@ -72,7 +72,7 @@
     },
     {
       "id": "decal-maintainer",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "title": "Decal 저장소 유지보수",
       "description": "Decal 저장소의 개발 앱과 A/B 테스트 빌드 전용 도구",
       "defaultSelected": false,

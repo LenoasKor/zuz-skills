@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.4 is the latest released line. The next 3.1.5 candidate requires externally hosted Task status transitions to commit their exact document/index checkpoint immediately when authorized and prioritizes reuse of matching open Work·Bug tickets before issuing another ID. The 3.1.4 release-stage-aware Work·Bug lifecycle and all settlement, deployment, user-file, and authority boundaries remain unchanged.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 carries the external ITS Task-transition and Work·Bug reuse guidance from 3.1.5, plus Decal's 0.9.3 debug-relaunch skill: a failed Remote static preview is reported as unapplied without blocking the macOS local app restart. Settlement, deployment, user-file, and authority boundaries remain unchanged.
 
-- source tag/release: `decal-pack-v3.1.4`
+- source tag/release: `decal-pack-v3.1.6`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 

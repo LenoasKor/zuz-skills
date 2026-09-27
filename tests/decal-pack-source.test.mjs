@@ -171,11 +171,12 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     { id: "development-core", version: "1.0.4" },
     { id: "zuz-its", version: "1.1.2" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.0.2" },
+    { id: "decal-maintainer", version: "1.0.3" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
+  assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
     "decal-task": "1.11.3",
     "decal-work": "1.8.4",
@@ -205,6 +206,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.doesNotMatch(content, /프로젝트 출시 단계를 먼저 확인/u, id);
     assert.match(content, /누락·null·`unset`.*`pre_live`/us, id);
     assert.match(content, /배포.*권한/us, id);
+    if (id === "decaldev-rebuild-relaunch") {
+      assert.match(content, /Remote 정적 preview 적용이 실패하면 경고와 미적용 사실을 보고하되 macOS 로컬 앱 재시작은 계속합니다/u);
+      assert.match(content, /실패하면 Remote 미적용을 명시합니다/u);
+    }
   }
   const buildSkill = packageValue.skills.find((skill) => skill.id === "decal-build");
   const buildFile = packageValue.files.find((file) => file.sourcePath === buildSkill.sourcePath);
@@ -223,7 +228,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-work": "1.8.4",
     "decal-bug": "1.8.4",
     "zuz-its": "1.3.3",
-    "decaldev-rebuild-relaunch": "0.9.2",
+    "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
   })) assert.equal(packPolicy.minimumCompatible[id], version, id);
 
@@ -299,11 +304,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.1.5 keeps v10 registration and the v11 release-stage lifecycle", async () => {
+test("Pack 3.1.6 keeps v10 registration and the v11 release-stage lifecycle", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.1.5");
+  assert.equal(packageValue.packVersion, "3.1.6");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
