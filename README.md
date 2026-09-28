@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 carries the external ITS Task-transition and Work·Bug reuse guidance from 3.1.5, plus Decal's 0.9.3 debug-relaunch skill: a failed Remote static preview is reported as unapplied without blocking the macOS local app restart. Settlement, deployment, user-file, and authority boundaries remain unchanged.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 is the latest released line. The next 3.2.0 candidate adds a recurring-work load gate to `decal-debug`: before editing code, agents inventory cumulative timers, watchers, IPC, I/O and render fan-out, justify the required freshness, and prefer events, revisions, exact deadlines, background work, deduplication and bounded active-only supervision. Settlement, deployment, user-file, and authority boundaries remain unchanged.
 
 - source tag/release: `decal-pack-v3.1.6`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
