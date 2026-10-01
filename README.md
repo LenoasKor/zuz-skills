@@ -11,7 +11,7 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 is the latest released line. The next 3.2.0 candidate adds a recurring-work load gate to `decal-debug`: before editing code, agents inventory cumulative timers, watchers, IPC, I/O and render fan-out, justify the required freshness, and prefer events, revisions, exact deadlines, background work, deduplication and bounded active-only supervision. Settlement, deployment, user-file, and authority boundaries remain unchanged.
+First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 is the latest released line. The 3.2.0 candidate adds a recurring-work load gate to `decal-debug`: before editing code, agents inventory cumulative timers, watchers, IPC, I/O and render fan-out, justify the required freshness, and prefer events, revisions, exact deadlines, background work, deduplication and bounded active-only supervision. Settlement, deployment, user-file, and authority boundaries remain unchanged.
 
 - source tag/release: `decal-pack-v3.1.6`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
@@ -23,12 +23,14 @@ Portable v10 routes zuz ITS Task, Work, Bug, and Incident registration from a li
 
 For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig → installed-project rollout, follow [the Decal Pack release guide](docs/decal-pack-release-guide.md).
 
+The unpublished 3.3.0 candidate adds v12 Work/Bug evidence reuse and history-preserving reopen, and policy-authorized bookkeeping with mandatory result reports. Existing published contracts stay pinned; release publication and installation remain separate steps.
+
 ## Decal Pack
 
 The source lives under [`packs/decal-pack`](packs/decal-pack). Pack 3 contains:
 
 - `development-core`: status, build, debugging, safe Git, handoff, and workspace guidance;
-- `zuz-its`: optional zuz ITS ticket skills and the pinned `task-work-bug/v1` through `v11` compatibility contracts;
+- `zuz-its`: optional zuz ITS ticket skills and the pinned `task-work-bug/v1` through `v12` compatibility contracts;
 - `design-motion`: optional animation design, implementation, and review guidance;
 - `decal-maintainer`: Decal-repository-only development build helpers.
 

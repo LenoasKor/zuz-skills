@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.3.3"
+  version: "1.4.0"
   portable: true
 ---
 
@@ -14,16 +14,20 @@ Use the repository's installed zuz Issue Tracking System without replacing its e
 
 Treat the Git root containing the invocation context as the active project. Do not read or change another repository merely because it is linked or supplies this Pack. Cross-project access requires explicit current-user approval naming the other root and operation scope. Commit, push, deploy, delete, and settlement remain separate authorities unless the user explicitly includes them.
 
-## External commit approval
+## Automatic bookkeeping and mandatory reporting
 
-For ordinary commits outside Decal, follow the host policy and valid user approval, including an
-existing standing or automatic approval covering this repository and task scope. Before committing,
-briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
-approval when that authorization remains valid; ask when approval is absent or the scope is unclear
-or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
-contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
-This does not replace Native approval, registration-digest approval, or completion/settlement gates,
-and does not authorize push, merge, deploy, deletion, or access to another repository.
+Within the requested repository and task scope, an explicit user or repository automatic policy
+may authorize registration, factual Task updates and ordinary isolated commits without another
+approval question. Recheck the source revision, exact write-set and authority; preserve unrelated work.
+Dry-run digests bind the same validated input, not an invented user click. Without applicable authority,
+obtain it. This does not authorize another repository, registry initialization, installation, changed
+scope, lifecycle completion, Smoke facts, version settlement, push, merge or deployment.
+
+Use policy-authorized Native receipts directly. If an older host only offers a pending candidate,
+use the common interaction panel and its existing grant; never bypass Native through direct files or
+external fallback. Report kind/ID, create/reuse/reopen, checked records and decision reason, changes,
+verification, canonical receipt/commit and remaining work after every operation.
+
 
 ## Meaning
 
@@ -66,3 +70,7 @@ Never guess a missing ticket. Search the canonical repository records first. If 
 - Preserve `contracts/task-work-bug/v1` through `v10` as pinned compatibility dependencies. Use the v10 main-authority broker for Task, Work, Bug, and Incident registration. It delegates the existing v7/v9 transaction to the one existing canonical default-branch worktree without changing the caller's worktree.
 - Use the v11 Work·Bug lifecycle with an approval-bound release context when installed. Explicit `live` keeps `release_ready`; explicit/defaulted `pre_live` closes after verified development completion without creating that state. Task lifecycle, Work·Bug settlement, identity aliases, finalization, and recovery remain v9. Legacy v9-only installations keep their published lifecycle until updated.
 - Use the more specific `decal-task`, `decal-work`, `decal-bug`, or `decal-incident` skill when creating or changing a ticket.
+
+## Same-issue reuse and reopen
+
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.

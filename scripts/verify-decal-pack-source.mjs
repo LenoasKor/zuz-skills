@@ -2,9 +2,12 @@ import { readFile } from "node:fs/promises";
 import { portablePath, loadSourceDescriptor, parseAgentMetadata, parsePromptMetadata, sourceRoot, stableJson, walkFiles } from "./pack-lib.mjs";
 import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/v11/verify-contract.mjs";
 
+import { verifyContract as verifyBookkeeping } from "../packs/decal-pack/src/contracts/task-work-bug/v12/verify-contract.mjs";
+
 const descriptor = await loadSourceDescriptor();
 const failures = [];
 try { await verifyContract(); } catch (error) { failures.push(`portable settlement contract: ${error.code ?? error.message}`); }
+try { await verifyBookkeeping(); } catch(error) { failures.push(`portable bookkeeping contract: ${error.code ?? error.message}`); }
 const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
 const policy = JSON.parse(await readFile(new URL("../packs/decal-pack/src/project-skill-pack-policy.json", import.meta.url), "utf8"));
 

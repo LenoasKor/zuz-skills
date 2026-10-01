@@ -1,0 +1,22 @@
+{
+  "schema": "decal.task-work-bug.contract/v12",
+  "contractId": "decal.task-work-bug/v12",
+  "dependsOn": [
+    {
+      "contractId": "decal.task-work-bug/v9",
+      "manifestSha256": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+    },
+    {
+      "contractId": "decal.task-work-bug/v10",
+      "manifestSha256": "c3ae1dc001a39853f1d992f3a2341e11b20767c84a1c3c82a6d922d6cb2d7fab"
+    },
+    {
+      "contractId": "decal.task-work-bug/v11",
+      "manifestSha256": "b93be95a3987df4c4cee2906d8f755bf256ee5b5bb6b8aeab16e78af4ff572b7"
+    }
+  ],
+  "bookkeeping": "contracts/task-work-bug/v12/work-item-bookkeeping.mjs",
+  "registrationBroker": "contracts/task-work-bug/v10",
+  "normalLifecycle": "contracts/task-work-bug/v11",
+  "settlement": "contracts/task-work-bug/v9"
+}

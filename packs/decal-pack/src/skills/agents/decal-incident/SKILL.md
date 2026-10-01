@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.3.1"
+  version: "1.4.0"
   portable: true
 ---
 
@@ -14,16 +14,20 @@ Manage a zuz ITS Incident using the repository's installed portable contract.
 
 Treat the Git root containing the invocation context as the only active project. Access to another repository requires explicit current-user approval naming its root and operation scope. Commit, push, deploy, delete, and settlement are separate authorities unless explicitly included.
 
-## External commit approval
+## Automatic bookkeeping and mandatory reporting
 
-For ordinary commits outside Decal, follow the host policy and valid user approval, including an
-existing standing or automatic approval covering this repository and task scope. Before committing,
-briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
-approval when that authorization remains valid; ask when approval is absent or the scope is unclear
-or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
-contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
-This does not replace Native approval, registration-digest approval, or completion/settlement gates,
-and does not authorize push, merge, deploy, deletion, or access to another repository.
+Within the requested repository and task scope, an explicit user or repository automatic policy
+may authorize registration, factual Task updates and ordinary isolated commits without another
+approval question. Recheck the source revision, exact write-set and authority; preserve unrelated work.
+Dry-run digests bind the same validated input, not an invented user click. Without applicable authority,
+obtain it. This does not authorize another repository, registry initialization, installation, changed
+scope, lifecycle completion, Smoke facts, version settlement, push, merge or deployment.
+
+Use policy-authorized Native receipts directly. If an older host only offers a pending candidate,
+use the common interaction panel and its existing grant; never bypass Native through direct files or
+external fallback. Report kind/ID, create/reuse/reopen, checked records and decision reason, changes,
+verification, canonical receipt/commit and remaining work after every operation.
+
 
 ## Incident boundary
 
@@ -45,7 +49,7 @@ Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonica
 
 Outside Decal, use the v10 main-authority broker. It preserves the v9 semantic intent while allowing a
 linked feature or detached worktree to request registration. First preview the semantic candidate; the final `INC-<number>`
-identity remains pending until approval:
+identity remains pending until the authorized writer runs:
 
 ```sh
 node contracts/task-work-bug/v10/register-ticket.mjs \
@@ -73,3 +77,7 @@ In a Decal-owned session, prefer its advertised Native candidate and lifecycle c
 ## Chat reference
 
 Use `@incident:INC-7` or `@incident:INC-7[title]` when referencing the Incident in a Decal conversation. Never guess a missing ID.
+
+## Same-issue reuse and reopen
+
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.

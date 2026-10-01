@@ -2,7 +2,7 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.11.3"
+  version: "1.12.0"
   portable: true
 ---
 
@@ -20,16 +20,20 @@ and allowed operation scope for the current task. Verify the approved root indep
 repository's own instructions. Commit, push, deploy, delete, and other external effects remain separate
 authorities unless the approval explicitly includes them.
 
-## External commit approval
+## Automatic bookkeeping and mandatory reporting
 
-For ordinary commits outside Decal, follow the host policy and valid user approval, including an
-existing standing or automatic approval covering this repository and task scope. Before committing,
-briefly report the repository, branch, exact files, and intended changes. Do not require a new-turn
-approval when that authorization remains valid; ask when approval is absent or the scope is unclear
-or expanded. Never self-authorize or treat tool availability as user consent. Recheck HEAD, target
-contents, staged/conflict state and ongoing Git operations; preserve unrelated changes.
-This does not replace Native approval, registration-digest approval, or completion/settlement gates,
-and does not authorize push, merge, deploy, deletion, or access to another repository.
+Within the requested repository and task scope, an explicit user or repository automatic policy
+may authorize registration, factual Task updates and ordinary isolated commits without another
+approval question. Recheck the source revision, exact write-set and authority; preserve unrelated work.
+Dry-run digests bind the same validated input, not an invented user click. Without applicable authority,
+obtain it. This does not authorize another repository, registry initialization, installation, changed
+scope, lifecycle completion, Smoke facts, version settlement, push, merge or deployment.
+
+Use policy-authorized Native receipts directly. If an older host only offers a pending candidate,
+use the common interaction panel and its existing grant; never bypass Native through direct files or
+external fallback. Report kind/ID, create/reuse/reopen, checked records and decision reason, changes,
+verification, canonical receipt/commit and remaining work after every operation.
+
 
 ## Before changing files
 
@@ -45,8 +49,8 @@ and does not authorize push, merge, deploy, deletion, or access to another repos
 ## Host routing
 
 - In a Decal-owned session, use the advertised Decal Task candidate/lifecycle capability. Remote input remains Decal-owned and routes through the Desktop Host; never invoke the portable writer as a Remote-side Git mutation. If the capability is absent or reports a stale host, stop and request a Decal update or session refresh. Do not imitate a Native approval or receipt in text.
-- Outside Decal, use `contracts/task-work-bug/v10/register-task-batch.mjs` for both single and multi-Task registration. First run the complete v7 semantic intent with `--dry-run`; show the candidate meanings, `intentDigest`, path pattern, and that identity is pending until approval. Do not show or reserve provisional final IDs. Only when the current user turn approves that semantic scope, rerun the same intent with `--approved-digest ... --write`. When invoked from a linked feature or detached worktree, the v10 broker finds the one existing canonical `main`/`master` worktree and runs the unchanged v7 registration transaction there without switching, detaching, creating, or removing any worktree. Its receipt reports both roots. Missing, ambiguous, or changing main authority fails closed. The registration commit does not authorize push, merge, deploy, lifecycle completion, or version settlement.
-- Express dependencies within one batch as stable `localRef` objects. Do not submit guessed final Task IDs or paths. A stale provisional ID is not a conflict because approval binds the semantic digest; changed title, scope, dependency, impact, or commit message requires a new dry-run and approval.
+- Outside Decal, use `contracts/task-work-bug/v10/register-task-batch.mjs` for both single and multi-Task registration. First run the complete v7 semantic intent with `--dry-run`; show the candidate meanings, `intentDigest`, path pattern, and that identity is pending until the authorized writer runs. Do not show or reserve provisional final IDs. When valid user or repository policy authorizes that semantic scope, rerun the same intent with `--approved-digest ... --write`. When invoked from a linked feature or detached worktree, the v10 broker finds the one existing canonical `main`/`master` worktree and runs the unchanged v7 registration transaction there without switching, detaching, creating, or removing any worktree. Its receipt reports both roots. Missing, ambiguous, or changing main authority fails closed. The registration commit does not authorize push, merge, deploy, lifecycle completion, or version settlement.
+- Express dependencies within one batch as stable `localRef` objects. Do not submit guessed final Task IDs or paths. A stale provisional ID is not a conflict because approval binds the semantic digest; changed title, scope, dependency, impact, or commit message requires a new dry-run and an authority recheck.
 - When the standard Project Pack is current and the v4 validator returns `missing_registry_file`, the repository may be initialized only with `contracts/task-work-bug/initialize-task-registry.mjs`. Prepare a stable v1 initialization intent with explicit categories, run `--dry-run`, show the exact two-path write-set, and run `--write` with its source revision only when the current user explicitly approves initialization for that repository. Never run the initializer during Pack installation or update. Partial, legacy, nonempty, symlinked, stale, or already initialized registries are blocking states, not repair-by-overwrite cases.
 - Repository lifecycle scripts remain canonical for status, Smoke, completion, and settlement when present. For a project explicitly adopting the packaged portable runner, read `contracts/task-work-bug/v9/README.md` and validate its manifest before using `v9/task-lifecycle.mjs`. Its project-approved `.decal/settlement-profile.json` names all version sources; do not guess paths or replace an existing repository engine. Preview the exact plan, obtain the operation's required approval, then apply the same digest. Finalization is automatic. Completion requires actual verification evidence bound to the tested HEAD/tree; never create a passing receipt merely to pass the gate. With no v9 runner, v4 supports only its advertised `planned → in_progress` start; report the missing completion runner as an update requirement rather than claiming completion support.
 - If either the validator or v10 broker is unavailable, stop and report `authoring_update_required` instead of extending the current index by inspection or relying on a network gateway. A repository explicitly pinned to v4 may keep its legacy file-only writer, but do not describe that path as atomic registration or reuse a v7 approval for a later manual commit.
@@ -72,3 +76,7 @@ While the Task is earlier than `development_complete`, test failures found while
   not include implementation files, push, merge, deploy, or a different repository.
 - Do not equate implementation, commit, merge, Smoke, release, and version settlement. Advance only through the lifecycle gates supported by the project.
 - Report the exact Task ID, resulting status, validation evidence, and any remaining release or settlement work.
+
+## Same-issue reuse and reopen
+
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
