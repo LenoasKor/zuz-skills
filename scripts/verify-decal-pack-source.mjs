@@ -49,7 +49,7 @@ const expectedPackInstallation = {
 if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");
 if (stableJson(policy.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("project skill Pack installation policy must match source descriptor");
 if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.7.4") failures.push("external transition commit checkpoint requires decal-slice-maintenance 0.7.4");
-if (policy.minimumCompatible?.["decal-debug"] !== "0.2.0") failures.push("recurring-work load gate requires decal-debug 0.2.0");
+if (policy.minimumCompatible?.["decal-debug"] !== "0.3.0") failures.push("scoped recurring-work companion requires decal-debug 0.3.0");
 
 const moduleIds = new Set();
 const membership = new Map();

@@ -23,7 +23,7 @@ Portable v10 routes zuz ITS Task, Work, Bug, and Incident registration from a li
 
 For the repeatable source → GitHub → Skill Store → Decal → Primer/Jig → installed-project rollout, follow [the Decal Pack release guide](docs/decal-pack-release-guide.md).
 
-The unpublished 3.3.0 candidate adds v12 Work/Bug evidence reuse and history-preserving reopen, and policy-authorized bookkeeping with mandatory result reports. Existing published contracts stay pinned; release publication and installation remain separate steps.
+The unpublished 3.4.0 candidate retains v12 Work/Bug evidence reuse and history-preserving reopen, and policy-authorized bookkeeping with mandatory result reports. It scopes debugging by observed evidence: local defects start with their owning paths, while recurring-work, leak and performance changes require the digest-bound offline companion before code changes. The complete prior load gate is preserved in that companion. Existing published contracts stay pinned; release publication and installation remain separate steps.
 
 ## Decal Pack
 

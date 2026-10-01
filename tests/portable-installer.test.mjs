@@ -463,6 +463,45 @@ test("development core installs without ITS contracts or ticket skills", async (
   }
 });
 
+test("debug companion installs offline for every provider and modified resources block writes", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-debug-companion-"));
+  const options = { modules: ["development-core"], providers: ["codex", "claude", "gemini", "acp"] };
+  try {
+    await installSelection(root, options.modules, options.providers);
+    const prefixes = ["skills", ".claude/skills", ".gemini/skills", ".agents/skills"];
+    const expected = await readFile(path.join(root, "docs/skills/resources/decal-debug/REPEATING-WORK.md"));
+    assert.equal(sha256(expected), "3b8e0d8420f9bd1c71bfbee4642163fd865ba00e7a4faa4c066dccf25230f685");
+    const lockPath = path.join(root, ".decal/decal-pack.lock.json");
+    const lockBefore = await readFile(lockPath);
+    const lock = JSON.parse(lockBefore.toString("utf8"));
+    for (const prefix of prefixes) {
+      const entry = await readFile(path.join(root, prefix, "decal-debug/SKILL.md"), "utf8");
+      const relative = `${prefix}/decal-debug/REPEATING-WORK.md`;
+      const bytes = await readFile(path.join(root, relative));
+      assert.deepEqual(bytes, expected, prefix);
+      assert.equal(lock.files.find((file) => file.path === relative)?.sha256, sha256(bytes), prefix);
+      assert.match(entry, /같은 폴더의 `REPEATING-WORK.md`/u, prefix);
+      assert.match(entry, /국소 결함.*관계없는 반복 작업 전수 조사를 요구하지 않습니다/us, prefix);
+      assert.match(entry, /코드 수정 전에 `REPEATING-WORK.md`를 반드시 읽고/u, prefix);
+      assert.doesNotMatch(entry, /## 반복 작업 부하 게이트/u, prefix);
+    }
+    assert.equal(run(root, "--dry-run", null, options).value.status, "current");
+    const changed = "skills/decal-debug/REPEATING-WORK.md";
+    await writeFile(path.join(root, changed), "user customized load guidance\n");
+    const preview = run(root, "--dry-run", null, options);
+    assert.equal(preview.value.status, "blocked");
+    assert.ok(preview.value.conflicts.includes(changed));
+    const blocked = run(root, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(blocked.status, 2);
+    assert.equal(blocked.value.code, "conflict_detected");
+    assert.equal(await readFile(path.join(root, changed), "utf8"), "user customized load guidance\n");
+    assert.deepEqual(await readFile(lockPath), lockBefore);
+    assert.deepEqual(await readFile(path.join(root, ".claude/skills/decal-debug/REPEATING-WORK.md")), expected);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("ITS removal retires pristine tools, preserves records, and reinstall previews adoption", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-its-lifecycle-"));
   const fullModules = ["development-core", "zuz-its"];

@@ -103,6 +103,8 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
       "pack-modules-have-version-and-digest",
       "development-core-does-not-install-zuz-its",
       "recurring-work-load-is-inventoried-and-event-first-before-code",
+      "localized-debugging-preserves-direct-regressions-without-unrelated-load-census",
+      "recurring-debugging-requires-digest-bound-offline-companion-before-code",
       "zuz-its-removal-retires-pristine-tools-and-preserves-records",
       "zuz-its-reinstall-previews-existing-record-adoption",
       "active-zuz-its-journal-blocks-removal",
@@ -172,7 +174,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.1.0" },
+    { id: "development-core", version: "1.2.0" },
     { id: "zuz-its", version: "1.2.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.0.3" },
@@ -191,21 +193,32 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-slice-maintenance": "0.7.4",
     "decal-slice-smoke": "0.5.2",
     "decal-commit-ready": "0.9.2",
-    "decal-debug": "0.2.0",
+    "decal-debug": "0.3.0",
   };
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
     assert.equal(packageValue.skills.find((skill) => skill.id === id)?.version, version, id);
   }
-  const debugSourceFile = packageValue.files.find((file) => file.sourcePath === "skills/prompts/debug.md");
-  const debugGeneratedFile = packageValue.files.find((file) => file.sourcePath === "generated/skills/decal-debug/SKILL.md");
-  for (const file of [debugSourceFile, debugGeneratedFile]) {
+  const debugResource = packageValue.files.find((file) => file.sourcePath === "skills/prompts/resources/decal-debug/REPEATING-WORK.md");
+  assert.ok(debugResource);
+  const gate = Buffer.from(debugResource.contentBase64, "base64").toString("utf8");
+  assert.equal(debugResource.sha256, "3b8e0d8420f9bd1c71bfbee4642163fd865ba00e7a4faa4c066dccf25230f685", "entire previous load gate remains byte-identical");
+  assert.match(gate, /기존 생산자와 소비자.*누적 부하/us);
+  assert.match(gate, /on-demand.*event.*revision.*deadline/us);
+  assert.match(gate, /UI·main thread 밖의 background/u);
+  assert.match(gate, /single-flight.*dedupe.*coalesce/us);
+  assert.match(gate, /idle.*active.*호출 횟수/us);
+  assert.deepEqual(debugResource.installTargets.map(({ provider }) => provider), ["shared", "codex", "claude", "gemini", "acp"]);
+  for (const sourcePath of ["skills/prompts/debug.md", "generated/skills/decal-debug/SKILL.md"]) {
+    const file = packageValue.files.find((candidate) => candidate.sourcePath === sourcePath);
     assert.ok(file);
     const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
-    assert.match(content, /기존 반복 작업 전체.*누적 부하/us);
-    assert.match(content, /on-demand.*event.*revision.*deadline/us);
-    assert.match(content, /UI·main thread 밖의 background/u);
-    assert.match(content, /single-flight.*dedupe.*coalesce/us);
-    assert.match(content, /idle.*active.*호출 횟수/us);
+    assert.match(content, /국소 결함.*관련 소유 경로/us);
+    assert.match(content, /관계없는 반복 작업 전수 조사를 요구하지 않습니다/u);
+    assert.match(content, /직접 관련된 반복 경로의 검증은 생략하지 않습니다/u);
+    assert.match(content, /코드 수정 전에 `REPEATING-WORK.md`를 반드시 읽고/u);
+    assert.match(content, /sha256:3b8e0d8420f9bd1c71bfbee4642163fd865ba00e7a4faa4c066dccf25230f685/u);
+    assert.match(content, /필수 파일이 없거나 digest가 다르면.*차단/us);
+    assert.doesNotMatch(content, /## 반복 작업 부하 게이트/u, "unconditional main document does not load the full census");
   }
   for (const id of ["decal-task", "decal-work", "decal-bug", "zuz-its"]) {
     const file = packageValue.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
@@ -240,7 +253,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   for (const [id, version] of Object.entries({
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
-    "decal-debug": "0.2.0",
+    "decal-debug": "0.3.0",
     "decal-task": "1.12.0",
     "decal-work": "1.9.0",
     "decal-bug": "1.9.0",
@@ -321,11 +334,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.3.0 keeps v10/v11 and adds v12 bookkeeping", async () => {
+test("Pack 3.4.0 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.3.0");
+  assert.equal(packageValue.packVersion, "3.4.0");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
