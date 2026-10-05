@@ -26,9 +26,11 @@ async function boundary(root,relative) {
  if((await git(root,['diff','--cached','--name-only','-z','--',relative])).length) fail('target_staged');
  const mode=(await git(root,['ls-files','--stage','--',relative])).split(' ')[0];
  if(!['100644','100755'].includes(mode)) fail('tracked_text_required');
- const target=await safeFile(root,relative); const bytes=await readFile(target);
+ const target=await safeFile(root,relative); const metadata=await lstat(target);
+ if(process.platform!=='win32' && Boolean(metadata.mode & 0o111)!==(mode==='100755')) fail('file_mode_changed');
+ const bytes=await readFile(target);
  if(bytes.length>1024*1024 || bytes.includes(0) || !Buffer.from(bytes.toString('utf8')).equals(bytes)) fail('tracked_text_required');
- return {target,mode,source:bytes.toString('utf8'),head:(await git(root,['rev-parse','HEAD'])).trim(),branch:(await git(root,['symbolic-ref','HEAD'])).trim()};
+ return {target,mode,permissions:metadata.mode & 0o777,source:bytes.toString('utf8'),head:(await git(root,['rev-parse','HEAD'])).trim(),branch:(await git(root,['symbolic-ref','HEAD'])).trim()};
 }
 async function storage(root, create=false) {
  const directory=path.resolve(root,(await git(root,['rev-parse','--git-path','decal-owned-edits-v1'])).trim());
@@ -93,7 +95,7 @@ export async function applyOwnedEdit({root,token,ownerId,expectedSourceRevision,
   await save(file,prepared);
   if(digest(await readFile(state.target,'utf8'))!==entry.beforeDigest) fail('source_drift');
   const tmp=`${state.target}.owned-${token}`;
-  await writeFile(tmp,after,{flag:'wx',mode:state.mode==='100755'?0o755:0o644});
+  await writeFile(tmp,after,{flag:'wx',mode:state.permissions});
   if(digest(await readFile(state.target,'utf8'))!==entry.beforeDigest) {await unlink(tmp);fail('source_drift');}
   await rename(tmp,state.target);await save(file,{...prepared,phase:'applied'});
   return {token,sourceRevision:digest(after)};
@@ -108,7 +110,7 @@ async function rejectHooks(root) {
 export async function commitOwnedEdit({root,token,ownerId,message,verification,independent,approvedDigest}) {
  const preview=await previewOwnedCommit({root,token,ownerId,message,verification,independent});
  if(preview.approvalDigest!==approvedDigest) fail('approval_digest_mismatch');
- const release=await acquireLock(root,1);let temp=null,indexLock=null;
+ const release=await acquireLock(root,1);let temp=null,indexLock=null,indexLockIdentity=null,indexLockPath=null;
  try {
   const {file,entry}=await load(root,token);await owner(root,entry,ownerId);
   if(entry.phase==='committed') {
@@ -123,7 +125,9 @@ export async function commitOwnedEdit({root,token,ownerId,message,verification,i
   if(state.head!==entry.head || state.branch!==entry.branch || digest(state.source)!==entry.afterDigest) fail('source_drift');
   const indexPath=path.resolve(root,(await git(root,['rev-parse','--git-path','index'])).trim());
   if((await lstat(indexPath)).isSymbolicLink()) fail('unsafe_index');
-  indexLock=await open(`${indexPath}.lock`,'wx',0o600);
+  indexLockPath=`${indexPath}.lock`;
+  indexLock=await open(indexLockPath,'wx',0o600);indexLockIdentity=await indexLock.stat();
+  const ownsIndexLock=async()=>{const current=await exists(indexLockPath);return current?.isFile() && !current.isSymbolicLink() && current.dev===indexLockIdentity.dev && current.ino===indexLockIdentity.ino;};
   const originalIndex=await readFile(indexPath);
   temp=await mkdtemp(path.join(await realpath(os.tmpdir()),'owned-commit-'));
   const before=path.join(temp,'before'),after=path.join(temp,'after');
@@ -147,14 +151,19 @@ export async function commitOwnedEdit({root,token,ownerId,message,verification,i
   const commit=(await git(root,['commit-tree',tree,'-p',state.head,'-m',message,'-m',`Zuz-Owned-Edit: ${token}`])).trim();
   await save(file,{...entry,phase:'committing',commit,committedBlob,verification,patchDigest:digest(patch)});
   if((await git(root,['rev-parse','HEAD'])).trim()!==state.head || digest(await readFile(state.target,'utf8'))!==entry.afterDigest || !originalIndex.equals(await readFile(indexPath))) fail('source_drift');
+  if(!await ownsIndexLock()) fail('index_lock_lost');
   await indexLock.writeFile(await readFile(nextIndex));await indexLock.sync();
+  if(!await ownsIndexLock()) fail('index_lock_lost');
   await git(root,['update-ref',state.branch,commit,state.head]);
   // Ref now contains only the verified patch; failed finalization retains the journal.
-  await indexLock.close();indexLock=null;await rename(`${indexPath}.lock`,indexPath);
+  await indexLock.close();indexLock=null;
+  if(!await ownsIndexLock()) fail('index_lock_lost');
+  await rename(indexLockPath,indexPath);
   await save(file,{...entry,phase:'committed',commit,committedBlob,verification,patchDigest:digest(patch)});
   return {status:'committed',commit,reused:false};
  } finally {
-  if(indexLock) {await indexLock.close();await unlink(path.resolve(root,(await git(root,['rev-parse','--git-path','index.lock'])).trim()));}
+  if(indexLock) {await indexLock.close();const current=await exists(indexLockPath);
+   if(current?.isFile() && !current.isSymbolicLink() && current.dev===indexLockIdentity.dev && current.ino===indexLockIdentity.ino) await unlink(indexLockPath);}
   if(temp) await rm(temp,{recursive:true,force:true});
   await release();
  }

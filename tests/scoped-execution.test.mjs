@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { realpath, mkdtemp, mkdir, cp, readFile, writeFile, rm, symlink } from 'node:fs/promises';
+import { realpath, mkdtemp, mkdir, cp, readFile, writeFile, rm, symlink, chmod, lstat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -93,6 +93,7 @@ async function prepareOwned(root) {
  git(root,'add','code.txt','other.txt');git(root,'commit','-m','source');
  await writeFile(path.join(root,'code.txt'),source.replace('line 1\n','foreign change\n'));
  await writeFile(path.join(root,'other.txt'),'foreign staged\n');git(root,'add','other.txt');
+ if(process.platform!=='win32') await chmod(path.join(root,'code.txt'),0o600);
  const captured=await beginOwnedEdit({root,relative:'code.txt',taskId:1,ownerId:'agent-one'});
  await applyOwnedEdit({root,...captured,expectedSourceRevision:captured.sourceRevision,ownerId:'agent-one',find:'line 25\n',replace:'owned change\n'});
  return {...captured,source};
@@ -105,6 +106,7 @@ test('owned patch commit preserves foreign worktree and staged contents',()=>fix
  const result=await commitOwnedEdit(args);
  assert.equal(git(root,'show','HEAD:code.txt'),source.replace('line 25\n','owned change\n').trim());
  assert.equal(await readFile(path.join(root,'code.txt'),'utf8'),working);
+ if(process.platform!=='win32') assert.equal((await lstat(path.join(root,'code.txt'))).mode & 0o777,0o600);
  assert.equal(git(root,'show',':other.txt'),foreignStage);
  assert.equal(git(root,'diff','--cached','--name-only'),'other.txt');
  assert.equal(git(root,'diff-tree','--no-commit-id','--name-only','-r','HEAD'),'code.txt');
@@ -131,6 +133,7 @@ test('same-file staged contents and unsupported hooks block owned commit',()=>fi
 test('overlap with pre-existing foreign edits cannot apply to HEAD',()=>fixture(async(root)=>{
  await writeFile(path.join(root,'code.txt'),'original\n');git(root,'add','code.txt');git(root,'commit','-m','seed');
  await writeFile(path.join(root,'code.txt'),'foreign\n');
+ if(process.platform!=='win32') await chmod(path.join(root,'code.txt'),0o600);
  const captured=await beginOwnedEdit({root,relative:'code.txt',taskId:1,ownerId:'agent-one'});
  await applyOwnedEdit({root,...captured,expectedSourceRevision:captured.sourceRevision,ownerId:'agent-one',find:'foreign',replace:'owned'});
  const before=git(root,'rev-parse','HEAD');
@@ -179,3 +182,10 @@ test('modified ownership journal cannot manufacture provenance',()=>fixture(asyn
   await writeFile(path.join(root,plan.entries[0].path),plan.entries[0].next);
   await assert.rejects(planTaskBody(root,request),/recorded_body_not_committed/);
  }));
+
+// Executable mode is part of the capture boundary, even when core.fileMode is false.
+test('owned capture rejects a changed executable mode', {skip:process.platform==='win32'},()=>fixture(async(root)=>{
+ await writeFile(path.join(root,'mode.txt'),'text\n');git(root,'add','mode.txt');git(root,'commit','-m','mode fixture');
+ git(root,'config','core.fileMode','false');await chmod(path.join(root,'mode.txt'),0o755);
+ await assert.rejects(beginOwnedEdit({root,relative:'mode.txt',taskId:'1',ownerId:'agent-one'}),/file_mode_changed/);
+}));
