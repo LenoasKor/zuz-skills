@@ -1,0 +1,17 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v13",
+  "files": {
+    "README.md": "86213f83ceb27dc03bbf3287bbc8f7a775985b51668e7f0327dbe4d4487a5246",
+    "contract.json": "2c1d6a83a6ac7113afadc3d22aec76694e33d6a9d393d4b3d15f1ae1db15e32c",
+    "execution-policy.mjs": "fc23f83b3d4ccd48e44e20edceffd2b9d1ee3b779a0f488ccaae07bb8c3111c2",
+    "owned-edit-cli.mjs": "ec1a1b1e497f358cb69b5829ca50046a376087982de61e6634b3332c7499ba92",
+    "owned-edit.mjs": "7a688a6b173f2aa00b2850716275959079994e0b582bffef7175e9c1f97c3bfa",
+    "task-body.mjs": "cd534829ad1aa35a148b1a3077e2ce4c77df9c51403898f454a2cbabff1cf54a",
+    "verify-contract.mjs": "48338cc7b75a2b0eb4b73eecc83e364001b554c667d5248bb6437d44024e4fad"
+  },
+  "dependencies": {
+    "v4/manifest.json": "2a7a88aa8db122db00eb4c2cbea1e40b2770b6418448ac8c455d5ef5cb77fed4",
+    "v9/manifest.json": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559",
+    "v12/manifest.json": "cdefac0e461d2fa222147ae2912feca031542623527e889fd9873eadb8cd07e2"
+  }
+}

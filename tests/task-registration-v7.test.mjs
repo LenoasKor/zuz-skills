@@ -64,6 +64,8 @@ async function fixture(defaultBranch = "main") {
   assert.equal(run("git", ["init", "-b", defaultBranch], root).status, 0);
   assert.equal(run("git", ["config", "user.email", "fixture@decal.test"], root).status, 0);
   assert.equal(run("git", ["config", "user.name", "Decal Fixture"], root).status, 0);
+  assert.equal(run("git", ["config", "gc.auto", "0"], root).status, 0);
+  assert.equal(run("git", ["config", "maintenance.auto", "false"], root).status, 0);
   assert.equal(run("git", ["add", "."], root).status, 0);
   assert.equal(run("git", ["commit", "-m", "fixture"], root).status, 0);
   return root;
@@ -301,6 +303,9 @@ try {
   assert.equal(run("git", ["init", "-b", "master"], taskRoot).status, 0);
   assert.equal(run("git", ["config", "user.email", "fixture@decal.test"], taskRoot).status, 0);
   assert.equal(run("git", ["config", "user.name", "Decal Fixture"], taskRoot).status, 0);
+  // Disposable fixtures must not leave Git auto-maintenance racing directory cleanup.
+  assert.equal(run("git", ["config", "gc.auto", "0"], taskRoot).status, 0);
+  assert.equal(run("git", ["config", "maintenance.auto", "false"], taskRoot).status, 0);
   assert.equal(run("git", ["add", "."], taskRoot).status, 0);
   assert.equal(run("git", ["commit", "-m", "fixture"], taskRoot).status, 0);
   const taskIntent = {

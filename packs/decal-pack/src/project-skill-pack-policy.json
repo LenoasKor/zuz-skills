@@ -1,20 +1,37 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.4.0",
+  "packVersion": "3.5.0",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
-    "modes": ["initial-pack-bootstrap", "update", "change-modules"],
+    "modes": [
+      "initial-pack-bootstrap",
+      "update",
+      "change-modules"
+    ],
     "approvalArgument": "--approved-plan-digest",
-    "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests", "managed-rule-blocks"],
+    "approvalBinding": [
+      "canonical-project-root",
+      "release-and-source-manifest",
+      "selected-modules",
+      "selected-providers",
+      "exact-file-digests",
+      "managed-rule-blocks"
+    ],
     "existingLock": "plain-v2-module-and-rule-state",
     "modifiedFiles": "preserve-and-block-entire-write",
     "obsoleteManagedFiles": "retire-pristine-and-preserve-modified",
     "managedRuleFiles": "dedicated-marker-preserve-outside-block-and-block-modified",
     "gitSettlement": "opt-in-exact-write-set-commit",
     "gitBlockedResult": "installation-preserved-and-typed",
-    "rollbackScope": ["create", "update", "restore", "retire", "installation-lock"]
+    "rollbackScope": [
+      "create",
+      "update",
+      "restore",
+      "retire",
+      "installation-lock"
+    ]
   },
   "repositoryAuthoringProfiles": {
     "jig.development-task-authoring/v1": [
@@ -32,7 +49,7 @@
     "decal-bug": "1.9.0",
     "decal-incident": "1.4.0",
     "zuz-its": "1.4.0",
-    "decal-slice-maintenance": "0.7.4",
+    "decal-slice-maintenance": "0.8.0",
     "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3"
   },
@@ -70,5 +87,14 @@
     "decaldev-rebuild-relaunch": [
       "sha256:166cd57d69eba51fe05088f37ebb1fa6daa37c14616f49fe93a8b4aa0e9ce088"
     ]
+  },
+  "executionPolicies": {
+    "scopedExecution": {
+      "contract": "task-work-bug/v13",
+      "waitTtlMs": 300000,
+      "correctionLimit": 1,
+      "nativeFallback": false,
+      "publicationState": "candidate"
+    }
   }
 }

@@ -6,6 +6,7 @@ import { verifyContract as verifyBookkeeping } from "../packs/decal-pack/src/con
 
 const descriptor = await loadSourceDescriptor();
 const failures = [];
+try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v13/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`scoped execution contract: ${error.code ?? error.message}`); }
 try { await verifyContract(); } catch (error) { failures.push(`portable settlement contract: ${error.code ?? error.message}`); }
 try { await verifyBookkeeping(); } catch(error) { failures.push(`portable bookkeeping contract: ${error.code ?? error.message}`); }
 const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
@@ -48,7 +49,7 @@ const expectedPackInstallation = {
 };
 if (stableJson(descriptor.executionPolicies?.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("Pack installation transaction policy must be exact");
 if (stableJson(policy.packInstallation) !== stableJson(expectedPackInstallation)) failures.push("project skill Pack installation policy must match source descriptor");
-if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.7.4") failures.push("external transition commit checkpoint requires decal-slice-maintenance 0.7.4");
+if (policy.minimumCompatible?.["decal-slice-maintenance"] !== "0.8.0") failures.push("external transition commit checkpoint requires decal-slice-maintenance 0.7.4");
 if (policy.minimumCompatible?.["decal-debug"] !== "0.3.0") failures.push("scoped recurring-work companion requires decal-debug 0.3.0");
 
 const moduleIds = new Set();

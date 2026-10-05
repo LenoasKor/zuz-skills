@@ -1,11 +1,16 @@
 {
   "schemaVersion": 1,
   "packId": "decal-project-pack",
-  "aliases": ["zuz.decal-pack"],
-  "packVersion": "3.4.0",
+  "aliases": [
+    "zuz.decal-pack"
+  ],
+  "packVersion": "3.5.0",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
-  "requiredFiles": ["LICENSE", "NOTICE"],
+  "requiredFiles": [
+    "LICENSE",
+    "NOTICE"
+  ],
   "recommended": true,
   "defaultSelected": false,
   "firstPartyLicense": "Apache-2.0",
@@ -13,7 +18,7 @@
   "modules": [
     {
       "id": "development-core",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "title": "기본 개발 도구",
       "description": "상태 확인, 빌드, 디버깅, 안전한 Git 작업, 작업 공간, 인계와 모션 지침",
       "defaultSelected": false,
@@ -35,7 +40,7 @@
     },
     {
       "id": "zuz-its",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "title": "zuz ITS · Task·Work·Issue",
       "description": "기존 Task·Work·Bug 자료의 호환성을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,
@@ -72,12 +77,14 @@
     },
     {
       "id": "decal-maintainer",
-      "version": "1.0.3",
+      "version": "1.1.0",
       "title": "Decal 저장소 유지보수",
       "description": "Decal 저장소의 개발 앱과 A/B 테스트 빌드 전용 도구",
       "defaultSelected": false,
       "projectInitialization": false,
-      "audience": ["decal-repository"],
+      "audience": [
+        "decal-repository"
+      ],
       "skillIds": [
         "decaldev-rebuild-relaunch",
         "decaldev-rebuild-relaunch-worktree"
@@ -124,43 +131,69 @@
       "decal": "0.406.0",
       "primer": null,
       "jig": null
-    }
+    },
+    "portableScopedExecution": "task-work-bug/v13"
   },
   "capabilities": [
     {
       "id": "portable-lifecycle-settlement",
       "scope": "contract",
-      "providers": ["codex", "claude", "gemini", "acp"],
+      "providers": [
+        "codex",
+        "claude",
+        "gemini",
+        "acp"
+      ],
       "required": false
     },
     {
       "id": "task-registry-explicit-initializer",
       "scope": "contract",
-      "providers": ["codex", "claude", "gemini", "acp", "decal"],
+      "providers": [
+        "codex",
+        "claude",
+        "gemini",
+        "acp",
+        "decal"
+      ],
       "required": true
     },
     {
       "id": "portable-cli-fallback",
       "scope": "skill",
-      "providers": ["codex", "claude", "gemini", "acp"],
+      "providers": [
+        "codex",
+        "claude",
+        "gemini",
+        "acp"
+      ],
       "required": true
     },
     {
       "id": "main-worktree-registration-broker",
       "scope": "contract",
-      "providers": ["codex", "claude", "gemini", "acp"],
+      "providers": [
+        "codex",
+        "claude",
+        "gemini",
+        "acp"
+      ],
       "required": true
     },
     {
       "id": "decal-native-ui",
       "scope": "skill",
-      "providers": ["decal"],
+      "providers": [
+        "decal"
+      ],
       "required": false
     },
     {
       "id": "jig-task-ledger",
       "scope": "consumer",
-      "providers": ["jig"],
+      "providers": [
+        "jig"
+      ],
       "required": false
     }
   ],
@@ -189,8 +222,17 @@
       "schemaVersion": 1,
       "identityProbe": "root-and-product-identity-only",
       "crossProjectAccess": "explicit-current-user-approval",
-      "approvalBinding": ["repository-root", "operation-scope", "current-task"],
-      "separateAuthorities": ["commit", "push", "deploy", "delete"]
+      "approvalBinding": [
+        "repository-root",
+        "operation-scope",
+        "current-task"
+      ],
+      "separateAuthorities": [
+        "commit",
+        "push",
+        "deploy",
+        "delete"
+      ]
     },
     "settlementCommit": {
       "schemaVersion": 1,
@@ -204,25 +246,55 @@
       "mode": "explicit-only",
       "writer": "contracts/task-work-bug/initialize-task-registry.mjs",
       "summaryRepairWriter": "contracts/task-work-bug/repair-task-registry-summary.mjs",
-      "approvalBinding": ["repository-root", "operation-scope", "current-task"],
+      "approvalBinding": [
+        "repository-root",
+        "operation-scope",
+        "current-task"
+      ],
       "automaticInstall": false
     },
     "packInstallation": {
       "schemaVersion": 3,
-      "modes": ["initial-pack-bootstrap", "update", "change-modules"],
+      "modes": [
+        "initial-pack-bootstrap",
+        "update",
+        "change-modules"
+      ],
       "approvalArgument": "--approved-plan-digest",
-      "approvalBinding": ["canonical-project-root", "release-and-source-manifest", "selected-modules", "selected-providers", "exact-file-digests", "managed-rule-blocks"],
+      "approvalBinding": [
+        "canonical-project-root",
+        "release-and-source-manifest",
+        "selected-modules",
+        "selected-providers",
+        "exact-file-digests",
+        "managed-rule-blocks"
+      ],
       "existingLock": "plain-v2-module-and-rule-state",
       "modifiedFiles": "preserve-and-block-entire-write",
       "obsoleteManagedFiles": "retire-pristine-and-preserve-modified",
       "managedRuleFiles": "dedicated-marker-preserve-outside-block-and-block-modified",
       "gitSettlement": "opt-in-exact-write-set-commit",
       "gitBlockedResult": "installation-preserved-and-typed",
-      "rollbackScope": ["create", "update", "restore", "retire", "installation-lock"]
+      "rollbackScope": [
+        "create",
+        "update",
+        "restore",
+        "retire",
+        "installation-lock"
+      ]
+    },
+    "scopedExecution": {
+      "contract": "task-work-bug/v13",
+      "waitTtlMs": 300000,
+      "correctionLimit": 1,
+      "nativeFallback": false,
+      "publicationState": "candidate"
     }
   },
   "revocations": {
-    "versions": ["1.3.0"],
+    "versions": [
+      "1.3.0"
+    ],
     "digests": [],
     "snapshotGeneratedAt": "2026-09-03T00:00:00Z"
   },
