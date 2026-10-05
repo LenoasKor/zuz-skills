@@ -6,11 +6,11 @@ import { beginOwnedEdit, applyOwnedEdit, commitOwnedEdit, inspectOwnedEdit, prev
 import { parseStrictJson } from '../v9/strict-json.mjs';
 import { fail } from '../v9/version-profile.mjs';
 import { waitForAvailability } from './execution-policy.mjs';
-export async function cli(argv) {
+export async function cli(argv, {signal} = {}) {
  if(Object.hasOwn(process.env,'DECAL_SESSION_ID')) fail('native_writer_required');
  const args=new Map();
  for(let i=0;i<argv.length;i++) {
-  if(!['--root','--request','--operation','--approved-plan-digest'].includes(argv[i]) || args.has(argv[i]) || !argv[i+1]) fail('usage_error');
+  if(!['--root','--request','--operation','--approved-plan-digest'].includes(argv[i]) || args.has(argv[i]) || !argv[i+1] || argv[i+1].startsWith('--')) fail('usage_error');
   args.set(argv[i],argv[++i]);
  }
  if(!args.get('--root') || !args.get('--request')) fail('usage_error');
@@ -23,14 +23,28 @@ export async function cli(argv) {
  const root=path.resolve(args.get('--root'));
  if(!['inspect','preview'].includes(operation)) {
   const ready=await waitForAvailability(async()=>{
-   try {const lock=await lstat(path.join(root,'.decal-slice-completion.lock'));return lock.isFile()&&!lock.isSymbolicLink()?{status:'busy'}:{status:'blocked',code:'unsafe_repository_lock'};}
+   try {
+    const lockPath=path.join(root,'.decal-slice-completion.lock');
+    const lock=await lstat(lockPath);
+    if(!lock.isFile() || lock.isSymbolicLink() || lock.size>4096) return {status:'blocked',code:'unsafe_repository_lock'};
+    let owner;
+    try {owner=parseStrictJson(await readFile(lockPath,'utf8'));} catch {return {status:'blocked',code:'unknown_lock_owner'};}
+    if(!Number.isSafeInteger(owner.pid) || owner.pid<1) return {status:'blocked',code:'unknown_lock_owner'};
+    try {process.kill(owner.pid,0);} catch(error) {if(error.code==='ESRCH') return {status:'busy',ownerActive:false};}
+    return {status:'busy'};
+   }
    catch(error){if(error.code==='ENOENT')return {status:'ready'};throw error;}
-  });
+  }, {signal});
   if(ready.status!=='ready') return ready;
  }
+ if(signal?.aborted) return {status:'blocked',code:'cancelled'};
  return operations[operation]({...request,root,approvedDigest:args.get('--approved-plan-digest')});
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
- try {console.log(JSON.stringify(await cli(process.argv.slice(2))));}
+ const controller=new AbortController();
+ const cancel=()=>controller.abort();
+ process.on('SIGINT',cancel);process.on('SIGTERM',cancel);
+ try {console.log(JSON.stringify(await cli(process.argv.slice(2),{signal:controller.signal})));}
  catch(error){console.log(JSON.stringify({status:'rejected',code:error.code??'owned_edit_failed',nextAction:'Inspect the owned edit receipt before another mutation.'}));process.exitCode=2;}
+ finally {process.off('SIGINT',cancel);process.off('SIGTERM',cancel);}
 }

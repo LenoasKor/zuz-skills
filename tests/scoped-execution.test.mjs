@@ -147,3 +147,35 @@ test('modified ownership journal cannot manufacture provenance',()=>fixture(asyn
  const sealed=JSON.parse(await readFile(file,'utf8'));sealed.entry.ownerId='agent-two';await writeFile(file,JSON.stringify(sealed));
  await assert.rejects(previewOwnedCommit({root,token,ownerId:'agent-two'}),/invalid_edit_receipt/);
 }));
+
+ test('invalid wait budget and cancellation during probe never allow a mutation', async () => {
+  await assert.rejects(policy.waitForAvailability(async () => assert.fail(), {ttlMs: NaN}), /invalid_wait_ttl/);
+  await assert.rejects(policy.waitForAvailability(async () => assert.fail(), {ttlMs: Infinity}), /invalid_wait_ttl/);
+  const signal = {aborted: false};
+  assert.equal((await policy.waitForAvailability(async () => {signal.aborted = true; return {status: 'ready'};}, {signal})).code, 'cancelled');
+  let time = 1000;
+  assert.equal((await policy.waitForAvailability(async () => ({status: 'busy'}), {now: () => time, wait: async () => {time = 0;}})).code, 'clock_changed');
+  let calls = 0;
+  assert.equal((await policy.waitForAvailability(async () => {calls++; return {status: 'busy'};}, {now: () => 1000, wait: async () => {}, ttlMs: 1000})).code, 'wait_timeout');
+  assert.ok(calls < 10);
+ });
+
+ test('CLI preserves dead-owner lock and cancellation does not create an owned edit',()=>fixture(async(root)=>{
+  const {cli}=await import('../packs/decal-pack/src/contracts/task-work-bug/v13/owned-edit-cli.mjs');
+  const requestPath=path.join(root,'request.json');
+  await writeFile(requestPath,'{}');
+  const args=['--root',root,'--request',requestPath,'--operation','capture'];
+  const deadPid=Number(execFileSync(process.execPath,['-e','console.log(process.pid)'],{encoding:'utf8'}).trim());
+  const lockPath=path.join(root,'.decal-slice-completion.lock');
+  const owner=JSON.stringify({pid:deadPid,token:'foreign'});
+  await writeFile(lockPath,owner);
+  assert.equal((await cli(args)).code,'owner_ended');
+  assert.equal(await readFile(lockPath,'utf8'),owner);
+  assert.equal((await cli(args,{signal:{aborted:true}})).code,'cancelled');
+  assert.equal(await readFile(lockPath,'utf8'),owner);
+ }));
+ test('an uncommitted body marker is never reported as completed',()=>fixture(async(root,request)=>{
+  const {plan}=await planTaskBody(root,request);
+  await writeFile(path.join(root,plan.entries[0].path),plan.entries[0].next);
+  await assert.rejects(planTaskBody(root,request),/recorded_body_not_committed/);
+ }));

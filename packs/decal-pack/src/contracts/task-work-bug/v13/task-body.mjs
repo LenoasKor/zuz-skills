@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { parseIndex, parseCategories, canonicalRegistry, validatePackage } from '../v4/registry.mjs';
 import { digest, fail, safeFile, loadProfile, PROFILE_PATH } from '../v9/version-profile.mjs';
 import { metadata } from '../v9/task-policy.mjs';
-import { executePlan, gitBoundary, planDigest, validatePlan } from '../v9/transaction.mjs';
+import { executePlan, gitBoundary, git, planDigest, validatePlan } from '../v9/transaction.mjs';
 import { parseStrictJson } from '../v9/strict-json.mjs';
 import { verifyContract } from './verify-contract.mjs';
 
@@ -53,6 +53,8 @@ export async function planTaskBody(root, request) {
   const prior = inspected.source.match(new RegExp(`<!-- zuz-task-body:${request.intentId}:([^ ]+) -->`, 'u'));
   if (prior) {
     if (prior[0] !== marker) fail('intent_conflict');
+    const head = await gitBoundary(root);
+    if (digest(await git(root, ['show', `${head}:${inspected.relative}`])) !== digest(inspected.source)) fail('recorded_body_not_committed');
     return { status: 'already_recorded', id: request.id, sourceRevision: digest(inspected.source) };
   }
   if (digest(inspected.source) !== request.expectedSourceRevision) fail('stale_source_revision');

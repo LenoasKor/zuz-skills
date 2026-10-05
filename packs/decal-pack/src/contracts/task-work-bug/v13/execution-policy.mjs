@@ -49,17 +49,27 @@ export function retryDecision({ requestState, retryability, correctionCount = 0,
 }
 // The probe must be read-only. A wait never retries the mutation itself.
 export async function waitForAvailability(probe, { signal, now = Date.now, wait = ms => new Promise(resolve => setTimeout(resolve, ms)), ttlMs = WAIT_TTL_MS } = {}) {
+  if (!Number.isFinite(ttlMs) || ttlMs < 0) throw new Error('invalid_wait_ttl');
   const start = now();
-  const ttl = Math.min(WAIT_TTL_MS, Math.max(0, ttlMs));
+  if (!Number.isFinite(start)) throw new Error('invalid_wait_clock');
+  const ttl = Math.min(WAIT_TTL_MS, ttlMs);
+  let elapsed = 0;
   let interval = 250;
   for (;;) {
     if (signal?.aborted) return { status: 'blocked', code: 'cancelled' };
     const state = await probe();
+    if (signal?.aborted) return { status: 'blocked', code: 'cancelled' };
     if (state.status !== 'busy') return state;
     if (state.ownerActive === false) return { status: 'blocked', code: 'owner_ended' };
-    const remaining = ttl - (now() - start);
+    const observed = now();
+    if (!Number.isFinite(observed) || observed < start) return { status: 'blocked', code: 'clock_changed' };
+    // A backward clock adjustment must not extend the wait budget.
+    elapsed = Math.max(elapsed, observed - start);
+    const remaining = ttl - elapsed;
     if (remaining <= 0) return { status: 'blocked', code: 'wait_timeout' };
-    await wait(Math.min(interval, remaining), signal);
+    const delay = Math.min(interval, remaining);
+    await wait(delay, signal);
+    elapsed += delay;
     interval = Math.min(interval * 2, 10_000);
   }
 }
