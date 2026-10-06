@@ -37,6 +37,8 @@
     "work-remains-a-ticket",
     "existing-jig-task-ledger-is-not-rewritten",
     "v15-registration-preserves-dead-owner-lock-and-head",
-    "v15-registration-retains-main-authority-and-idempotent-receipt"
+    "v15-registration-retains-main-authority-and-idempotent-receipt",
+    "meaningful-result-units-reuse-work-without-time-boxed-ticket-splitting",
+    "cause-local-recovery-preserves-authority-and-uncertain-write-holds"
   ]
 }

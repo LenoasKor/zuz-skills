@@ -221,8 +221,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.4" },
-    { id: "zuz-its", version: "1.4.2" },
+    { id: "development-core", version: "1.3.5" },
+    { id: "zuz-its", version: "1.4.3" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.0" },
   ]);
@@ -236,10 +236,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-bug": "1.10.0",
     "decal-incident": "1.5.2",
     "zuz-its": "1.4.0",
-    "decal-slice": "0.4.10",
+    "decal-slice": "0.4.11",
     "decal-slice-maintenance": "0.8.0",
     "decal-slice-smoke": "0.5.2",
-    "decal-commit-ready": "0.10.1",
+    "decal-commit-ready": "0.10.2",
     "decal-debug": "0.3.0",
   };
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
@@ -381,11 +381,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.6.2 keeps v10/v11 and v12 bookkeeping", async () => {
+test("Pack 3.6.3 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.6.2");
+  assert.equal(packageValue.packVersion, "3.6.3");
   assert.equal(packageValue.schemaVersion, 2);
   assert.equal(packageValue.compatibility.portablePreservingRegistration, "task-work-bug/v15");
   assert.ok(packageValue.files.some(file => file.sourcePath === "contracts/task-work-bug/v15/registration-lock.mjs"));
@@ -557,4 +557,42 @@ test("release guide operational registration commands match the adopted executio
   }
   assert.match(section,/저장소 공식 등록 엔진.*우선/u);
   assert.match(section,/명시 채택 profile.*manifest·dependency 검증/u);
+});
+
+
+test("WORK-209 meaningful units and cause-local holds are preserved in all provider projections", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "9".repeat(40)], { stdio: "pipe" });
+  const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  const content = (p) => Buffer.from(pack.files.find((f) => f.sourcePath === p).contentBase64, "base64").toString("utf8");
+  for (const [name, id] of [["slice", "decal-slice"], ["commit-ready", "decal-commit-ready"]]) {
+    const shared = content(`skills/prompts/${name}.md`);
+    const generated = content(`generated/skills/${id}/SKILL.md`);
+    assert.ok(generated.includes(shared.split("\n").find((line) => line.startsWith("template: ")).slice(10)));
+    const file = pack.files.find((f) => f.sourcePath === `generated/skills/${id}/SKILL.md`);
+    assert.deepEqual(file.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+    for (const source of [shared, generated]) {
+      assert.match(source, /저장소·브랜치·정확한 대상 파일과 변경 내용/);
+      assert.match(source, /DECAL_SESSION_ID/);
+      assert.match(source, /Native|네이티브/);
+      if (name === "slice") {
+        assert.doesNotMatch(source, /30분/);
+        assert.match(source, /필요한 결합 변경은 묶/);
+        assert.match(source, /단계 추가만으로 새 ID를 만들지/);
+        assert.match(source, /기존 Work를 재사용/);
+      } else {
+        assert.match(source, /git commit --only -- <paths>/);
+        assert.doesNotMatch(source, /중단해 사용자 지시를 기다리세요/);
+        assert.match(source, /권한 거절·결과 불명 쓰기는 보류/);
+        assert.match(source, /임의 재시도·우회하지/);
+        assert.match(source, /해당 동작과 종속 단계만 보류하고 독립 승인 작업은 계속/);
+        assert.match(source, /host가 사용자 입력을 명시 요구하면 그 동작은 입력을 기다리/);
+        assert.doesNotMatch(source, /scripts\/read_agent_rules\.mjs/, "portable prompt must not require a Decal-only loader");
+      }
+    }
+  }
+  for (const fixture of pack.consumerAcceptanceFixtures) {
+    const value = JSON.parse(content(fixture.sourcePath));
+    assert.ok(value.requiredCases.includes("meaningful-result-units-reuse-work-without-time-boxed-ticket-splitting"));
+    assert.ok(value.requiredCases.includes("cause-local-recovery-preserves-authority-and-uncertain-write-holds"));
+  }
 });
