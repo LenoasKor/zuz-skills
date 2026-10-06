@@ -2,7 +2,7 @@
 name: decal-work
 description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
 metadata:
-  version: "1.9.0"
+  version: "1.10.0"
   portable: true
 ---
 
@@ -130,3 +130,10 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 ## Same-issue reuse and reopen
 
 Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+
+
+## Preserving registration locks
+
+When `compatibility.portablePreservingRegistration` advertises `task-work-bug/v15` and its installed verifier passes, use the same commands above from `contracts/task-work-bug/v15/` instead of `v10/`. v15 retains the v10 canonical-main resolver, existing intent/approval digest, exact registration commit and idempotent receipt. It waits at most five minutes, supports cancellation, and preserves locks belonging to terminated owners. An owner-terminated or unknown result requires inspection; never delete the lock or repeat an ambiguous write. A repository adapter explicitly selecting v15 is equivalent.
+
+Hosts without this installed capability keep their pinned v10 path; do not claim that legacy registration preserves dead-owner locks. This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.

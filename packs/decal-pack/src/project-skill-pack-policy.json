@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.5.3",
+  "packVersion": "3.6.1",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -44,10 +44,10 @@
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.12.0",
-    "decal-work": "1.9.0",
-    "decal-bug": "1.9.0",
-    "decal-incident": "1.4.1",
+    "decal-task": "1.14.0",
+    "decal-work": "1.10.0",
+    "decal-bug": "1.10.0",
+    "decal-incident": "1.5.1",
     "zuz-its": "1.4.0",
     "decal-slice-maintenance": "0.8.0",
     "decaldev-rebuild-relaunch": "0.9.3",
@@ -96,6 +96,13 @@
       "nativeFallback": false,
       "publicationState": "candidate",
       "ownedEditContract": "task-work-bug/v14"
+    },
+    "preservingRegistration": {
+      "contract": "task-work-bug/v15",
+      "waitTtlMs": 300000,
+      "ownerTerminated": "preserve-and-reject",
+      "nativeFallback": false,
+      "publicationState": "candidate"
     },
     "incidentTransition": {
       "manifestValidator": "contracts/zuz-its/v4/verify-contract.mjs",
