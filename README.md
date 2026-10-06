@@ -74,3 +74,9 @@ The build is deterministic for the same source revision and source bytes. Genera
 Prompt-based tools are preserved as shared documentation and are also emitted as Agent Skills in the native Codex, Claude, Gemini, and ACP project paths. This keeps the same Pack usable with or without Decal.
 
 When Decal Native is unavailable, the installed skills continue through their documented portable CLI fallback. Only the missing Native panel or permission helper is unavailable; the zuz ITS workflow itself must not be rejected merely because the current host is Codex, Claude, Gemini, or ACP outside Decal.
+
+### Jig repository-owned contract installation
+
+The portable installer now recognizes `jig.development-task-authoring/v1` only when its exact manifest is trusted by the approved package's `repositoryAuthoringProfiles` policy and the repository identifies as Jig. It checks every profile file and all pinned v1–v4 consumer manifest bytes before excluding those contracts from Pack ownership. The known unchanged historical initializer is also preserved. Other differing files remain blocking conflicts. No project-authored trust list or arbitrary exclusion flag is accepted.
+
+The preview and newly issued installation receipt include `repositoryProfile`, its manifest digest, preserved paths and checked file digests. Approval binds these values; application rechecks them under the normal installation lock. Missing, changed or untrusted profiles fail closed, and ITS removal remains the repository owner's operation. Existing Task records and Jig-specific agent rules are not rewritten. Older installers that do not understand this profile may still reject the historical contracts; use this source installer for these projects. This installer-only change does not alter published Pack 3.6.2 bytes or claim a Native UI update.
