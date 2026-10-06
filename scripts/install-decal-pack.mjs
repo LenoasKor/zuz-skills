@@ -18,7 +18,6 @@ import {
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { resolveRepositoryProfile } from "./repository-installation-profile.mjs";
 
 import { assertSafeRelativePath, stableJson } from "./pack-lib.mjs";
 
@@ -594,11 +593,6 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   const hadIts = lockedModules.some((moduleId) => moduleId === "task-work-bug" || moduleId === "zuz-its");
   const hasIts = modules.includes("zuz-its");
   if (hadIts && !hasIts) await assertItsRemovalIsIdle(root);
-  const repositoryProfile = await resolveRepositoryProfile(packageValue, relative => currentFile(root, relative));
-  if (lock?.value.repositoryProfile && !repositoryProfile) fail("repository_profile_missing");
-  if (repositoryProfile && !hasIts) fail("repository_profile_its_removal_requires_owner");
-  const protectedPaths = new Set(repositoryProfile?.preservedPaths ?? []);
-  if ((lock?.value.files ?? []).some(file => protectedPaths.has(file.path))) fail("repository_profile_ownership_conflict");
   const rulePlan = await plannedPackRuleFiles(root, hasIts, lock);
 
   const mode = !lock ? "initial-pack-bootstrap" : selectionChanged ? "change-modules" : "update";
@@ -608,7 +602,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   ];
   const previousByPath = new Map(previousManagedFiles.map((file) => [file.path, file]));
   const previousRetiredByPath = new Map((lock?.value.retiredFiles ?? []).map((file) => [file.path, file]));
-  const desired = desiredFiles(packageValue, modules, providers).filter(file => !protectedPaths.has(file.path));
+  const desired = desiredFiles(packageValue, modules, providers);
   const desiredPaths = new Set(desired.map((file) => file.path));
   const entries = [];
   for (const file of desired) {
@@ -713,7 +707,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   const priorRelease = previousRelease(lock);
   const releaseAlreadyCurrent = Boolean(lock)
     && !selectionChanged
-    && stableJson(lock.value.repositoryProfile ?? null) === stableJson(repositoryProfile)
+    && !lock.value.repositoryProfile
     && lock.value.packVersion === packageValue.packVersion
     && lock.value.sourceRevision === packageValue.sourceRevision
     && lock.value.manifestSha256 === packageValue.manifestSha256
@@ -757,9 +751,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   const addingIts = hasIts && !hadIts;
   const adoptionPaths = addingIts ? await existingItsDocuments(root) : [];
   const moduleStates = moduleStatesForSelection(packageValue, modules);
-  const profileBinding = repositoryProfile ? { repositoryProfile } : {};
   const approvalBinding = {
-    ...profileBinding,
     schema: PLAN_BINDING_SCHEMA,
     mode,
     projectRoot: root,
@@ -787,7 +779,6 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   };
   const installationPlanDigest = prefixedSha256(stableJson(approvalBinding));
   const lockValue = {
-    ...profileBinding,
     schema: LOCK_SCHEMA,
     packId: packageValue.packId,
     packVersion: packageValue.packVersion,
@@ -841,7 +832,6 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
     ruleEntries: rulePlan.entries,
     retirementEntries,
     public: {
-      ...profileBinding,
       schema: PLAN_SCHEMA,
       status,
       mode,
@@ -1245,8 +1235,6 @@ export async function installPackage({
       beforeSha256: plan.lock?.digest ?? null,
       bytes: plan.lockBytes,
     });
-    const currentProfile = await resolveRepositoryProfile(plan.packageValue, relative => currentFile(root, relative));
-    if (stableJson(currentProfile) !== stableJson(plan.public.repositoryProfile ?? null)) fail("repository_profile_changed");
     await applyTransaction(root, writes, testFailAt);
     const gitResult = commit
       ? await settleExactPackCommit(root, plan)
