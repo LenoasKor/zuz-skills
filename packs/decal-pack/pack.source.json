@@ -4,7 +4,7 @@
   "aliases": [
     "zuz.decal-pack"
   ],
-  "packVersion": "3.6.1",
+  "packVersion": "3.6.2",
   "title": "Decal Pack",
   "description": "Decal 없이도 외부 AI가 상태 확인, 빌드, 디버깅, 안전한 Git 작업, 세션 인계와 선택형 zuz ITS Task·Work·Issue 규약을 사용할 수 있는 휴대형 개발 Pack",
   "requiredFiles": [
@@ -18,7 +18,7 @@
   "modules": [
     {
       "id": "development-core",
-      "version": "1.3.3",
+      "version": "1.3.4",
       "title": "기본 개발 도구",
       "description": "상태 확인, 빌드, 디버깅, 안전한 Git 작업, 작업 공간, 인계와 모션 지침",
       "defaultSelected": false,
@@ -40,7 +40,7 @@
     },
     {
       "id": "zuz-its",
-      "version": "1.4.1",
+      "version": "1.4.2",
       "title": "zuz ITS · Task·Work·Issue",
       "description": "기존 Task·Work·Bug 자료의 호환성을 유지하는 작업·소작업·이슈·장애 스킬과 portable 계약",
       "defaultSelected": false,
@@ -135,7 +135,8 @@
     "portableScopedExecution": "task-work-bug/v13",
     "portablePreservingRegistration": "task-work-bug/v15",
     "portableOwnedTextEdit": "task-work-bug/v14",
-    "portableIncidentTransition": "zuz-its/v4"
+    "portableIncidentTransition": "zuz-its/v5",
+    "portableIncidentRegistration": "task-work-bug/v16"
   },
   "capabilities": [
     {
@@ -302,9 +303,17 @@
       "publicationState": "candidate"
     },
     "incidentTransition": {
-      "manifestValidator": "contracts/zuz-its/v4/verify-contract.mjs",
-      "runner": "contracts/zuz-its/v4/transition-incident.mjs",
+      "manifestValidator": "contracts/zuz-its/v5/verify-contract.mjs",
+      "runner": "contracts/zuz-its/v5/transition-incident.mjs",
       "nativeFallback": false
+    },
+    "incidentRegistration": {
+      "contract": "task-work-bug/v16",
+      "manifestValidator": "contracts/task-work-bug/v16/verify-contract.mjs",
+      "runner": "contracts/task-work-bug/v16/register-ticket.mjs",
+      "scope": "incident-only",
+      "nativeFallback": false,
+      "consumer": "zuz-its/v5"
     }
   },
   "revocations": {

@@ -1,0 +1,23 @@
+{
+  "schema": "zuz.its.fixture-manifest/v5",
+  "contractId": "zuz.its/v5",
+  "files": {
+    "README.md": "68dc71136383ed893bf9a45966e116d13f212a42e65bacff1bd676372a6a6e35",
+    "incident.mjs": "5bc942c993d4109885668f7feea575675b07b3c63255a725daedfd5dc5931058",
+    "transition-incident.mjs": "641d37f96d57fb20edb2acd71df0e89d23c634e9716d5b033c757843de8beae0",
+    "verify-contract.mjs": "085ad68e888d31a1fe0ae120dae929ad7f3847e467bd45bb0ac320afc61faade"
+  },
+  "dependencies": {
+    "zuz-its/v3/incident.mjs": "0d4db20e6abb1aa3962f321e4c03872d2e9d3f4390df653506bd29c28ead71cd",
+    "task-work-bug/v9/transaction.mjs": "dc6d29030044f94015bcba4839610d2d069c7dd5c40a02a3c5c003fa70806347",
+    "task-work-bug/v9/version-profile.mjs": "242663ff8e6a62a3e41d836837796e2f93c30eec4f9a0a71e2020a9c5a983ded",
+    "task-work-bug/v9/strict-json.mjs": "f9d9ac37e79a267bb6cbc73d6bc93e309fe945433a1ce5ba8c9001bcb888f4a8",
+    "task-work-bug/v9/verify-contract.mjs": "e1f1672339b733585347f9a2549e482e943c016455562425af69df82e998a7c0",
+    "task-work-bug/v7/default-branch.mjs": "337c36cf10ea43e4a4ab5a9148652fcaebf99db469923aac7d747e426f20c5ad",
+    "zuz-its/v4/README.md": "eb6ba9547b6a4ad1f0ded1bc0506038a051993ec2f83d6ed0c8e21a7b041f281",
+    "zuz-its/v4/incident.mjs": "187cb09f3ac714c9a7d4ac8e56d4187d526f29023c5a105679547d9b538a51e9",
+    "zuz-its/v4/transition-incident.mjs": "b7d95ea1e116f31797aa54c09c166589a69db72cdd2e709e0ec8045a7e5cd8b1",
+    "zuz-its/v4/verify-contract.mjs": "6d7b41e6c7519b65ad7b8b40e37259c0cd7e5042dfdbee271a9cef9b44003c3c",
+    "zuz-its/v4/manifest.json": "47d1d48ba63ae8b57c6987703ad7439e6e2c7f6508c4c92da1b0503afc8ef4e5"
+  }
+}

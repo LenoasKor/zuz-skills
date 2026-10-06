@@ -5,7 +5,10 @@ import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/
 import { verifyContract as verifyBookkeeping } from "../packs/decal-pack/src/contracts/task-work-bug/v12/verify-contract.mjs";
 
 const descriptor = await loadSourceDescriptor();
+
 const failures = [];
+try { await (await import("../packs/decal-pack/src/contracts/zuz-its/v5/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`exact-time Incident contract: ${error.code ?? error.message}`); }
+try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v16/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`canonical Incident registration contract: ${error.code ?? error.message}`); }
 try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v15/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`preserving registration contract: ${error.code ?? error.message}`); }
 try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v13/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`scoped execution contract: ${error.code ?? error.message}`); }
 try { await verifyContract(); } catch (error) { failures.push(`portable settlement contract: ${error.code ?? error.message}`); }

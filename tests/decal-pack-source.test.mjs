@@ -221,8 +221,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.3" },
-    { id: "zuz-its", version: "1.4.1" },
+    { id: "development-core", version: "1.3.4" },
+    { id: "zuz-its", version: "1.4.2" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.0" },
   ]);
@@ -234,7 +234,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-task": "1.14.0",
     "decal-work": "1.10.0",
     "decal-bug": "1.10.0",
-    "decal-incident": "1.5.1",
+    "decal-incident": "1.5.2",
     "zuz-its": "1.4.0",
     "decal-slice": "0.4.10",
     "decal-slice-maintenance": "0.8.0",
@@ -381,11 +381,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.6.1 keeps v10/v11 and v12 bookkeeping", async () => {
+test("Pack 3.6.2 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.6.1");
+  assert.equal(packageValue.packVersion, "3.6.2");
   assert.equal(packageValue.schemaVersion, 2);
   assert.equal(packageValue.compatibility.portablePreservingRegistration, "task-work-bug/v15");
   assert.ok(packageValue.files.some(file => file.sourcePath === "contracts/task-work-bug/v15/registration-lock.mjs"));
@@ -445,14 +445,14 @@ test("additive owned-edit and Incident profiles include their exact source bytes
   assert.equal(value.compatibility.portableScopedExecution, "task-work-bug/v13");
   assert.equal(value.compatibility.zuzItsContract, "zuz.its/v3");
   assert.equal(value.compatibility.portableOwnedTextEdit, "task-work-bug/v14");
-  assert.equal(value.compatibility.portableIncidentTransition, "zuz-its/v4");
+  assert.equal(value.compatibility.portableIncidentTransition, "zuz-its/v5");
   assert.deepEqual(value.executionPolicies.scopedExecution, {
     contract: "task-work-bug/v13", waitTtlMs: 300000, correctionLimit: 1,
     nativeFallback: false, publicationState: "candidate", ownedEditContract: "task-work-bug/v14",
   });
   assert.deepEqual(value.executionPolicies.incidentTransition, {
-    manifestValidator: "contracts/zuz-its/v4/verify-contract.mjs",
-    runner: "contracts/zuz-its/v4/transition-incident.mjs", nativeFallback: false,
+    manifestValidator: "contracts/zuz-its/v5/verify-contract.mjs",
+    runner: "contracts/zuz-its/v5/transition-incident.mjs", nativeFallback: false,
   });
   const policy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
   assert.deepEqual(policy.executionPolicies.scopedExecution, value.executionPolicies.scopedExecution);
@@ -461,6 +461,7 @@ test("additive owned-edit and Incident profiles include their exact source bytes
   const contracts = [
     ["task-work-bug/v14", ["README.md", "contract.json", "manifest.json", "owned-edit-cli.mjs", "owned-edit.mjs", "verify-contract.mjs"]],
     ["zuz-its/v4", ["README.md", "incident.mjs", "manifest.json", "transition-incident.mjs", "verify-contract.mjs"]],
+    ["zuz-its/v5", ["README.md", "incident.mjs", "manifest.json", "transition-incident.mjs", "verify-contract.mjs"]],
   ];
   for (const [contract, names] of contracts) {
     const actual = value.files.filter((file) => file.sourcePath.startsWith(`contracts/${contract}/`));
@@ -483,7 +484,7 @@ test("Incident skill prefers the additive writer and keeps Native and repository
   assert.deepEqual(file.installTargets.map(({ provider }) => provider), ["codex", "claude", "gemini", "acp"]);
   const source = await readFile(join(repositoryRoot, "packs/decal-pack/src", file.sourcePath), "utf8");
   assert.equal(Buffer.from(file.contentBase64, "base64").toString("utf8"), source);
-  assert.match(source, /prefer.*contracts\/zuz-its\/v4\/transition-incident\.mjs/iu);
+  assert.match(source, /prefer.*contracts\/zuz-its\/v5\/transition-incident\.mjs/iu);
   assert.match(source, /Repository lifecycle engines stay canonical/u);
   assert.match(source, /fail-closed/u);
   assert.match(source, /v3.*not.*direct.*fallback/iu);
@@ -514,4 +515,46 @@ test("commit guidance requires the approved v14 owned-edit profile without an un
     if (path === sourcePath) assert.equal(content, source);
     else assert.ok(content.includes(source.split("---")[2].trim()), "all four providers retain the exact guidance body");
   }
+});
+
+
+test("actual package routes only Incident registration to v16 and retains v15 plus four-provider safety instructions", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "d".repeat(40)], { stdio: "pipe" });
+  const value = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  assert.equal(value.compatibility.portablePreservingRegistration, "task-work-bug/v15");
+  assert.equal(value.compatibility.portableIncidentRegistration, "task-work-bug/v16");
+  const profile = {contract:"task-work-bug/v16",manifestValidator:"contracts/task-work-bug/v16/verify-contract.mjs",runner:"contracts/task-work-bug/v16/register-ticket.mjs",scope:"incident-only",nativeFallback:false,consumer:"zuz-its/v5"};
+  assert.deepEqual(value.executionPolicies.incidentRegistration,profile);
+  const policy=JSON.parse(await readFile(join(repositoryRoot,"packs/decal-pack/src/project-skill-pack-policy.json"),"utf8"));assert.deepEqual(policy.executionPolicies.incidentRegistration,profile);assert.equal(policy.minimumCompatible["decal-incident"],"1.5.2");
+  const files=value.files.filter(f=>f.sourcePath.startsWith("contracts/task-work-bug/v16/"));assert.equal(files.length,6);
+  for(const f of files){assert.equal(f.moduleId,"zuz-its");assert.deepEqual(Buffer.from(f.contentBase64,"base64"),await readFile(join(repositoryRoot,"packs/decal-pack/src",f.sourcePath)));}
+  const incident=value.files.find(f=>f.sourcePath==="skills/agents/decal-incident/SKILL.md");assert.deepEqual(incident.installTargets.map(t=>t.provider),["codex","claude","gemini","acp"]);const content=Buffer.from(incident.contentBase64,"base64").toString("utf8");assert.equal(content,await readFile(join(repositoryRoot,"packs/decal-pack/src",incident.sourcePath),"utf8"));assert.match(content,/v15 remains.*Task\/Work\/Bug only/u);assert.match(content,/neither v15 nor v10 Incident output is a direct fallback/u);assert.match(content,/actual v5 consumer before any write/u);assert.match(content,/applicable user authority or explicit repository automatic policy authorizes that exact scope/u);assert.match(content,/not evidence of a human click or a new permission grant/u);
+  for(const id of ["decal-task","decal-work","decal-bug"]){const f=value.files.find(f=>f.sourcePath===`skills/agents/${id}/SKILL.md`);assert.match(Buffer.from(f.contentBase64,"base64").toString("utf8"),/Preserving registration locks/u);}
+});
+
+
+test("release guide operational registration commands match the adopted execution profiles and installed payload", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "d".repeat(40)], { stdio: "pipe" });
+  const value = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  const policy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
+  const guide = await readFile(join(repositoryRoot, "docs/decal-pack-release-guide.md"), "utf8");
+  const section = guide.split("## 10. worktree와 ITS 발급 안전 규칙")[1].split("## ")[0];
+  const commands = Object.fromEntries([...section.matchAll(/^- (Task|Work·Bug|Incident) 등록: `([^`]+)`$/gmu)].map(m => [m[1],m[2]]));
+  const preserving = policy.executionPolicies.preservingRegistration.contract;
+  assert.deepEqual(commands, {
+    Task: `contracts/${preserving}/register-task-batch.mjs`,
+    "Work·Bug": `contracts/${preserving}/register-ticket.mjs`,
+    Incident: policy.executionPolicies.incidentRegistration.runner,
+  });
+  assert.deepEqual(policy.executionPolicies.preservingRegistration, value.executionPolicies.preservingRegistration);
+  assert.deepEqual(policy.executionPolicies.incidentRegistration, value.executionPolicies.incidentRegistration);
+  for (const command of Object.values(commands)) {
+    const file = value.files.find(f => f.sourcePath === command);
+    assert.ok(file, `operational command must be installed: ${command}`);
+    assert.equal(file.moduleId,"zuz-its");
+    assert.deepEqual(file.installTargets,[{provider:"shared",path:command}]);
+    assert.deepEqual(Buffer.from(file.contentBase64,"base64"),await readFile(join(repositoryRoot,"packs/decal-pack/src",command)));
+  }
+  assert.match(section,/저장소 공식 등록 엔진.*우선/u);
+  assert.match(section,/명시 채택 profile.*manifest·dependency 검증/u);
 });

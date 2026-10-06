@@ -43,7 +43,7 @@
 ### 별도 portable 실행 profile
 
 - `task-work-bug/v13`은 Task body와 대기 정책을 계속 소유한다. `compatibility.portableOwnedTextEdit`와 `scopedExecution.ownedEditContract`의 `task-work-bug/v14`는 소유 텍스트 편집만 담당하며 v13 전체·등록·lifecycle·정산 계약을 대체하지 않는다.
-- `zuz.its/v3`는 identity·project·읽기 호환 계약으로 유지한다. `compatibility.portableIncidentTransition`과 `executionPolicies.incidentTransition`의 `zuz-its/v4`는 검증된 외부 host Incident 전이만 담당한다. 기존 저장소 공식 엔진은 보존하며, 안전한 v4 또는 승인된 호환 엔진이 없으면 mutation을 fail-closed하고 구 v3 writer로 직접 우회하지 않는다.
+- `zuz.its/v3`는 identity·project·읽기 호환 계약으로 유지한다. `compatibility.portableIncidentTransition`과 `executionPolicies.incidentTransition`의 `zuz-its/v5`는 검증된 외부 host Incident 전이만 담당한다. 기존 저장소 공식 엔진은 보존하며, 안전한 v5 또는 승인된 호환 엔진이 없으면 mutation을 fail-closed하고 구 v3 writer로 직접 우회하지 않는다.
 - candidate profile 설치는 Native capability 광고나 grant가 아니다. Decal 소유 세션은 실제 광고된 Native 권한 경로만 사용하고 외부 writer를 직접 호출하지 않는다. commit·push·정산·배포·설치는 각각 별도 권한이다.
 - 새 profile 검증은 해당 manifest와 pinned dependency bytes를 확인한다. 이미 공개된 v1–v13 및 zuz ITS v1–v3와 Pack 3.5.2는 변경하지 않는다. 새 source와 profile은 새 Pack 버전의 실제 커밋·불변 package·정식 설치 영수증에 결속한 뒤 소비한다.
 
@@ -164,11 +164,14 @@ Pack 전용 commit을 canonical main에도 별도로 반영·검증하거나, ma
 
 feature 또는 detached worktree에서 티켓을 등록할 때 현재 작업공간을 main으로 switch/detach하지 않는다. 임시 main worktree를 만들고 나중에 반납하는 방식도 사용하지 않는다.
 
-- Task 등록: `contracts/task-work-bug/v10/register-task-batch.mjs`
-- Work·Bug·Incident 등록: `contracts/task-work-bug/v10/register-ticket.mjs`
+저장소 공식 등록 엔진이 있으면 그 지원 명령을 우선한다. portable 경로는 현재 설치 policy의 명시 채택 profile과 실제 manifest·dependency 검증을 통과한 경우에만 선택한다.
+
+- Task 등록: `contracts/task-work-bug/v15/register-task-batch.mjs`
+- Work·Bug 등록: `contracts/task-work-bug/v15/register-ticket.mjs`
+- Incident 등록: `contracts/task-work-bug/v16/register-ticket.mjs`
 - lifecycle·정산: 기존 `v9` runner
 
-v10 broker는 동일 저장소에서 이미 canonical `main` 또는 `master`를 소유한 작업공간 하나를 찾아 등록만 위임한다. main 작업공간이 없거나 둘 이상으로 모호하면 `main_worktree_required` 또는 `main_worktree_ambiguous`로 멈춘다. 이때 checkout을 바꾸거나 새 worktree를 만들어 우회하지 않는다.
+v15·v16은 v10의 main-authority resolver를 유지하며 동일 저장소에서 이미 canonical `main` 또는 `master`를 소유한 작업공간 하나를 찾아 등록만 위임한다. main 작업공간이 없거나 둘 이상으로 모호하면 `main_worktree_required` 또는 `main_worktree_ambiguous`로 멈춘다. 이때 checkout을 바꾸거나 새 worktree를 만들어 우회하지 않는다.
 
 ## 11. 마감 검증과 정산
 
@@ -197,3 +200,9 @@ v10 broker는 동일 저장소에서 이미 canonical `main` 또는 `master`를 
 - feature worktree를 main으로 바꾸거나 기본 폴더를 detached 상태로 남김
 - 기존 release를 삭제하거나 같은 tag의 bytes를 교체함
 - GitHub, Store, Decal, 고정 소비자, 설치 프로젝트 중 한 단계만 끝내고 전체 완료로 보고함
+
+### Canonical Incident registration successor
+
+Pack 3.6.2 candidate adds Incident-only task-work-bug/v16 registration. Task/Work/Bug stay on v15, Task body/wait on v13, owned text edits on v14, identity/read on zuz.its/v3 and Incident transition on zuz-its/v5. The nested semantic intent and approved digest stay compatible, while the writer emits canonical top-level Incident fields and validates actual v5 parsing before writing. Both source and editable policy advertise the separate profile; no Native capability or grant is implied. Legacy nested Incident records require explicit review, not automatic migration or old-writer fallback. Published contracts and Pack3.6.1 are immutable. New source commit, deterministic artifacts and explicit adoption are required before public use.
+
+The 3.6.2 candidate uses the new v5 exact-time consumer with v16 registration. v4 mixed-precision transition limitations remain in immutable old bytes; v16 padding alone is not evidence that legacy v4 is corrected. The v5 consumer supports exact UTC ordering without reducing fractional precision.
