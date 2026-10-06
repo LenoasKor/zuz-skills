@@ -97,7 +97,7 @@
       "publicationState": "candidate"
     },
     "preservingRegistration": {
-      "contract": "task-work-bug/v14",
+      "contract": "task-work-bug/v15",
       "waitTtlMs": 300000,
       "ownerTerminated": "preserve-and-reject",
       "nativeFallback": false,

@@ -17,7 +17,7 @@ async function plain(file) {
 export async function verifyContract(directory = path.dirname(fileURLToPath(import.meta.url))) {
   if (await realpath(directory) !== directory) fail("unsafe_contract_path");
   const manifest = JSON.parse(await plain(path.join(directory, "manifest.json")));
-  if (manifest.schema !== "decal.task-work-bug.fixture-manifest/v14" || !manifest.files || Array.isArray(manifest.files)
+  if (manifest.schema !== "decal.task-work-bug.fixture-manifest/v15" || !manifest.files || Array.isArray(manifest.files)
       || JSON.stringify(Object.keys(manifest.files).sort()) !== JSON.stringify([...required].sort())) fail("invalid_contract_manifest");
   const actual = (await readdir(directory)).sort();
   if (JSON.stringify(actual) !== JSON.stringify([...required, "manifest.json"].sort())) fail("unexpected_contract_file");

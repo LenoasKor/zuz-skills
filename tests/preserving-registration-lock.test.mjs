@@ -4,8 +4,8 @@ import { mkdtemp, realpath, writeFile, readFile, rm, symlink, rename, lstat } fr
 import { execFileSync } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
-import { acquireRegistrationLock } from '../packs/decal-pack/src/contracts/task-work-bug/v14/registration-lock.mjs';
-async function fixture(fn) { const root = await realpath(await mkdtemp(path.join(os.tmpdir(),'its-v14-lock-'))); try { await fn(root,path.join(root,'.decal-slice-completion.lock')); } finally { await rm(root,{recursive:true,force:true}); } }
+import { acquireRegistrationLock } from '../packs/decal-pack/src/contracts/task-work-bug/v15/registration-lock.mjs';
+async function fixture(fn) { const root = await realpath(await mkdtemp(path.join(os.tmpdir(),'its-v15-lock-'))); try { await fn(root,path.join(root,'.decal-slice-completion.lock')); } finally { await rm(root,{recursive:true,force:true}); } }
 test('dead owner lock is preserved byte-for-byte and no mutation executes',()=>fixture(async(root,file)=>{
  const pid=Number(execFileSync(process.execPath,['-p','process.pid'],{encoding:'utf8'}).trim());
  const bytes=JSON.stringify({pid,token:'old-owner'}); await writeFile(file,bytes);

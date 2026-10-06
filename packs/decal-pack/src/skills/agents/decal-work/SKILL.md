@@ -134,6 +134,6 @@ Before a new Work/Bug, inspect the current record and same-parent open/closed re
 
 ## Preserving registration locks
 
-When `compatibility.portablePreservingRegistration` advertises `task-work-bug/v14` and its installed verifier passes, use the same commands above from `contracts/task-work-bug/v14/` instead of `v10/`. v14 retains the v10 canonical-main resolver, existing intent/approval digest, exact registration commit and idempotent receipt. It waits at most five minutes, supports cancellation, and preserves locks belonging to terminated owners. An owner-terminated or unknown result requires inspection; never delete the lock or repeat an ambiguous write. A repository adapter explicitly selecting v14 is equivalent.
+When `compatibility.portablePreservingRegistration` advertises `task-work-bug/v15` and its installed verifier passes, use the same commands above from `contracts/task-work-bug/v15/` instead of `v10/`. v15 retains the v10 canonical-main resolver, existing intent/approval digest, exact registration commit and idempotent receipt. It waits at most five minutes, supports cancellation, and preserves locks belonging to terminated owners. An owner-terminated or unknown result requires inspection; never delete the lock or repeat an ambiguous write. A repository adapter explicitly selecting v15 is equivalent.
 
 Hosts without this installed capability keep their pinned v10 path; do not claim that legacy registration preserves dead-owner locks. This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.

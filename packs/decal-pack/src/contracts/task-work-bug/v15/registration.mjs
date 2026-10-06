@@ -80,7 +80,7 @@ async function validatePackage(root) {
   const manifestMetadata = await metadata(manifestPath);
   if (manifestMetadata?.isSymbolicLink() || !manifestMetadata?.isFile()) fail("contract_digest_mismatch");
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-  if (manifest?.schema !== "decal.task-work-bug.fixture-manifest/v14" || !manifest.files) fail("contract_digest_mismatch");
+  if (manifest?.schema !== "decal.task-work-bug.fixture-manifest/v15" || !manifest.files) fail("contract_digest_mismatch");
   for (const [relative, expected] of Object.entries(manifest.files)) {
     const target = path.join(CONTRACT_ROOT, ...relative.split("/"));
     const entry = await metadata(target);

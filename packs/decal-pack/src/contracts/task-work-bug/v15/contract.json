@@ -1,5 +1,5 @@
 {
-  "schema": "zuz.its.registration-lock-preservation/v14",
+  "schema": "zuz.its.registration-lock-preservation/v15",
   "predecessor": "task-work-bug/v10",
   "taskIntent": "v7",
   "ticketIntent": "v9",

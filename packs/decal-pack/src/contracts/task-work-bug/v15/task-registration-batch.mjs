@@ -72,11 +72,11 @@ async function lstatOrNull(target) {
 }
 
 async function validateV7Package(root) {
-  const packageRoot = path.join(root, "contracts/task-work-bug/v14");
+  const packageRoot = path.join(root, "contracts/task-work-bug/v15");
   const predecessor = await plainFile(path.join(root, "contracts/task-work-bug/v6/manifest.json"));
   if (sha256(predecessor) !== `sha256:${PREDECESSOR_MANIFEST_SHA256}`) fail("contract_digest_mismatch");
   const manifest = JSON.parse(await plainFile(path.join(packageRoot, "manifest.json")));
-  if (manifest?.schema !== "decal.task-work-bug.fixture-manifest/v14" || !manifest.files) {
+  if (manifest?.schema !== "decal.task-work-bug.fixture-manifest/v15" || !manifest.files) {
     fail("contract_digest_mismatch");
   }
   for (const [relative, expected] of Object.entries(manifest.files)) {

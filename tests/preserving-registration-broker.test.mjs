@@ -6,11 +6,11 @@ import path from "node:path";
 import test from "node:test";
 
 import { repositoryRoot } from "../scripts/pack-lib.mjs";
-import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/v14/verify-contract.mjs";
+import { verifyContract } from "../packs/decal-pack/src/contracts/task-work-bug/v15/verify-contract.mjs";
 
 const sourceRoot = path.join(repositoryRoot, "packs/decal-pack/src");
-const ticketWriter = path.join(sourceRoot, "contracts/task-work-bug/v14/register-ticket.mjs");
-const taskWriter = path.join(sourceRoot, "contracts/task-work-bug/v14/register-task-batch.mjs");
+const ticketWriter = path.join(sourceRoot, "contracts/task-work-bug/v15/register-ticket.mjs");
+const taskWriter = path.join(sourceRoot, "contracts/task-work-bug/v15/register-task-batch.mjs");
 
 function run(command, args, cwd) {
   const result = spawnSync(command, args, { cwd, encoding: "utf8" });
@@ -69,7 +69,7 @@ function taskIntent() {
   };
 }
 
-test("v14 contract manifest is valid", async () => {
+test("v15 contract manifest is valid", async () => {
   assert.equal((await verifyContract()).status, "accepted");
 });
 
@@ -120,7 +120,7 @@ test("feature worktree delegates Task and Work registration to the existing main
   }
 });
 
-test("v14 fails closed when no canonical main worktree exists", async () => {
+test("v15 fails closed when no canonical main worktree exists", async () => {
   const root = await repository();
   try {
     assert.equal(run("git", ["switch", "-q", "-c", "feature/no-main"], root).status, 0);
@@ -136,7 +136,7 @@ test("v14 fails closed when no canonical main worktree exists", async () => {
 });
 
 
-test("v14 Task and ticket writers refuse dead-owner locks without changing HEAD or lock", async () => {
+test("v15 Task and ticket writers refuse dead-owner locks without changing HEAD or lock", async () => {
   for (const [writer, intent] of [[taskWriter,taskIntent()], [ticketWriter,workIntent()]]) {
     const root=await repository();
     try {

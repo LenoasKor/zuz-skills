@@ -340,8 +340,8 @@ test("Pack 3.6.0 keeps v10/v11 and v12 bookkeeping", async () => {
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.packVersion, "3.6.0");
   assert.equal(packageValue.schemaVersion, 2);
-  assert.equal(packageValue.compatibility.portablePreservingRegistration, "task-work-bug/v14");
-  assert.ok(packageValue.files.some(file => file.sourcePath === "contracts/task-work-bug/v14/registration-lock.mjs"));
+  assert.equal(packageValue.compatibility.portablePreservingRegistration, "task-work-bug/v15");
+  assert.ok(packageValue.files.some(file => file.sourcePath === "contracts/task-work-bug/v15/registration-lock.mjs"));
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
   assert.equal(packageValue.compatibility.zuzItsContract, "zuz.its/v3");
