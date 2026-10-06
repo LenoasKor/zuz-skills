@@ -35,6 +35,8 @@
     "work-bug-reuse-before-new-ticket",
     "external-task-transition-exact-commit-before-next-operation",
     "work-remains-a-ticket",
-    "existing-jig-task-ledger-is-not-rewritten"
+    "existing-jig-task-ledger-is-not-rewritten",
+    "v14-registration-preserves-dead-owner-lock-and-head",
+    "v14-registration-retains-main-authority-and-idempotent-receipt"
   ]
 }

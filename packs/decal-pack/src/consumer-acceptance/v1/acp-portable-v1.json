@@ -41,6 +41,8 @@
     "work-bug-reuse-before-new-ticket",
     "external-task-transition-exact-commit-before-next-operation",
     "work-remains-a-ticket",
-    "incident-writer-and-chat-references-are-portable"
+    "incident-writer-and-chat-references-are-portable",
+    "v14-registration-preserves-dead-owner-lock-and-head",
+    "v14-registration-retains-main-authority-and-idempotent-receipt"
   ]
 }

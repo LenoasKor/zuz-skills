@@ -1,0 +1,11 @@
+{
+  "schema": "zuz.its.registration-lock-preservation/v14",
+  "predecessor": "task-work-bug/v10",
+  "taskIntent": "v7",
+  "ticketIntent": "v9",
+  "maxWaitMs": 300000,
+  "ownerTerminated": "preserve-and-reject",
+  "retryMutation": false,
+  "lockRemoval": "matching-owned-lock-only",
+  "nativeFallback": false
+}

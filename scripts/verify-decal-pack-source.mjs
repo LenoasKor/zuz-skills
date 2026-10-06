@@ -6,6 +6,7 @@ import { verifyContract as verifyBookkeeping } from "../packs/decal-pack/src/con
 
 const descriptor = await loadSourceDescriptor();
 const failures = [];
+try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v14/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`preserving registration contract: ${error.code ?? error.message}`); }
 try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v13/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`scoped execution contract: ${error.code ?? error.message}`); }
 try { await verifyContract(); } catch (error) { failures.push(`portable settlement contract: ${error.code ?? error.message}`); }
 try { await verifyBookkeeping(); } catch(error) { failures.push(`portable bookkeeping contract: ${error.code ?? error.message}`); }
