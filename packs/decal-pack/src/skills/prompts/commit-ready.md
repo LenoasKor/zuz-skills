@@ -1,7 +1,7 @@
 ---
 id: decal-commit-ready
 label: 데칼 커밋
-version: 0.10.0
+version: 0.10.1
 risk: confirmation_required
 group: 저장소
 target: active-cli
@@ -28,4 +28,4 @@ template: 현재 브랜치와 작업 공간(worktree), 변경 기록 위치(HEAD
 
 ## 소유 변경 단위 커밋
 
-파일 전체가 현재 작업 소유일 때 기존 파일 단위 커밋을 사용한다. portable v13을 채택한 프로젝트에서는 `owned-edit-cli.mjs`의 capture → apply → preview → 승인된 digest의 commit 경로만 혼합 텍스트 파일에 사용할 수 있다. 소유 Task·세션·편집 전후 증거·독립성과 검증 결과를 결속하고 다른 working tree/staged 변경을 보존한다. 사후 diff만으로 소유권을 만들지 않는다. Native 세션은 광고된 Native 경로만 사용하며 portable로 우회하지 않는다. 동일 파일 staged·겹침·의미적 의존·binary·rename·symlink는 보류한다. 정산은 이 경로를 사용하지 않는다. 결과 불명은 inspect로 확인하고 재실행하지 않는다.
+파일 전체가 현재 작업 소유일 때 기존 파일 단위 커밋을 사용한다. 프로젝트가 명시적으로 승인된 `task-work-bug/v14` 소유 텍스트 편집 profile을 채택했다면, 설치된 v14 manifest와 pinned dependency bytes를 검증한 뒤 v14 `owned-edit-cli.mjs`의 capture → apply → preview → 승인된 digest의 commit 경로를 우선 사용한다. v14는 소유 텍스트 편집만 담당하며 v13의 Task body·대기 정책을 대체하지 않는다. 구 v13의 owned-edit-cli를 직접 fallback으로 사용하지 않는다. 승인된 v14 profile이 없거나 검증되지 않으면 파일 전체 소유가 확인되는 기존 파일 단위 커밋만 사용하거나 Pack 갱신을 요청하고 혼합 파일 편집은 보류한다. 소유 Task·세션·편집 전후 증거·독립성과 검증 결과를 결속하고 다른 working tree/staged 변경을 보존한다. 사후 diff만으로 소유권을 만들지 않는다. Native 세션은 광고된 Native 경로만 사용하며 portable로 우회하지 않는다. 동일 파일 staged·겹침·의미적 의존·binary·rename·symlink는 보류한다. 정산은 이 경로를 사용하지 않는다. 결과 불명은 inspect로 확인하고 재실행하지 않는다.

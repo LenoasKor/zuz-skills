@@ -40,6 +40,13 @@
 
 `dist/` 파일을 직접 편집하지 않는다. source 변경이 끝나기 전에 release artifact를 만들지 않는다.
 
+### 별도 portable 실행 profile
+
+- `task-work-bug/v13`은 Task body와 대기 정책을 계속 소유한다. `compatibility.portableOwnedTextEdit`와 `scopedExecution.ownedEditContract`의 `task-work-bug/v14`는 소유 텍스트 편집만 담당하며 v13 전체·등록·lifecycle·정산 계약을 대체하지 않는다.
+- `zuz.its/v3`는 identity·project·읽기 호환 계약으로 유지한다. `compatibility.portableIncidentTransition`과 `executionPolicies.incidentTransition`의 `zuz-its/v4`는 검증된 외부 host Incident 전이만 담당한다. 기존 저장소 공식 엔진은 보존하며, 안전한 v4 또는 승인된 호환 엔진이 없으면 mutation을 fail-closed하고 구 v3 writer로 직접 우회하지 않는다.
+- candidate profile 설치는 Native capability 광고나 grant가 아니다. Decal 소유 세션은 실제 광고된 Native 권한 경로만 사용하고 외부 writer를 직접 호출하지 않는다. commit·push·정산·배포·설치는 각각 별도 권한이다.
+- 새 profile 검증은 해당 manifest와 pinned dependency bytes를 확인한다. 이미 공개된 v1–v13 및 zuz ITS v1–v3와 Pack 3.5.2는 변경하지 않는다. 새 source와 profile은 새 Pack 버전의 실제 커밋·불변 package·정식 설치 영수증에 결속한 뒤 소비한다.
+
 ## 3. 정본 검증과 source commit
 
 ```sh

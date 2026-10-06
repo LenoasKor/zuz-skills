@@ -7,7 +7,15 @@ import test from "node:test";
 import { repositoryRoot, sha256, stableJson } from "../scripts/pack-lib.mjs";
 
 const sourceDescriptor = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/pack.source.json"), "utf8"));
-const artifactPath = (suffix) => join(repositoryRoot, `dist/decal-pack-${sourceDescriptor.packVersion}.${suffix}`);
+const artifactRoot = await mkdtemp(join(tmpdir(), "decal-pack-source-build-"));
+try {
+  await cp(join(repositoryRoot, "scripts"), join(artifactRoot, "scripts"), { recursive: true });
+  await cp(join(repositoryRoot, "packs"), join(artifactRoot, "packs"), { recursive: true });
+} catch (error) {
+  await rm(artifactRoot, { recursive: true, force: true });
+  throw error;
+}
+const artifactPath = (suffix) => join(artifactRoot, `dist/decal-pack-${sourceDescriptor.packVersion}.${suffix}`);
 
 test("source registry is complete and opt-in", () => {
   const output = execFileSync(process.execPath, [join(repositoryRoot, "scripts/verify-decal-pack-source.mjs")], { encoding: "utf8" });
@@ -66,7 +74,7 @@ test("legacy Task Work Bug v1 through v6 contract bytes remain pinned", async ()
 
 test("the same source revision produces byte-identical Pack artifacts", async () => {
   const revision = "a".repeat(40);
-  const args = [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
+  const args = [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision];
   execFileSync(process.execPath, args, { stdio: "pipe" });
   const manifestPath = artifactPath("manifest.json");
   const packagePath = artifactPath("zuz-pack.json");
@@ -79,7 +87,7 @@ test("the same source revision produces byte-identical Pack artifacts", async ()
 
 test("signed manifest binds every consumer acceptance ID to fixture bytes", async () => {
   const revision = "b".repeat(40);
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const manifest = JSON.parse(await readFile(artifactPath("manifest.json"), "utf8"));
   assert.deepEqual(
     manifest.consumerAcceptanceFixtures.map((fixture) => fixture.id),
@@ -120,7 +128,7 @@ test("signed manifest binds every consumer acceptance ID to fixture bytes", asyn
 
 test("every prompt skill is emitted as an Agent Skill for all portable providers", async () => {
   const revision = "c".repeat(40);
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   const promptSkills = packageValue.skills.filter((skill) => skill.kind === "prompt");
   for (const skill of promptSkills) {
@@ -174,7 +182,7 @@ test("prompt scalar quotes preserve the complete risk review in every provider p
 
 test("Pack execution policy binds cross-project approval and settlement commit", async () => {
   const revision = "d".repeat(40);
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
   assert.equal(packageValue.compatibility.portableSettlement, "task-work-bug/v11");
@@ -213,8 +221,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.1" },
-    { id: "zuz-its", version: "1.3.0" },
+    { id: "development-core", version: "1.3.2" },
+    { id: "zuz-its", version: "1.3.1" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.0" },
   ]);
@@ -226,12 +234,13 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-task": "1.13.0",
     "decal-work": "1.9.0",
     "decal-bug": "1.9.0",
-    "decal-incident": "1.4.0",
+    "decal-incident": "1.4.1",
     "zuz-its": "1.4.0",
-    "decal-slice": "0.4.9",
+    "decal-slice": "0.4.10",
+    "decal-slice-plan-report": "0.2.5",
     "decal-slice-maintenance": "0.8.0",
     "decal-slice-smoke": "0.5.2",
-    "decal-commit-ready": "0.10.0",
+    "decal-commit-ready": "0.10.1",
     "decal-debug": "0.3.0",
   };
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
@@ -316,7 +325,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
 });
 
 test("commit guidance is preserved in shared and every provider entrypoint", async () => {
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
   const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   const source = await readFile(join(repositoryRoot, "packs/decal-pack/src/skills/prompts/commit-ready.md"), "utf8");
   const shared = pack.files.find((file) => file.sourcePath === "skills/prompts/commit-ready.md");
@@ -333,7 +342,7 @@ test("commit guidance is preserved in shared and every provider entrypoint", asy
 });
 
 test("ITS and maintenance entrypoints retain scoped external commit approval for every provider", async () => {
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
   const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   for (const id of ["decal-task", "decal-work", "decal-bug", "decal-incident", "zuz-its"]) {
     const path = `skills/agents/${id}/SKILL.md`;
@@ -373,11 +382,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.5.2 keeps v10/v11 and v12 bookkeeping", async () => {
+test("Pack 3.5.3 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
-  execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.5.2");
+  assert.equal(packageValue.packVersion, "3.5.3");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
@@ -400,5 +409,108 @@ test("Pack 3.5.2 keeps v10/v11 and v12 bookkeeping", async () => {
 });
 
 test.after(async () => {
-  await rm(join(repositoryRoot, "dist"), { recursive: true, force: true });
+  await rm(artifactRoot, { recursive: true, force: true });
+});
+
+for (const [id, sourcePath] of [
+  ["decal-slice", "skills/prompts/slice.md"],
+  ["decal-slice-plan-report", "skills/prompts/decal-slice-plan-report.md"],
+]) {
+  test(`registration planning authority stays broker-owned for ${id}`, async () => {
+    execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "d".repeat(40)], { stdio: "pipe" });
+    const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+    const generatedPath = `generated/skills/${id}/SKILL.md`;
+    const generated = packageValue.files.find((file) => file.sourcePath === generatedPath);
+    assert.deepEqual(generated.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+    for (const path of [sourcePath, generatedPath]) {
+      const file = packageValue.files.find((candidate) => candidate.sourcePath === path);
+      assert.equal(file.moduleId, "zuz-its", path);
+      const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+      assert.doesNotMatch(content, /정확한 3경로 수기 transaction|registry의 다음 전역 번호와 카테고리 순번을 사용해/u, path);
+      assert.match(content, /semantic intent/u, path);
+      assert.match(content, /v10 register-task-batch broker/u, path);
+      assert.match(content, /유일한 기존 canonical main worktree/u, path);
+      assert.match(content, /수기 발급·checkout 전환.*(?:우회하지|중단)/u, path);
+      assert.match(content, /전역 번호·Category Index·최종 파일명.*(?:broker만 발급|broker가 발급)/u, path);
+      if (path === generatedPath) assert.match(content, /explicit approval from the current user/u);
+    }
+  });
+}
+
+
+test("additive owned-edit and Incident profiles include their exact source bytes without replacing v13 or v3", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "b".repeat(40)], { stdio: "pipe" });
+  const value = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  assert.equal(value.compatibility.portableScopedExecution, "task-work-bug/v13");
+  assert.equal(value.compatibility.zuzItsContract, "zuz.its/v3");
+  assert.equal(value.compatibility.portableOwnedTextEdit, "task-work-bug/v14");
+  assert.equal(value.compatibility.portableIncidentTransition, "zuz-its/v4");
+  assert.deepEqual(value.executionPolicies.scopedExecution, {
+    contract: "task-work-bug/v13", waitTtlMs: 300000, correctionLimit: 1,
+    nativeFallback: false, publicationState: "candidate", ownedEditContract: "task-work-bug/v14",
+  });
+  assert.deepEqual(value.executionPolicies.incidentTransition, {
+    manifestValidator: "contracts/zuz-its/v4/verify-contract.mjs",
+    runner: "contracts/zuz-its/v4/transition-incident.mjs", nativeFallback: false,
+  });
+  const policy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
+  assert.deepEqual(policy.executionPolicies.scopedExecution, value.executionPolicies.scopedExecution);
+  assert.deepEqual(policy.executionPolicies.incidentTransition, value.executionPolicies.incidentTransition);
+  assert.equal(policy.zuzItsContract, "zuz.its/v3");
+  const contracts = [
+    ["task-work-bug/v14", ["README.md", "contract.json", "manifest.json", "owned-edit-cli.mjs", "owned-edit.mjs", "verify-contract.mjs"]],
+    ["zuz-its/v4", ["README.md", "incident.mjs", "manifest.json", "transition-incident.mjs", "verify-contract.mjs"]],
+  ];
+  for (const [contract, names] of contracts) {
+    const actual = value.files.filter((file) => file.sourcePath.startsWith(`contracts/${contract}/`));
+    assert.deepEqual(actual.map((file) => file.sourcePath.split("/").at(-1)).sort(), names.sort());
+    for (const file of actual) {
+      const source = await readFile(join(repositoryRoot, "packs/decal-pack/src", file.sourcePath));
+      assert.deepEqual(Buffer.from(file.contentBase64, "base64"), source);
+      assert.equal(file.sha256, sha256(source));
+      assert.equal(file.moduleId, "zuz-its");
+      assert.deepEqual(file.installTargets, [{ provider: "shared", path: file.sourcePath }]);
+    }
+    execFileSync(process.execPath, [join(repositoryRoot, `packs/decal-pack/src/contracts/${contract}/verify-contract.mjs`)], { stdio: "pipe" });
+  }
+});
+
+test("Incident skill prefers the additive writer and keeps Native and repository engine authority separate", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "b".repeat(40)], { stdio: "pipe" });
+  const value = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  const file = value.files.find((file) => file.sourcePath === "skills/agents/decal-incident/SKILL.md");
+  assert.deepEqual(file.installTargets.map(({ provider }) => provider), ["codex", "claude", "gemini", "acp"]);
+  const source = await readFile(join(repositoryRoot, "packs/decal-pack/src", file.sourcePath), "utf8");
+  assert.equal(Buffer.from(file.contentBase64, "base64").toString("utf8"), source);
+  assert.match(source, /prefer.*contracts\/zuz-its\/v4\/transition-incident\.mjs/iu);
+  assert.match(source, /Repository lifecycle engines stay canonical/u);
+  assert.match(source, /fail-closed/u);
+  assert.match(source, /v3.*not.*direct.*fallback/iu);
+  assert.match(source, /candidate.*does not.*advertise.*Native/iu);
+  assert.match(source, /Decal-owned session.*never.*external.*writer/iu);
+});
+
+
+test("commit guidance requires the approved v14 owned-edit profile without an unsafe v13 fallback", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "c".repeat(40)], { stdio: "pipe" });
+  const value = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  const sourcePath = "skills/prompts/commit-ready.md";
+  const generatedPath = "generated/skills/decal-commit-ready/SKILL.md";
+  const source = await readFile(join(repositoryRoot, "packs/decal-pack/src", sourcePath), "utf8");
+  const generated = value.files.find((file) => file.sourcePath === generatedPath);
+  assert.deepEqual(generated.installTargets.map(({ provider }) => provider), ["codex", "claude", "gemini", "acp"]);
+  for (const path of [sourcePath, generatedPath]) {
+    const file = value.files.find((candidate) => candidate.sourcePath === path);
+    const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.equal(file.moduleId, "development-core");
+    assert.match(content, /명시적으로 승인된.*task-work-bug\/v14.*소유 텍스트 편집 profile/u);
+    assert.match(content, /설치된 v14 manifest와 pinned dependency bytes를 검증/u);
+    assert.match(content, /구 v13의 owned-edit-cli.*직접 fallback으로 사용하지 않는다/u);
+    assert.match(content, /파일 단위 커밋.*Pack 갱신.*요청/u);
+    assert.doesNotMatch(content, /portable v13을 채택한 프로젝트에서는/u);
+    assert.match(content, /다른 working tree\/staged 변경을 보존/u);
+    assert.match(content, /Native 세션은 광고된 Native 경로만 사용/u);
+    if (path === sourcePath) assert.equal(content, source);
+    else assert.ok(content.includes(source.split("---")[2].trim()), "all four providers retain the exact guidance body");
+  }
 });

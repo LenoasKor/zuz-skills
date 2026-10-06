@@ -1,0 +1,18 @@
+{
+  "schema": "zuz.its.fixture-manifest/v4",
+  "contractId": "zuz.its/v4",
+  "files": {
+    "README.md": "eb6ba9547b6a4ad1f0ded1bc0506038a051993ec2f83d6ed0c8e21a7b041f281",
+    "incident.mjs": "187cb09f3ac714c9a7d4ac8e56d4187d526f29023c5a105679547d9b538a51e9",
+    "transition-incident.mjs": "b7d95ea1e116f31797aa54c09c166589a69db72cdd2e709e0ec8045a7e5cd8b1",
+    "verify-contract.mjs": "6d7b41e6c7519b65ad7b8b40e37259c0cd7e5042dfdbee271a9cef9b44003c3c"
+  },
+  "dependencies": {
+    "zuz-its/v3/incident.mjs": "0d4db20e6abb1aa3962f321e4c03872d2e9d3f4390df653506bd29c28ead71cd",
+    "task-work-bug/v9/transaction.mjs": "dc6d29030044f94015bcba4839610d2d069c7dd5c40a02a3c5c003fa70806347",
+    "task-work-bug/v9/version-profile.mjs": "242663ff8e6a62a3e41d836837796e2f93c30eec4f9a0a71e2020a9c5a983ded",
+    "task-work-bug/v9/strict-json.mjs": "f9d9ac37e79a267bb6cbc73d6bc93e309fe945433a1ce5ba8c9001bcb888f4a8",
+    "task-work-bug/v9/verify-contract.mjs": "e1f1672339b733585347f9a2549e482e943c016455562425af69df82e998a7c0",
+    "task-work-bug/v7/default-branch.mjs": "337c36cf10ea43e4a4ab5a9148652fcaebf99db469923aac7d747e426f20c5ad"
+  }
+}

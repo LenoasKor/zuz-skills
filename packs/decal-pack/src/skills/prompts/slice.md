@@ -1,7 +1,7 @@
 ---
 id: decal-slice
 label: 데칼 작업 분할
-version: 0.4.9
+version: 0.4.10
 risk: read_only
 group: 작업
 target: active-cli
@@ -12,6 +12,6 @@ template: 현재 목표나 요청된 작업을 30분 이내에 검증 가능한 
 
 큰 작업을 30분 단위 검증 가능한 Slice로 쪼개고 의존 관계 순서로 정렬하는 읽기 전용 계획 스킬입니다.
 
-새 Decal Slice 제안에는 등록 intent의 category·slug·title·index metadata·본문·version/Remote impact를 함께 제시합니다. 전역 번호·카테고리 순번·최종 파일명은 canonical default branch를 재검증한 Native가 발급하고, Decal 소유 세션은 그 결과를 사용합니다. 외부 Codex/CLI host는 canonical default branch 재검증과 정확한 3경로 수기 transaction으로 같은 정본을 작성합니다. Primer-origin WorkSlice는 외부 식별자와 제목을 보존하며 Decal의 로컬 Slice와 혼동하지 않습니다.
+새 Decal Slice 제안에는 category·slug·title·priority·areas·summary·Context Budget을 포함한 body·version/Remote impact의 semantic intent만 제시합니다. 임시 번호·카테고리 순번·최종 파일명·index 링크 제목을 추정하지 않습니다. 실제 등록의 전역 번호·Category Index·최종 파일명은 Native 또는 v10 register-task-batch broker만 발급합니다. Decal 소유 세션은 Native의 slice_register_intent 경로를 사용하고 외부 Codex/CLI host는 같은 semantic intent를 broker로 dry-run한 뒤 유효한 등록 digest 승인 범위에서 write합니다. broker는 유일한 기존 canonical main worktree에서 번호·경로 발급과 exact 등록 커밋을 소유하며, broker 또는 main authority가 없거나 모호하면 수기 발급·checkout 전환으로 우회하지 않습니다. Native 실패를 외부 fallback으로 바꾸거나 등록 승인을 구현·정산·push·merge·deploy 권한으로 확대하지 않습니다. Primer-origin WorkSlice는 외부 식별자와 제목을 보존하며 Decal의 로컬 Slice와 혼동하지 않습니다.
 
 계획 범위가 다른 작업과 섞이기 쉬운 중단기 작업이면 `decal-task-space` 스킬의 구조화 형식으로 분리 작업을 함께 제안합니다. 제안만으로 Git 상태를 변경하지 않습니다.

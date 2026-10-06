@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
   portable: true
 ---
 
@@ -40,7 +40,7 @@ Incident is a zuz ITS Issue with its own stable `INC-###` namespace and canonica
 ## Before changing files
 
 1. Resolve and verify the current Git root and repository identity.
-2. Read repository instructions and the current `contracts/zuz-its/v3` contract while preserving v1 and v2 as immutable compatibility inputs.
+2. Read repository instructions, `contracts/zuz-its/v3` for identity and read compatibility, and the installed `contracts/zuz-its/v4` transition profile when present. Preserve published v1–v3 bytes as immutable compatibility inputs.
 3. Preserve existing zuz ITS records and search current Incident records before reserving an ID.
 4. Capture the observed impact, affected services, occurrence and detection times, classification tags, response state, and evidence.
 5. Preserve unrelated dirty files and reject symlink, path escape, duplicate identity, or stale revision targets.
@@ -70,9 +70,9 @@ It never changes the caller's branch or worktree. Missing, ambiguous, mismatched
 rejected. The approval includes only that exact registration commit, not push, merge, deploy, lifecycle
 completion, or settlement.
 
-Use `contracts/zuz-its/v3/transition-incident.mjs` for lifecycle changes. It accepts padded legacy aliases but displays the unpadded key. The normal flow is `new → confirmed → in_progress → development_complete → release_ready → closed`. Completion requires recovery time and evidence; closing as resolved requires completed recovery evidence.
+For external portable lifecycle changes, prefer `contracts/zuz-its/v4/transition-incident.mjs` after validating its installed manifest and approved Pack receipt. Repository lifecycle engines stay canonical: use their supported Incident command instead of bypassing them with a direct packaged writer. If neither the v4 writer nor a compatible approved repository engine is available, fail-closed for mutation and report the required update; the old v3 writer is not a direct mutation fallback. Keep v3 identity, schema, padded aliases and read compatibility. The normal flow remains `new → confirmed → in_progress → development_complete → release_ready → closed`; completion requires recovery time and evidence, and resolved closure requires completed recovery evidence.
 
-In a Decal-owned session, prefer its advertised Native candidate and lifecycle capability. If Native is unavailable in an external Codex, Claude, Gemini, or ACP session, use the portable flow instead of refusing the entire ITS task.
+A packaged candidate profile does not advertise or authorize a Native capability. In a Decal-owned session, never invoke the external transition writer: use only its advertised Native lifecycle capability, and preserve a blocked request when that capability is missing or rejected. External Codex, Claude, Gemini and ACP sessions may use the validated portable profile within actual user or repository authority. This transition permission does not include Git commit, release/version settlement, publishing or installation.
 
 ## Chat reference
 

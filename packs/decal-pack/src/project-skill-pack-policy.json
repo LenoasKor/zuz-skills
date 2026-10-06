@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.5.2",
+  "packVersion": "3.5.3",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -47,7 +47,7 @@
     "decal-task": "1.12.0",
     "decal-work": "1.9.0",
     "decal-bug": "1.9.0",
-    "decal-incident": "1.4.0",
+    "decal-incident": "1.4.1",
     "zuz-its": "1.4.0",
     "decal-slice-maintenance": "0.8.0",
     "decaldev-rebuild-relaunch": "0.9.3",
@@ -94,7 +94,13 @@
       "waitTtlMs": 300000,
       "correctionLimit": 1,
       "nativeFallback": false,
-      "publicationState": "candidate"
+      "publicationState": "candidate",
+      "ownedEditContract": "task-work-bug/v14"
+    },
+    "incidentTransition": {
+      "manifestValidator": "contracts/zuz-its/v4/verify-contract.mjs",
+      "runner": "contracts/zuz-its/v4/transition-incident.mjs",
+      "nativeFallback": false
     }
   }
 }
