@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { lstat, readFile, readdir, rm } from "node:fs/promises";
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { repositoryRoot, sha256, stableJson } from "../scripts/pack-lib.mjs";
@@ -133,6 +134,44 @@ test("every prompt skill is emitted as an Agent Skill for all portable providers
   }
 });
 
+test("prompt scalar quotes preserve the complete risk review in every provider projection", async () => {
+  const fixtureRoot = await mkdtemp(join(tmpdir(), "decal-prompt-scalar-"));
+  try {
+    await mkdir(join(fixtureRoot, "scripts"));
+    for (const name of ["build-decal-pack.mjs", "pack-lib.mjs"]) {
+      await cp(join(repositoryRoot, "scripts", name), join(fixtureRoot, "scripts", name));
+    }
+    await cp(join(repositoryRoot, "packs"), join(fixtureRoot, "packs"), { recursive: true });
+    const promptPath = join(fixtureRoot, "packs/decal-pack/src/skills/prompts/risk-review.md");
+    const original = await readFile(promptPath, "utf8");
+    const originalTemplate = original.split("\n").find((line) => line.startsWith("template: ")).slice("template: ".length);
+    const cases = [
+      { scalar: originalTemplate, expected: originalTemplate, label: "데칼 위험 중심 리뷰" },
+      { scalar: '"검토할 때 \'보호값\'을 유지하세요."', expected: "검토할 때 '보호값'을 유지하세요.", label: '"데칼 위험 중심 리뷰"' },
+      { scalar: '\'검토할 때 "보호값"을 유지하세요.\'', expected: '검토할 때 "보호값"을 유지하세요.', label: "'데칼 위험 중심 리뷰'" },
+    ];
+    for (const [index, fixture] of cases.entries()) {
+      const source = original.replace(/^template: .*$/m, () => `template: ${fixture.scalar}`)
+        .replace(/^label: .*$/m, () => `label: ${fixture.label}`);
+      await writeFile(promptPath, source);
+      execFileSync(process.execPath, [join(fixtureRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+      const packageValue = JSON.parse(await readFile(join(fixtureRoot, `dist/decal-pack-${sourceDescriptor.packVersion}.zuz-pack.json`), "utf8"));
+      const generated = packageValue.files.find((file) => file.sourcePath === "generated/skills/decal-risk-review/SKILL.md");
+      assert.deepEqual(generated.installTargets.map((target) => target.provider), ["codex", "claude", "gemini", "acp"]);
+      const content = Buffer.from(generated.contentBase64, "base64").toString("utf8");
+      assert.ok(content.includes(`\n\n${fixture.expected}\n\n`), `case ${index}: entire original template survives`);
+      assert.ok(content.includes("# 데칼 위험 중심 리뷰\n"), `case ${index}: whole-quoted label remains compatible`);
+      if (index === 0) {
+        for (const requirement of ["1) 버그 유발 가능성.", "2) 기존 기능 회귀 위험.", "3) 보안 취약점.", "4) 성능 저하.", '문제가 없으면 "이상 없음"으로 끝내세요.']) {
+          assert.ok(content.includes(requirement), requirement);
+        }
+      }
+    }
+  } finally {
+    await rm(fixtureRoot, { recursive: true, force: true });
+  }
+});
+
 test("Pack execution policy binds cross-project approval and settlement commit", async () => {
   const revision = "d".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
@@ -174,7 +213,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.0" },
+    { id: "development-core", version: "1.3.1" },
     { id: "zuz-its", version: "1.3.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.0" },
@@ -334,11 +373,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.5.1 keeps v10/v11 and v12 bookkeeping", async () => {
+test("Pack 3.5.2 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(repositoryRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.5.1");
+  assert.equal(packageValue.packVersion, "3.5.2");
   assert.equal(packageValue.schemaVersion, 2);
   assert.deepEqual(packageValue.requiredFiles, ["LICENSE", "NOTICE"]);
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");

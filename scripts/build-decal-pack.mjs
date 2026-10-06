@@ -45,7 +45,14 @@ function promptAgentSkill(text, identity, relativePath) {
   const frontmatterEnd = text.indexOf("\n---\n", 4);
   if (frontmatterEnd < 0) throw new Error(`unterminated-frontmatter:${relativePath}`);
   const header = text.slice(4, frontmatterEnd);
-  const value = (key) => header.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?$`, "m"))?.[1]?.trim() ?? null;
+  const value = (key) => {
+    const scalar = header.match(new RegExp(`^${key}:\\s*([^\\n]*)$`, "m"))?.[1]?.trim();
+    if (!scalar) return null;
+    const quote = scalar[0];
+    return (quote === '"' || quote === "'") && scalar.endsWith(quote)
+      ? scalar.slice(1, -1)
+      : scalar;
+  };
   const label = value("label");
   const template = value("template");
   if (!label) throw new Error(`missing-prompt-label:${relativePath}`);
