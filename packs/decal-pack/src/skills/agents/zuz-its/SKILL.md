@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
   portable: true
 ---
 
@@ -62,7 +62,7 @@ When a ticket is relevant, prefer the canonical reference tokens understood by D
 
 Examples: `@task:TASK-12[출시 준비]`, `@work:WORK-3[문구 정리]`, `@bug:BUG-8[로그인 실패]`, `@incident:INC-2[인증 장애]`. Legacy padded references remain readable.
 
-Never guess a missing ticket. Search the canonical repository records first. If Decal Native is unavailable, keep using the installed portable writers and plain-text approval flow; only the unavailable Native panel or helper is omitted.
+Never guess a missing ticket. Search the canonical repository records first. Outside Decal (no `DECAL_SESSION_ID`), use the installed portable writers and plain-text approval flow. In a Decal-owned session, a missing Native capability holds only that action; do not switch to portable writers.
 
 ## Contract routing
 

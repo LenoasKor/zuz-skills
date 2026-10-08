@@ -221,10 +221,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.5" },
-    { id: "zuz-its", version: "1.4.3" },
+    { id: "development-core", version: "1.3.6" },
+    { id: "zuz-its", version: "1.4.4" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.1.0" },
+    { id: "decal-maintainer", version: "1.1.1" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
@@ -235,10 +235,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-work": "1.10.0",
     "decal-bug": "1.10.0",
     "decal-incident": "1.5.2",
-    "zuz-its": "1.4.0",
-    "decal-slice": "0.4.11",
-    "decal-slice-maintenance": "0.8.0",
-    "decal-slice-smoke": "0.5.2",
+    "zuz-its": "1.4.1",
+    "decal-slice": "0.4.12",
+    "decal-slice-maintenance": "0.8.1",
+    "decal-slice-smoke": "0.5.3",
     "decal-commit-ready": "0.10.2",
     "decal-debug": "0.3.0",
   };
@@ -381,11 +381,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.6.3 keeps v10/v11 and v12 bookkeeping", async () => {
+test("Pack 3.6.4 keeps v10/v11 and v12 bookkeeping", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.6.3");
+  assert.equal(packageValue.packVersion, "3.6.4");
   assert.equal(packageValue.schemaVersion, 2);
   assert.equal(packageValue.compatibility.portablePreservingRegistration, "task-work-bug/v15");
   assert.ok(packageValue.files.some(file => file.sourcePath === "contracts/task-work-bug/v15/registration-lock.mjs"));
