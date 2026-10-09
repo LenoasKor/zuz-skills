@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.10.0"
+  version: "1.11.0"
   portable: true
 ---
 
@@ -97,9 +97,12 @@ from `development_complete` after the required verification and Smoke; do not cr
 
 If the project explicitly adopts the packaged v11 runner, read `contracts/task-work-bug/v11/README.md`
 and validate its manifest. Use `v11/work-item-lifecycle.mjs` for release-stage-aware normal transitions and
-`v9/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
+`v17/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
-Task, not separately. The approved project profile must name its version sources. Preserve existing
+Task, not separately. When the committed `config/its-settlement.json` sets `mode: release`, closing does
+not settle: the record keeps `pending`, the settlement runner returns `deferred_to_release`, and the
+version is applied once at release with `v17/release-settle.mjs` (separately approved). A missing file
+keeps per-ticket settlement. The approved project profile must name its version sources. Preserve existing
 repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
 writer after a v11 rejection. A project that only has the published v9 runner retains its legacy
 `development_complete → release_ready → closed` flow until its Pack is updated. The following v5 path is only for an older, explicitly pinned installation:

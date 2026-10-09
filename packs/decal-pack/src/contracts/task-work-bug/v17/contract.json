@@ -1,0 +1,29 @@
+{
+  "schema": "decal.task-work-bug.contract/v17",
+  "contractId": "decal.task-work-bug/v17",
+  "dependsOn": [
+    { "contractId": "decal.task-work-bug/v4", "manifest": "v4/manifest.json" },
+    { "contractId": "decal.task-work-bug/v9", "manifest": "v9/manifest.json" }
+  ],
+  "settlementMode": {
+    "path": "config/its-settlement.json",
+    "schema": "decal.its-settlement-mode/v1",
+    "modes": ["release", "per-ticket"],
+    "missing": "per-ticket",
+    "profileSchema": "zuz.its.settlement-profile/v1"
+  },
+  "portableSettlement": {
+    "taskLifecycle": "contracts/task-work-bug/v17/task-lifecycle.mjs",
+    "standaloneSettlement": "contracts/task-work-bug/v17/settle-work-item.mjs",
+    "releaseSettlement": "contracts/task-work-bug/v17/release-settle.mjs",
+    "workItemLifecycle": "contracts/task-work-bug/v11/work-item-lifecycle.mjs",
+    "finalizer": "contracts/task-work-bug/v9/finalize.mjs",
+    "recovery": "contracts/task-work-bug/v9/recover.mjs"
+  },
+  "releasePolicy": {
+    "taskPending": "minor",
+    "workBugPendingOnly": "patch",
+    "taskBatch": "ships-with-completed-task",
+    "appliedHistory": "never-rewritten"
+  }
+}
