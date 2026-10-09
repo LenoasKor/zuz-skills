@@ -29,7 +29,7 @@ test("explicit initializer creates the exact empty Task registry and enables v4 
     const preview = run(root, "--dry-run");
     assert.equal(preview.status, 0);
     assert.equal(preview.value.status, "planned");
-    assert.deepEqual(preview.value.writeSet, ["docs/tasks/index.md", "docs/tasks/category_index.md"]);
+    assert.deepEqual(preview.value.writeSet, ["docs/tasks/index.md", "docs/tasks/category_index.md", "config/its-settlement.json"]);
 
     const written = run(root, "--expected-source-revision", preview.value.sourceRevision, "--write");
     assert.equal(written.status, 0);
@@ -41,6 +41,23 @@ test("explicit initializer creates the exact empty Task registry and enables v4 
     assert.equal(validation.status, "accepted");
     assert.equal(validation.authoringStatus, "ready");
     assert.equal(validation.taskCount, 0);
+    assert.deepEqual(JSON.parse(await readFile(join(root, "config/its-settlement.json"), "utf8")), { schema: "decal.its-settlement-mode/v1", mode: "release" });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("initializer keeps a settlement mode the project already chose", async () => {
+  const root = await project("existing-mode");
+  try {
+    await mkdir(join(root, "config"), { recursive: true });
+    const chosen = '{"schema":"decal.its-settlement-mode/v1","mode":"per-ticket"}\n';
+    await writeFile(join(root, "config/its-settlement.json"), chosen);
+    const preview = run(root, "--dry-run");
+    assert.deepEqual(preview.value.writeSet, ["docs/tasks/index.md", "docs/tasks/category_index.md"]);
+    const written = run(root, "--expected-source-revision", preview.value.sourceRevision, "--write");
+    assert.equal(written.value.status, "written");
+    assert.equal(await readFile(join(root, "config/its-settlement.json"), "utf8"), chosen);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

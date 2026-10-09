@@ -9,6 +9,10 @@ import { parseCategories, parseIndex, STATUSES, validatePackage, validateProject
 const RESULT_SCHEMA = "decal.task-work-bug.task-registry-initialization/v1";
 const INTENT_SCHEMA = "decal.task-work-bug.task-registry-initialization-intent/v1";
 const WRITE_SET = ["docs/tasks/index.md", "docs/tasks/category_index.md"];
+// A new registry applies product versions once at release (task-work-bug/v17). A project that
+// already chose a settlement mode keeps its file untouched.
+const MODE_PATH = "config/its-settlement.json";
+const MODE_SOURCE = `${JSON.stringify({ schema: "decal.its-settlement-mode/v1", mode: "release" }, null, 2)}\n`;
 
 function fail(code) {
   const error = new Error(code);
@@ -98,6 +102,13 @@ async function inspectBaseline(root) {
   }
 }
 
+async function plannedWriteSet(root) {
+  await assertPlainDirectory(path.join(root, "config"), { allowMissing: true });
+  const mode = await metadata(path.join(root, MODE_PATH));
+  if (mode?.isSymbolicLink()) fail("symlink_rejected");
+  return mode ? WRITE_SET : [...WRITE_SET, MODE_PATH];
+}
+
 function renderIndex() {
   return [
     "# Tasks",
@@ -175,8 +186,9 @@ try {
   parseIndex(indexSource);
   parseCategories(categorySource);
 
+  const writeSet = await plannedWriteSet(root);
   if (dryRun) {
-    output("planned", "accepted", { sourceRevision: revision, writeSet: WRITE_SET });
+    output("planned", "accepted", { sourceRevision: revision, writeSet });
   } else {
     if (args.get("--expected-source-revision") !== revision) fail("stale_source_revision");
     await inspectBaseline(root);
@@ -191,12 +203,18 @@ try {
       generated.push([WRITE_SET[0], indexSource]);
       await createExclusive(path.join(root, WRITE_SET[1]), categorySource);
       generated.push([WRITE_SET[1], categorySource]);
+      if (writeSet.includes(MODE_PATH)) {
+        await mkdir(path.join(root, "config"), { recursive: true });
+        await assertPlainDirectory(path.join(root, "config"));
+        await createExclusive(path.join(root, MODE_PATH), MODE_SOURCE);
+        generated.push([MODE_PATH, MODE_SOURCE]);
+      }
       await validateProject(root);
     } catch (error) {
       await rollbackGenerated(root, generated);
       throw error;
     }
-    output("written", "accepted", { previousSourceRevision: revision, sourceRevision: sha256(`${indexSource}\0${categorySource}`), writeSet: WRITE_SET });
+    output("written", "accepted", { previousSourceRevision: revision, sourceRevision: sha256(`${indexSource}\0${categorySource}`), writeSet });
   }
 } catch (error) {
   output("rejected", error.code || "initialization_failed");

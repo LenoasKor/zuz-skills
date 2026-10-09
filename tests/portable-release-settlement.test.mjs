@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { cp, mkdtemp, mkdir, readFile, readdir, writeFile, realpath } from "node:fs/promises";
+import { cp, mkdtemp, mkdir, readFile, readdir, rm, writeFile, realpath } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
@@ -35,10 +35,10 @@ async function fixture({ mode = "release" } = {}) {
     schema: "zuz.its.settlement-profile/v1", engine: "portable", channels: { desktop: "app", remote: null },
     products: [{ id: "app", files: [{ path: "product/package.json", format: "json", pointers: ["/version"] }] }],
   }));
-  if (mode) {
-    await mkdir(path.join(root, "config"));
-    await writeFile(path.join(root, "config/its-settlement.json"), JSON.stringify({ schema: "decal.its-settlement-mode/v1", mode }, null, 2) + "\n");
-  }
+  // The initializer gives a new registry release mode; fixtures override or remove it.
+  assert.equal(JSON.parse(await readFile(path.join(root, "config/its-settlement.json"), "utf8")).mode, "release");
+  if (mode) await writeFile(path.join(root, "config/its-settlement.json"), JSON.stringify({ schema: "decal.its-settlement-mode/v1", mode }, null, 2) + "\n");
+  else await rm(path.join(root, "config"), { recursive: true });
   await git(root, ["init", "-b", "main"]);
   await git(root, ["config", "user.name", "Fixture"]);
   await git(root, ["config", "user.email", "fixture@example.invalid"]);
