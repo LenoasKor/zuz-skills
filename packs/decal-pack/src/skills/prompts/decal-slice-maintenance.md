@@ -1,7 +1,7 @@
 ---
 id: decal-slice-maintenance
 label: 데칼 Slice 유지보수 정산
-version: 0.8.1
+version: 0.8.2
 risk: host_policy_authorized
 group: 작업
 target: active-cli
@@ -30,7 +30,7 @@ template: 새 Task/Slice 등록, lifecycle 상태 전이, 승인된 Smoke의 tes
 
 - `correct_and_retry_same_turn` + `not_created`: 보고된 입력만 고쳐 정확히 한 번 재호출합니다.
 - `retry_after_user_input`: 변경을 보존하고 원인·해결 조건을 보고한 뒤 새 사용자 입력을 기다립니다.
-- `repair_state_then_retry`: branch·staged·write-set·문서 상태를 읽기 전용으로 확인하고 안전하게 해결된 뒤 새 입력에서 재호출합니다.
+- `repair_state_then_retry`: branch·staged·write-set·문서 상태를 읽기 전용으로 다시 확인합니다. 원인이 이미 풀렸거나 이번 요청 범위 안에서 안전하게 풀 수 있으면 같은 turn에서 정확히 한 번 재호출하고, 사용자 조치나 다른 세션의 작업이 필요하면 원인·해결 조건을 보고하고 기다립니다.
 - `refresh_session_then_retry`: 새 turn·세션·앱 적용 조건을 설명하고 현재 turn에서는 반복하지 않습니다.
 - `do_not_retry`: 저장소 변경을 멈추고 진단 코드를 보고합니다.
 

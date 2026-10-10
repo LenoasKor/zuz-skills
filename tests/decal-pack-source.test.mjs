@@ -222,9 +222,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.6" },
-    { id: "zuz-its", version: "1.5.0" },
+    { id: "zuz-its", version: "1.5.1" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.1.1" },
+    { id: "decal-maintainer", version: "1.1.2" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
@@ -237,7 +237,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-incident": "1.5.2",
     "zuz-its": "1.4.1",
     "decal-slice": "0.4.12",
-    "decal-slice-maintenance": "0.8.1",
+    "decal-slice-maintenance": "0.8.2",
     "decal-slice-smoke": "0.5.3",
     "decal-commit-ready": "0.10.2",
     "decal-debug": "0.3.0",
@@ -382,11 +382,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.7.0 keeps v10/v11 and v12 bookkeeping and adds v17 release settlement", async () => {
+test("Pack 3.7.1 keeps v10/v11 and v12 bookkeeping and adds v17 release settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.7.0");
+  assert.equal(packageValue.packVersion, "3.7.1");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v17");
   for (const file of ["release-settle.mjs", "settle-work-item.mjs", "settlement-mode.mjs", "task-lifecycle.mjs", "verify-contract.mjs"]) {
     assert.ok(packageValue.files.some((item) => item.sourcePath === `contracts/task-work-bug/v17/${file}`), file);
