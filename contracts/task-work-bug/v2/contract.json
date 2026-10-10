@@ -1,0 +1,47 @@
+{
+  "schema": "decal.task-work-bug.contract/v2",
+  "contractId": "decal.task-work-bug/v2",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v1",
+    "manifestSha256": "62bcab47e97221ee715725c9981090a4428b1079997ad9124aec890984f9cb67"
+  },
+  "canonicalPaths": {
+    "taskIndex": "docs/tasks/index.md",
+    "taskCategoryIndex": "docs/tasks/category_index.md",
+    "taskDocuments": "docs/tasks/task_<ID>_<existing-suffix>.md",
+    "workDocuments": "docs/work-items/work/WORK-<number>.md",
+    "bugCards": "docs/work-items/bugs/BUG-<number>.md",
+    "migrationManifest": "docs/task-work-bug/migrations/<generation>.json"
+  },
+  "tokens": {
+    "canonicalCommandPrefix": "task:",
+    "legacyCommandPrefix": "slice:",
+    "legacyCommandMode": "deprecation_wrapper_read_compatible_no_new_legacy_writes"
+  },
+  "documentProfiles": {
+    "work": { "schema": "decal.task-work-bug.work-document", "schemaVersion": 1 },
+    "bug": { "schema": "decal.task-work-bug.bug-card", "schemaVersion": 1 }
+  },
+  "legacyWorkIdAllocation": [
+    "reserve_existing_work_ids",
+    "sort_legacy_sources_by_relative_path",
+    "prefer_matching_numeric_suffix",
+    "otherwise_allocate_smallest_available_positive_number",
+    "persist_mapping_and_reject_stale_reallocation"
+  ],
+  "portableMetadata": {
+    "unattendedDevelopment": {
+      "allowedValue": "allowed",
+      "defaultMode": "manual",
+      "unknownValueMode": "manual",
+      "taskEncoding": "Unattended Development: allowed",
+      "workBugEncoding": "unattendedDevelopment: allowed",
+      "oneRunIncludeAllMutatesDocument": false
+    }
+  },
+  "readOnlyPreview": {
+    "schema": "decal.task-work-bug.migration-preview/v2",
+    "writeAllowed": false,
+    "pathDisclosure": "project_relative_only"
+  }
+}

@@ -1,0 +1,1274 @@
+{
+  "schema": "zuz.decal-pack.installation-lock/v2",
+  "packId": "decal-project-pack",
+  "packVersion": "3.7.1",
+  "sourceRevision": "bd0820b1cce49e8c6221de24570c4e0a65682960",
+  "manifestSha256": "723dcb759c482fcbbf399a0138b0d940178bc5bcea592ecab1c0d5a027e815ed",
+  "packageSha256": "add34ad334f7674b66536b1dbf5284c4e544210f2e7e33c723039f8596684910",
+  "mode": "initial-pack-bootstrap",
+  "installationPlanDigest": "sha256:9e8be01096b4ae1308d5004655a95a6ed4727f5122e3935dc72b5c6ced95dfc2",
+  "previousRelease": null,
+  "modules": [
+    "zuz-its"
+  ],
+  "moduleStates": [
+    {
+      "id": "decal-maintainer",
+      "version": "1.1.2",
+      "digest": "6eaeeb1113fe015a50c388cc1158b92a991ad6c57861c2e1fcd1ec49490a1d48",
+      "status": "removed"
+    },
+    {
+      "id": "design-motion",
+      "version": "1.0.1",
+      "digest": "469f11efe905043bda115c148d3627a3f86aab4451707c138afde7dff3d34112",
+      "status": "removed"
+    },
+    {
+      "id": "development-core",
+      "version": "1.3.6",
+      "digest": "2914c9bfba04e5f1d69e0aa5322b144940eb3196825e77c70a03865cbf29c099",
+      "status": "removed"
+    },
+    {
+      "id": "zuz-its",
+      "version": "1.5.1",
+      "digest": "0e414db4ddc36e170399e7b4b9c25d81c459a30ea3ff22e0f2c5a709f171e1f6",
+      "status": "installed"
+    }
+  ],
+  "providers": [
+    "acp",
+    "claude",
+    "codex"
+  ],
+  "files": [
+    {
+      "path": ".agents/skills/decal-bug/SKILL.md",
+      "provider": "acp",
+      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+    },
+    {
+      "path": ".agents/skills/decal-incident/SKILL.md",
+      "provider": "acp",
+      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+    },
+    {
+      "path": ".agents/skills/decal-slice-dev-report/SKILL.md",
+      "provider": "acp",
+      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+    },
+    {
+      "path": ".agents/skills/decal-slice-hygiene/SKILL.md",
+      "provider": "acp",
+      "sha256": "4b9445d84318186d542421c8e9f8bdc507eedbd86d08958e6f1ca6fceeb51282"
+    },
+    {
+      "path": ".agents/skills/decal-slice-maintenance/SKILL.md",
+      "provider": "acp",
+      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+    },
+    {
+      "path": ".agents/skills/decal-slice-map/SKILL.md",
+      "provider": "acp",
+      "sha256": "fd47ebed14a0bef7ded59364fe1485263c2bbcc180e0012f88a57aa5ac5ff9ea"
+    },
+    {
+      "path": ".agents/skills/decal-slice-plan-report/SKILL.md",
+      "provider": "acp",
+      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+    },
+    {
+      "path": ".agents/skills/decal-slice-report/SKILL.md",
+      "provider": "acp",
+      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+    },
+    {
+      "path": ".agents/skills/decal-slice-smoke/SKILL.md",
+      "provider": "acp",
+      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+    },
+    {
+      "path": ".agents/skills/decal-slice-test-report/SKILL.md",
+      "provider": "acp",
+      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+    },
+    {
+      "path": ".agents/skills/decal-slice/SKILL.md",
+      "provider": "acp",
+      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+    },
+    {
+      "path": ".agents/skills/decal-task/SKILL.md",
+      "provider": "acp",
+      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+    },
+    {
+      "path": ".agents/skills/decal-work/SKILL.md",
+      "provider": "acp",
+      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+    },
+    {
+      "path": ".agents/skills/zuz-its/SKILL.md",
+      "provider": "acp",
+      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+    },
+    {
+      "path": ".claude/skills/decal-bug/SKILL.md",
+      "provider": "claude",
+      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+    },
+    {
+      "path": ".claude/skills/decal-incident/SKILL.md",
+      "provider": "claude",
+      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+    },
+    {
+      "path": ".claude/skills/decal-slice-dev-report/SKILL.md",
+      "provider": "claude",
+      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+    },
+    {
+      "path": ".claude/skills/decal-slice-hygiene/SKILL.md",
+      "provider": "claude",
+      "sha256": "4b9445d84318186d542421c8e9f8bdc507eedbd86d08958e6f1ca6fceeb51282"
+    },
+    {
+      "path": ".claude/skills/decal-slice-maintenance/SKILL.md",
+      "provider": "claude",
+      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+    },
+    {
+      "path": ".claude/skills/decal-slice-map/SKILL.md",
+      "provider": "claude",
+      "sha256": "fd47ebed14a0bef7ded59364fe1485263c2bbcc180e0012f88a57aa5ac5ff9ea"
+    },
+    {
+      "path": ".claude/skills/decal-slice-plan-report/SKILL.md",
+      "provider": "claude",
+      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+    },
+    {
+      "path": ".claude/skills/decal-slice-report/SKILL.md",
+      "provider": "claude",
+      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+    },
+    {
+      "path": ".claude/skills/decal-slice-smoke/SKILL.md",
+      "provider": "claude",
+      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+    },
+    {
+      "path": ".claude/skills/decal-slice-test-report/SKILL.md",
+      "provider": "claude",
+      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+    },
+    {
+      "path": ".claude/skills/decal-slice/SKILL.md",
+      "provider": "claude",
+      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+    },
+    {
+      "path": ".claude/skills/decal-task/SKILL.md",
+      "provider": "claude",
+      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+    },
+    {
+      "path": ".claude/skills/decal-work/SKILL.md",
+      "provider": "claude",
+      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+    },
+    {
+      "path": ".claude/skills/zuz-its/SKILL.md",
+      "provider": "claude",
+      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+    },
+    {
+      "path": "contracts/task-work-bug/initialize-task-registry.mjs",
+      "provider": "shared",
+      "sha256": "8b3ce12bef5a90dd4d489975fd1ab0fb648bfd05f01ec4038ea642f257a98fa0"
+    },
+    {
+      "path": "contracts/task-work-bug/repair-task-registry-summary.mjs",
+      "provider": "shared",
+      "sha256": "b6aa804b9129e0fa012c7762ce5e5b39681d4b773a86a35d7e4287d8b3cd2c8f"
+    },
+    {
+      "path": "contracts/task-work-bug/task-registry-initialization-intent.json",
+      "provider": "shared",
+      "sha256": "1aa36159ad700229b042ac5963f13c50dad0dcff9ce986a19724a3a1dbfb55b4"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/acceptance-cases.json",
+      "provider": "shared",
+      "sha256": "93516dbc7c64abd32f37aa0682304e714d89649697fa279f1e95c44ae36fe122"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/expected-projection.json",
+      "provider": "shared",
+      "sha256": "6cd6f9a71d1e4ea717b5758008724aad421aa7ed786decf7adcda4272be0edb3"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/fixtures/docs/slices/index.md",
+      "provider": "shared",
+      "sha256": "e70f5d9bda43f3e1e1872ab915b9880dd462a99b6c472377f525c6891bf8e0eb"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/fixtures/docs/slices/slice_541_integration_040_task_work_bug_contract_ledger_v1.md",
+      "provider": "shared",
+      "sha256": "d98ab784177e865659f21bf6946a7b46cdeafc9042442e57f4af92937bac12d3"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/fixtures/docs/work-items/bugs/BUG-001.md",
+      "provider": "shared",
+      "sha256": "8248809bfedb1ad429e38ec4ddf0fe292ec2cfbd421e58692264ecf9c0672574"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/fixtures/docs/work-items/work/WORK-001.md",
+      "provider": "shared",
+      "sha256": "157f9b00ab200db0322b53122863e49e655728ecf3ec8ee8f997ac78bb05b055"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/manifest.json",
+      "provider": "shared",
+      "sha256": "62bcab47e97221ee715725c9981090a4428b1079997ad9124aec890984f9cb67"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/README.md",
+      "provider": "shared",
+      "sha256": "713568ac85e3ea8941e577e673df7d6af7b08251e5ed01349ed45ccfd69b51d5"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/schemas/bug-card.schema.json",
+      "provider": "shared",
+      "sha256": "20d910a64c826be205705fadfeb6b53f21febff56a769e1387389b3fde1072eb"
+    },
+    {
+      "path": "contracts/task-work-bug/v1/schemas/work-document.schema.json",
+      "provider": "shared",
+      "sha256": "8ca62b51bfe00248857ed8503a186b9d6a830a5e0aaae749ed311860d3068c65"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/contract.json",
+      "provider": "shared",
+      "sha256": "d8918327673d7207cf02cbfd0fba574a54366b472f6a6fa0b5dd60b70073985f"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/main-authority.mjs",
+      "provider": "shared",
+      "sha256": "a4d74250b8b259a566c965d8de162607595d8b9955c9a279fbd57609d083f5c6"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/manifest.json",
+      "provider": "shared",
+      "sha256": "c3ae1dc001a39853f1d992f3a2341e11b20767c84a1c3c82a6d922d6cb2d7fab"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/README.md",
+      "provider": "shared",
+      "sha256": "3f1e26fba9aefa31831ae7472267d3e0397dea84fb7f1c1af0deba1ea679db8d"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/register-task-batch.mjs",
+      "provider": "shared",
+      "sha256": "73d7787a2267a0aabd1de8e0437f30544636ff769f091f075303e5acedd1d544"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/register-ticket.mjs",
+      "provider": "shared",
+      "sha256": "9d4f63cb0de54b0c1b958b3091517bd9c182df79d8b5d590482425caa82e55a2"
+    },
+    {
+      "path": "contracts/task-work-bug/v10/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "d9b68b4db954fa59eb53aef4504be267b399448894d2ca6d4e6d171bdb49124c"
+    },
+    {
+      "path": "contracts/task-work-bug/v11/contract.json",
+      "provider": "shared",
+      "sha256": "5ee8d283c330bd3faedcf15164498afb6bbd391f9f01efaad02a9b01e8642c3f"
+    },
+    {
+      "path": "contracts/task-work-bug/v11/manifest.json",
+      "provider": "shared",
+      "sha256": "b93be95a3987df4c4cee2906d8f755bf256ee5b5bb6b8aeab16e78af4ff572b7"
+    },
+    {
+      "path": "contracts/task-work-bug/v11/README.md",
+      "provider": "shared",
+      "sha256": "1f49769a1a1300a1a65dc88105decf673541551d60447a3c0197a17fc8001ca8"
+    },
+    {
+      "path": "contracts/task-work-bug/v11/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "bbdd3b93686675bc35aecbed19123afafd92aa49940b4f07e28fe81cc26ec909"
+    },
+    {
+      "path": "contracts/task-work-bug/v11/work-item-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "12726417a643916e8cf378e7ab4b5bdad03b2bc79ecbb5a859020404e249163f"
+    },
+    {
+      "path": "contracts/task-work-bug/v12/contract.json",
+      "provider": "shared",
+      "sha256": "a4f0ad04f6458cb2cbe1617821ef9a478743f8e43f95c98a570cae73f34d722b"
+    },
+    {
+      "path": "contracts/task-work-bug/v12/manifest.json",
+      "provider": "shared",
+      "sha256": "cdefac0e461d2fa222147ae2912feca031542623527e889fd9873eadb8cd07e2"
+    },
+    {
+      "path": "contracts/task-work-bug/v12/README.md",
+      "provider": "shared",
+      "sha256": "f257090fd131618aa7ca476d18fcdbdf7117ed3bd6986d26e304218428802310"
+    },
+    {
+      "path": "contracts/task-work-bug/v12/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "a4a2bec51a66ffb2a700a60de202bee502319c2c18106f3481c96b34fa3653f0"
+    },
+    {
+      "path": "contracts/task-work-bug/v12/work-item-bookkeeping.mjs",
+      "provider": "shared",
+      "sha256": "db33d3b15fb702903f16b6ce4d0b036f202b03317eb73c37db7b9d7c16e2e4b1"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/contract.json",
+      "provider": "shared",
+      "sha256": "2c1d6a83a6ac7113afadc3d22aec76694e33d6a9d393d4b3d15f1ae1db15e32c"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/execution-policy.mjs",
+      "provider": "shared",
+      "sha256": "1fc9da5c5eb2ca1ff434889f19c6403574ea48830ae7c2ee9adde2a29f5ba79b"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/manifest.json",
+      "provider": "shared",
+      "sha256": "18b5f77a17ae5a5ecd2097607b81862bb9920848a81dd236b78017c7006ceeb0"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/owned-edit-cli.mjs",
+      "provider": "shared",
+      "sha256": "bf4216c7386eaa37e3207d31d3d825bd5a1da9e690c8f49c89bc69168463e331"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/owned-edit.mjs",
+      "provider": "shared",
+      "sha256": "a4e1fb1d8568690ae73852f31f5c10ba9405c94290eee2602fd114afe500055b"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/README.md",
+      "provider": "shared",
+      "sha256": "524a74260c4870d7673b88e0f6c7aa9e88b430ec18c8ea98351c2d51c4a9c234"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/task-body.mjs",
+      "provider": "shared",
+      "sha256": "12ebe31eb15a981525b50ed071143f4f48d46787e0fc506f6da0f03bb843214e"
+    },
+    {
+      "path": "contracts/task-work-bug/v13/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "48338cc7b75a2b0eb4b73eecc83e364001b554c667d5248bb6437d44024e4fad"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/contract.json",
+      "provider": "shared",
+      "sha256": "01e620b91f829b8abbe900ef8a6bd26f4fa9428b36270d5869830102505ac8c7"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/manifest.json",
+      "provider": "shared",
+      "sha256": "c0e4aa21e4cdeab90f473fff8d71d0c1877bc31a7ce764ef0985cbcae78d712a"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/owned-edit-cli.mjs",
+      "provider": "shared",
+      "sha256": "49a927764e6c62fab7dcd8c3e46ded7c5a5f1357ab8239e73bcf27ae723290b4"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/owned-edit.mjs",
+      "provider": "shared",
+      "sha256": "412540bc27e92528bc94f93fb73cf7b886bd880062f3ddbcbc162ef6dabf218c"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/README.md",
+      "provider": "shared",
+      "sha256": "3c5f8321c84b880bed22d440a659ad9b09930f2eb8eb829e8abff134c230ea45"
+    },
+    {
+      "path": "contracts/task-work-bug/v14/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "f2fd3fb990133b31b51299bcc841038571d19bc0bb2f954c20312ec80a424510"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/contract.json",
+      "provider": "shared",
+      "sha256": "ac4d9a2821ac6b96ef7524fb30a392659161de6e3c2f80f15efe10797ec2686f"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/manifest.json",
+      "provider": "shared",
+      "sha256": "845e790e42e1ed315b887955b5eb880e508fb9ea5b5c52cd4f5182f56e63140a"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/README.md",
+      "provider": "shared",
+      "sha256": "df0de59b1c0e02d40c8ac6d335ad9f59069984a4c978d8fb2877d6a9b9d0e1a8"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/register-task-batch.mjs",
+      "provider": "shared",
+      "sha256": "f436408cfc40260a2cbfef6dc9d5e6a728f9f40a71f4bc59d9e39f03efa90bfd"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/register-ticket.mjs",
+      "provider": "shared",
+      "sha256": "f569ae6287df5638d8922fca930fb1ee7ae9deef925505fecfd31a123a0772c1"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/registration-lock.mjs",
+      "provider": "shared",
+      "sha256": "74dc26613dfb54c49fdec8ff0c1751ee6f0ae25902a0aa861c14965e03ab4aaa"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/registration.mjs",
+      "provider": "shared",
+      "sha256": "68202fa714ad5c798e738f99aa72ad189b5eb3ccd49211f64aceeea368cf5700"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/task-registration-batch.mjs",
+      "provider": "shared",
+      "sha256": "d39785ac714acd9e76ac8c1f7605e68ed501bc01f2bf785a0193807243e6e279"
+    },
+    {
+      "path": "contracts/task-work-bug/v15/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "aa72a80e8fdf7cdb148cb5375e0cbec0792e7d52e3d65a324bba93de78941e7e"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/contract.json",
+      "provider": "shared",
+      "sha256": "2924a70d555d243fef5198c81abd4de5d64b8591ff304eea436fda4492a6e2a3"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/manifest.json",
+      "provider": "shared",
+      "sha256": "63efb9bc379010ca3f670af1daabb79fb74c438078c534b7fa5f8f78401ae7dd"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/README.md",
+      "provider": "shared",
+      "sha256": "5f00111a484740ac7c893cd96b5c167561f217e55816c9a93b0ea37e24d6d165"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/register-ticket.mjs",
+      "provider": "shared",
+      "sha256": "835a00947f09d999e9c820ee09d9a302fd9e8b5917a8076f33d40377322655e6"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/registration.mjs",
+      "provider": "shared",
+      "sha256": "77385c5052d7fd8071ba07554018adf3ed28741f7fd0287e41209589a8accf59"
+    },
+    {
+      "path": "contracts/task-work-bug/v16/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "5471accc5ad863e64bec1f39411bc6e530f4605dde8ad8459d6436a4b24c9b77"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/contract.json",
+      "provider": "shared",
+      "sha256": "c620026e457f1ecb81496f7a42a3f403975436a870b294749e5498e4d18c407b"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/manifest.json",
+      "provider": "shared",
+      "sha256": "56ac2f7ac588990c1b815abd7dd43416e179485862ad56efc67b3d3e0388ba55"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/README.md",
+      "provider": "shared",
+      "sha256": "0d54d74b7136e5d55a9cd93974b42228bbcdbdbda7c3e638b9e29f2e0a66b9c7"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/release-settle.mjs",
+      "provider": "shared",
+      "sha256": "342922517ad0952888138529e7a01bec094ed432deba225522f0874bdbf3a8da"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/settle-work-item.mjs",
+      "provider": "shared",
+      "sha256": "5d7e79f80f7ba808ca45436fe9490a565ebc0c2d422fd6aa99a0535ec3e20d4b"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/settlement-mode.mjs",
+      "provider": "shared",
+      "sha256": "d2d0248c2a027ff51302ff197c5d87d6b05a464002014ac204225061ab6f5d43"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/task-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "df38c228c43425eec06ac351e33f5babce719e39dee4e87d19359297269a41fa"
+    },
+    {
+      "path": "contracts/task-work-bug/v17/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "12997ee31328908851aa8d3e79605ccffdfd452efea5cda73568e911592e1bd8"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/acceptance-cases.json",
+      "provider": "shared",
+      "sha256": "88b825441c8aaf497f29da45f4b76e02f7de0771f61f21650f4e4d9e87dbbeca"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/contract.json",
+      "provider": "shared",
+      "sha256": "43960401bac20eb7ff8cfa63b2188cd8f0b582ac4c4cf5af6f02b531e2a7b817"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/expected-dry-run.json",
+      "provider": "shared",
+      "sha256": "79e96cd5b158c096af12d41234420fa5957ad2fa679e2ccbc2bada206adce572"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/slices/category_index.md",
+      "provider": "shared",
+      "sha256": "9f9e72363650bd8714ca3082db0df5b89c313a4fa52e2d571a8367129dccd8c6"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/slices/index.md",
+      "provider": "shared",
+      "sha256": "24122421c206029f1195951701c5dd14ef29f7dbac83befd4f0f4a7e978d146a"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/slices/slice_578_workflow_023_task_work_bug_storage_migration.md",
+      "provider": "shared",
+      "sha256": "a765c6735802bba331ea564f645f73411c0513f79308ffc0e87d41978f66df2f"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/work-items/bugs/BUG-003.md",
+      "provider": "shared",
+      "sha256": "5e406850b5e685b07c6e0644857daeb32156214d6d04daee806e25a175ee97f0"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/work-items/improvements/IMP-001.md",
+      "provider": "shared",
+      "sha256": "f629e76fd3695ed6e281d6ac3c106a53ac9586f2a718d6e31ddb2798016b2c05"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/work-items/tasks/TASK-007.md",
+      "provider": "shared",
+      "sha256": "12276e877d755d2b32e19da180a4e205d1566a06cd91afbad6d80a86132bd686"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/fixtures/project/docs/work-items/work/WORK-001.md",
+      "provider": "shared",
+      "sha256": "b9918b8d7a804218e188594da8dfbf28f4d6b639c8e28e258e4ff93af2c4d34d"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/manifest.json",
+      "provider": "shared",
+      "sha256": "e7a7a73a079976c0f528629ecbef8a267bad70b1d81a8211aa156d56bb96585c"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/README.md",
+      "provider": "shared",
+      "sha256": "82f262dbba7d6efd2ce420331ec0bd18e62fd1eb55ee48bf8d832775a609fc4d"
+    },
+    {
+      "path": "contracts/task-work-bug/v2/schemas/migration-manifest.schema.json",
+      "provider": "shared",
+      "sha256": "cdc5d94ea047287b1adb613bac71a67498f9f2198e9460138910d0270718d7e1"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/acceptance-cases.json",
+      "provider": "shared",
+      "sha256": "ca63684e90f09a0979524b7855f54e92b0f9ec413163fc54c0eaf223880d843c"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/contract.json",
+      "provider": "shared",
+      "sha256": "5363e90b10aeb0a9de3c8db6d878967e2d835b222a08e5edd2f0e5d5b32e4d90"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/expected-projection.json",
+      "provider": "shared",
+      "sha256": "23717d6712a26d651bca3bc5b8e1423fcbdf7fec57b9859876d5283a2befbf1e"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/fixtures/malformed/missing-column-index.md",
+      "provider": "shared",
+      "sha256": "96e8b09fe2b1b1c4e617c7311cf01179fe6e133680fed23240a5ceb4a9910ba7"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/fixtures/malformed/task-word-prefix-index.md",
+      "provider": "shared",
+      "sha256": "3d10acfb903590f371073b48295ced470359570f6dfa9ae4baf5b1af2daa56eb"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/fixtures/project/docs/tasks/category_index.md",
+      "provider": "shared",
+      "sha256": "afc17a0b15babad2cd6370a803ecdf20463f148316a545e42b062dce96d3abf8"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/fixtures/project/docs/tasks/index.md",
+      "provider": "shared",
+      "sha256": "100327847cb6458b86b011e9f4a887abfb301ee5aaf60971a97dc2cfbd3c6ed4"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/fixtures/project/docs/tasks/task_1_product_001_registry_acceptance_fixture.md",
+      "provider": "shared",
+      "sha256": "2e1c851201ddf61233b10db89b90ecb44387595c80720ad10a5644f7ada6436c"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/manifest.json",
+      "provider": "shared",
+      "sha256": "438c36cede469a65e2e9f239200e485452bdc5111351879198779e5b139e6fc0"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/README.md",
+      "provider": "shared",
+      "sha256": "cdef4edb037360b5c628053fcfd912870d3e07685cf09a9be0ad32902bc9375d"
+    },
+    {
+      "path": "contracts/task-work-bug/v3/validate-task-index.mjs",
+      "provider": "shared",
+      "sha256": "a043e0b108b5da4034661a826bd30ffabe796b03973b77b2eca9452cfd20ae88"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/acceptance-cases.json",
+      "provider": "shared",
+      "sha256": "26e842a658ee224aeeb5b7b286515971cce1423a1fb33e2060a01b7f64871ace"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/contract.json",
+      "provider": "shared",
+      "sha256": "543461d101f24d6a4d8b92ab8872b5f386a26d7fafc02a1f63dfe36028c234db"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/expected-registration.json",
+      "provider": "shared",
+      "sha256": "85981c711946aa7384c8daffc7ec45bc3d828b62d3be8ab24172dcaa11f5819d"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/fixtures/project/docs/tasks/category_index.md",
+      "provider": "shared",
+      "sha256": "afc17a0b15babad2cd6370a803ecdf20463f148316a545e42b062dce96d3abf8"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/fixtures/project/docs/tasks/index.md",
+      "provider": "shared",
+      "sha256": "100327847cb6458b86b011e9f4a887abfb301ee5aaf60971a97dc2cfbd3c6ed4"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/fixtures/project/docs/tasks/task_1_product_001_registry_acceptance_fixture.md",
+      "provider": "shared",
+      "sha256": "2e1c851201ddf61233b10db89b90ecb44387595c80720ad10a5644f7ada6436c"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/fixtures/task-2-intent.json",
+      "provider": "shared",
+      "sha256": "c5badc01b0d8a18997e38348aba6beb6ba5791e4d72d4a07f3c6874c96557148"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/manifest.json",
+      "provider": "shared",
+      "sha256": "2a7a88aa8db122db00eb4c2cbea1e40b2770b6418448ac8c455d5ef5cb77fed4"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/README.md",
+      "provider": "shared",
+      "sha256": "3e47011a0c421aaf627c12fd311fffe1c045c0e39c95da7e97c09a3b40a6a495"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/register-task.mjs",
+      "provider": "shared",
+      "sha256": "c57fcf401ce4fbf8eaffbdf57c91946ab7e472a930930293bfa1a670eb8a6a43"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/registry.mjs",
+      "provider": "shared",
+      "sha256": "22d9526c39a309bb9569e9f524d766c1417b717b999422280f562b39d681c465"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/transition-task.mjs",
+      "provider": "shared",
+      "sha256": "d9075a3e91ef20a8e0f57679e4cd200fc04121575b4500233d73ed841663fbb1"
+    },
+    {
+      "path": "contracts/task-work-bug/v4/validate-task-index.mjs",
+      "provider": "shared",
+      "sha256": "0cd1ac7a30b3b5f83030a57e9ee26355732d91d935c8663b5dbbe601e76a21fe"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/contract.json",
+      "provider": "shared",
+      "sha256": "cb98c8b953c238011cd1c690adcd4285c317398b108842a337abe91a2f8cbc45"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/fixtures/project/docs/work-items/bugs/BUG-001.md",
+      "provider": "shared",
+      "sha256": "bbf0de68d821dc23cab25a237a29be887727d792c7b2d9e5157e51aa10b85672"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/fixtures/project/docs/work-items/work/WORK-001.md",
+      "provider": "shared",
+      "sha256": "5ffed417a7c3e425d1c55f6cc23b36bdd68749c981874ac21d00e9e70c330870"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/fixtures/work-002-intent.json",
+      "provider": "shared",
+      "sha256": "39ef8eadd306eed321791c0ca449090240a9d3fd3ad5a655f099ce3828bef2b1"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/manifest.json",
+      "provider": "shared",
+      "sha256": "993f14fbf05591edb4aebd40778b09c1d6f83cae9222183798b575ecf6909983"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/README.md",
+      "provider": "shared",
+      "sha256": "d2bd9180c034b184f5db2345ade2acd4313ddd9b25b499dee4380d35e937c4b6"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/register-work-item.mjs",
+      "provider": "shared",
+      "sha256": "d45a1382443c97475d371b1c442e830789c9552648ebb4c91a55bdd0b1c90ff4"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/transition-work-item.mjs",
+      "provider": "shared",
+      "sha256": "138d748d36b580d14354090b70d355b6036161aa5d92bee32a5b08bd10ab2874"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/validate-work-items.mjs",
+      "provider": "shared",
+      "sha256": "f2f9b1940dd6bf71e6cd946427d48f24ab20e118374391e60f9b3cf08a7df465"
+    },
+    {
+      "path": "contracts/task-work-bug/v5/work-items.mjs",
+      "provider": "shared",
+      "sha256": "ddfb570a7c5a09a1bec9b08c738616941385f2b8c26f91c400468f16f04cef95"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/contract.json",
+      "provider": "shared",
+      "sha256": "34e0884f555af5a063d87e8873958c8c60fb7848ee924414b8e301860fad6963"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/fixtures/task-batch-intent.json",
+      "provider": "shared",
+      "sha256": "1edb8252b3492f28b11ba4f53180626c95a5f3597fc6c566c51d959d29de5270"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/manifest.json",
+      "provider": "shared",
+      "sha256": "6d5176a773e03724b36e1be333a533ae223988d56a1f924f43ba0def8529db5e"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/README.md",
+      "provider": "shared",
+      "sha256": "0a29d35512024b0bd492f75c0d6775c7d2b416784cb8ffd4011daf783485b950"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/register-task-batch.mjs",
+      "provider": "shared",
+      "sha256": "5c5b938a7f4605db3814398edf002caf614f477829ae1c5ac91f504e3b92de06"
+    },
+    {
+      "path": "contracts/task-work-bug/v6/registration-batch.mjs",
+      "provider": "shared",
+      "sha256": "43b5d7650fdeaeb441db53c1b277c330a86524f9016eb96f6ee64ef1c2955b91"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/contract.json",
+      "provider": "shared",
+      "sha256": "21fced351746b12b82234573a7981679bd2809adb6f8e2dceaa7c14b4c21ae40"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/default-branch.mjs",
+      "provider": "shared",
+      "sha256": "337c36cf10ea43e4a4ab5a9148652fcaebf99db469923aac7d747e426f20c5ad"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/fixtures/work-intent.json",
+      "provider": "shared",
+      "sha256": "1f43185ad85d64519c9166b030c4933cfec7c3731081d6b630a195c090dbfab8"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/manifest.json",
+      "provider": "shared",
+      "sha256": "8651d80ffdeed955e583b06231415236975bf1c6a85e7360345e3743cdcad333"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/README.md",
+      "provider": "shared",
+      "sha256": "f182056772292734c75fbbbbbf30426ae0356f9543c0f01fd08b508ea86c4b71"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/register-task-batch.mjs",
+      "provider": "shared",
+      "sha256": "13a88491fdf38adfb67db4183c29ec600863de5914cc15b4f9468036ed61e573"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/register-ticket.mjs",
+      "provider": "shared",
+      "sha256": "8492cf1a9bae641780d678cf1559cc65957e14307cfa3aa3ae4c843e95ad167f"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/registration.mjs",
+      "provider": "shared",
+      "sha256": "782b42c0971ff1ab6827d0ff4bbc0f1dcd780a598e5c1023cf4af003021e8568"
+    },
+    {
+      "path": "contracts/task-work-bug/v7/task-registration-batch.mjs",
+      "provider": "shared",
+      "sha256": "d232f33bf0922bcf7b9947118feac1be0173622ae68a93dd964a29b4d9da0ed8"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/finalize.mjs",
+      "provider": "shared",
+      "sha256": "6325c63212986a2b13b998e65b34042dc4c6e6b3e1402eecbef2cd3b034e49ec"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/manifest.json",
+      "provider": "shared",
+      "sha256": "5a15801488dde89b0fa187cb9dcdeffa7f8fbb73fcb9a7c9bb2aee7eeca62957"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/README.md",
+      "provider": "shared",
+      "sha256": "46ef6a9f40ae2c31c052df05c34a047daac274de5d53eb321f4a2a91a1f58d27"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/recover.mjs",
+      "provider": "shared",
+      "sha256": "c0826eae7b2aa863b3494358bc97daf59d82b4894ebb8f3cc3d5192c7ce8957b"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/settle-work-item.mjs",
+      "provider": "shared",
+      "sha256": "59981f84f64b9911c50fd9079c3f3ed39515f83c04b7b9661c8fd3a84f98cb1d"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/strict-json.mjs",
+      "provider": "shared",
+      "sha256": "f9d9ac37e79a267bb6cbc73d6bc93e309fe945433a1ce5ba8c9001bcb888f4a8"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/task-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "2aa140b2c25ece96a3c9a0a97bf3fba26593b4dabfc18861b12b22d19a48a728"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/task-policy.mjs",
+      "provider": "shared",
+      "sha256": "6f1de76df42ea169275cf65faa0b1a1437feaa094781d9f84c141df7c55fabcf"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/transaction.mjs",
+      "provider": "shared",
+      "sha256": "67ca3d2ea5addc7028925a48cfcc9c08ece78284a4e1ffa374d5da0851c79b24"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "46b50783334499694bd917930d8b64344f03d0de40d05fe7bc3ebe8afbd623b7"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/version-profile.mjs",
+      "provider": "shared",
+      "sha256": "242663ff8e6a62a3e41d836837796e2f93c30eec4f9a0a71e2020a9c5a983ded"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/work-bug-policy.mjs",
+      "provider": "shared",
+      "sha256": "af5009a985ddced3c7d3ff11ef8cbd2d6b24665534a25fc07e5d1dd4cee271ef"
+    },
+    {
+      "path": "contracts/task-work-bug/v8/work-item-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "589db73ab8f683ba7712b4971acbab17bc9551fa4e82a162ebde8946b247daa5"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/contract.json",
+      "provider": "shared",
+      "sha256": "e5cd6244da723250befc7051452bfcfc68b9b3f4c35953e691af495b5b1b5ae4"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/finalize.mjs",
+      "provider": "shared",
+      "sha256": "6325c63212986a2b13b998e65b34042dc4c6e6b3e1402eecbef2cd3b034e49ec"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/manifest.json",
+      "provider": "shared",
+      "sha256": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/README.md",
+      "provider": "shared",
+      "sha256": "1e35a6df3ca88b976b47fb27e848a4dfef8d0c3f519fbbc8a70ef774ef44413d"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/recover.mjs",
+      "provider": "shared",
+      "sha256": "c0826eae7b2aa863b3494358bc97daf59d82b4894ebb8f3cc3d5192c7ce8957b"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/register-ticket.mjs",
+      "provider": "shared",
+      "sha256": "8492cf1a9bae641780d678cf1559cc65957e14307cfa3aa3ae4c843e95ad167f"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/registration.mjs",
+      "provider": "shared",
+      "sha256": "6088cc85d67c88cafdc20c9b05411fec4f24d50f93e307ff2de61d1188d6417f"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/settle-work-item.mjs",
+      "provider": "shared",
+      "sha256": "b77d94b969dee51ff89417816591cc6ac2d6853b359ed3c3c4330e1dbd93143f"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/strict-json.mjs",
+      "provider": "shared",
+      "sha256": "f9d9ac37e79a267bb6cbc73d6bc93e309fe945433a1ce5ba8c9001bcb888f4a8"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/task-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "6fcebb3aa36f75af3ea0d40556c767c671de4c15fb292ea34f54e4f8a8104c8b"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/task-policy.mjs",
+      "provider": "shared",
+      "sha256": "6f1de76df42ea169275cf65faa0b1a1437feaa094781d9f84c141df7c55fabcf"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/ticket-path.mjs",
+      "provider": "shared",
+      "sha256": "dbe9c6c5f4f8c043ab53b5255439d2a023d1966f07b553698502ef9e77b653b5"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/transaction.mjs",
+      "provider": "shared",
+      "sha256": "dc6d29030044f94015bcba4839610d2d069c7dd5c40a02a3c5c003fa70806347"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/unpadded-work-intent.json",
+      "provider": "shared",
+      "sha256": "101fd959476dc92984f51635d82d0489b5b280d06c91e48f0700e13292c1fe3e"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "e1f1672339b733585347f9a2549e482e943c016455562425af69df82e998a7c0"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/version-profile.mjs",
+      "provider": "shared",
+      "sha256": "242663ff8e6a62a3e41d836837796e2f93c30eec4f9a0a71e2020a9c5a983ded"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/work-bug-policy.mjs",
+      "provider": "shared",
+      "sha256": "5b171832f3a701d9f67d65d467538a1cf94b886bd48fef8a737d4c8907eef0d5"
+    },
+    {
+      "path": "contracts/task-work-bug/v9/work-item-lifecycle.mjs",
+      "provider": "shared",
+      "sha256": "5b954ba75be8c5541e12e3f0360377fa8312e80827d9c1943a9037b7dd0df5c6"
+    },
+    {
+      "path": "contracts/zuz-its/v1/contract.json",
+      "provider": "shared",
+      "sha256": "6f6a376d310e8adb1ca32927e32f694b0cb7514a953b412b1ae5b2d3da3e03e5"
+    },
+    {
+      "path": "contracts/zuz-its/v1/fixtures/expected-projection.json",
+      "provider": "shared",
+      "sha256": "2f76e56d56fce47bc5fd01ec04d69a036888ce5c4297d8710aa74053c771ee52"
+    },
+    {
+      "path": "contracts/zuz-its/v1/fixtures/legacy-records.json",
+      "provider": "shared",
+      "sha256": "9cdfca9ebed8dad99baa18e979085e45fc03711cd8959bb5ad76a3179684c76d"
+    },
+    {
+      "path": "contracts/zuz-its/v1/manifest.json",
+      "provider": "shared",
+      "sha256": "2dfc23b58614cc3a966d0d1353b60846eaaf68bb73dbf7408603f2aba093e0ef"
+    },
+    {
+      "path": "contracts/zuz-its/v1/project.mjs",
+      "provider": "shared",
+      "sha256": "edf603d9629ad99ed81aac64d0dab59894265dfd84a46827e051112a3d08d378"
+    },
+    {
+      "path": "contracts/zuz-its/v1/README.md",
+      "provider": "shared",
+      "sha256": "c3078d36f3e3d1e1a536db9a18b2788d24ce87b3b3fc1fdee9259cd297d0cdc3"
+    },
+    {
+      "path": "contracts/zuz-its/v2/contract.json",
+      "provider": "shared",
+      "sha256": "503eb5b7f4a534e804aad6b30274002c11407fb2a0b20aa913b211caf8fba2e1"
+    },
+    {
+      "path": "contracts/zuz-its/v2/fixtures/incident-intent.json",
+      "provider": "shared",
+      "sha256": "041035a044096567420805ed2b3b4d8986719edf54d831de09ceeb365defe174"
+    },
+    {
+      "path": "contracts/zuz-its/v2/incident.mjs",
+      "provider": "shared",
+      "sha256": "183f438542cbcc9a532423a02c61522832b4038fa87e2e7c5a1571a58740a9bf"
+    },
+    {
+      "path": "contracts/zuz-its/v2/manifest.json",
+      "provider": "shared",
+      "sha256": "c9217686113672707fdb1357eb2df2ed9b1ea38fcc39025caa670fa9dcef63ed"
+    },
+    {
+      "path": "contracts/zuz-its/v2/README.md",
+      "provider": "shared",
+      "sha256": "3f43cb4535071e9b31d6ca440d811e708526b5647332dcbd08ce84d1002d1458"
+    },
+    {
+      "path": "contracts/zuz-its/v2/register-incident.mjs",
+      "provider": "shared",
+      "sha256": "7d4d9de23552490ef9ab8eac608ad138751092de158010a6e1a407ad1fbeab63"
+    },
+    {
+      "path": "contracts/zuz-its/v2/transition-incident.mjs",
+      "provider": "shared",
+      "sha256": "36a4842b9bcfb3f816f2d5339dbbf1098bc49fb084cb4de3aafc5075f54e4177"
+    },
+    {
+      "path": "contracts/zuz-its/v3/contract.json",
+      "provider": "shared",
+      "sha256": "58792db52f3a5122ab89f1a0cd82810021b60fac91d74b16fc6f94efa6f3df8e"
+    },
+    {
+      "path": "contracts/zuz-its/v3/fixtures/legacy-aliases.json",
+      "provider": "shared",
+      "sha256": "50f56dc8dc062b167b3f850ef3195afa13a2c0db4869c645a24c79fbbbd00c66"
+    },
+    {
+      "path": "contracts/zuz-its/v3/incident.mjs",
+      "provider": "shared",
+      "sha256": "0d4db20e6abb1aa3962f321e4c03872d2e9d3f4390df653506bd29c28ead71cd"
+    },
+    {
+      "path": "contracts/zuz-its/v3/manifest.json",
+      "provider": "shared",
+      "sha256": "d486ac0882330bb67eebf326d822eae678f0b42ae75fd0542778f0b662fd7052"
+    },
+    {
+      "path": "contracts/zuz-its/v3/project.mjs",
+      "provider": "shared",
+      "sha256": "cff6b37b41283c2ed77eff26b570bac316bde250664fc6e6dcdef37ae1cda515"
+    },
+    {
+      "path": "contracts/zuz-its/v3/README.md",
+      "provider": "shared",
+      "sha256": "21f2161b63cca1c95479f570b8a9feec9a93543c3ae9ea565a122dcd6e2723f7"
+    },
+    {
+      "path": "contracts/zuz-its/v3/transition-incident.mjs",
+      "provider": "shared",
+      "sha256": "df907b3a1b928190e7996b520a43c9a3f0729175153bfbb0c97794275c57bae7"
+    },
+    {
+      "path": "contracts/zuz-its/v4/incident.mjs",
+      "provider": "shared",
+      "sha256": "187cb09f3ac714c9a7d4ac8e56d4187d526f29023c5a105679547d9b538a51e9"
+    },
+    {
+      "path": "contracts/zuz-its/v4/manifest.json",
+      "provider": "shared",
+      "sha256": "47d1d48ba63ae8b57c6987703ad7439e6e2c7f6508c4c92da1b0503afc8ef4e5"
+    },
+    {
+      "path": "contracts/zuz-its/v4/README.md",
+      "provider": "shared",
+      "sha256": "eb6ba9547b6a4ad1f0ded1bc0506038a051993ec2f83d6ed0c8e21a7b041f281"
+    },
+    {
+      "path": "contracts/zuz-its/v4/transition-incident.mjs",
+      "provider": "shared",
+      "sha256": "b7d95ea1e116f31797aa54c09c166589a69db72cdd2e709e0ec8045a7e5cd8b1"
+    },
+    {
+      "path": "contracts/zuz-its/v4/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "6d7b41e6c7519b65ad7b8b40e37259c0cd7e5042dfdbee271a9cef9b44003c3c"
+    },
+    {
+      "path": "contracts/zuz-its/v5/incident.mjs",
+      "provider": "shared",
+      "sha256": "5bc942c993d4109885668f7feea575675b07b3c63255a725daedfd5dc5931058"
+    },
+    {
+      "path": "contracts/zuz-its/v5/manifest.json",
+      "provider": "shared",
+      "sha256": "27355af79c872aad0ba2b8b6ba1405451c1112b72dbb04d03705d89118ae1e59"
+    },
+    {
+      "path": "contracts/zuz-its/v5/README.md",
+      "provider": "shared",
+      "sha256": "68dc71136383ed893bf9a45966e116d13f212a42e65bacff1bd676372a6a6e35"
+    },
+    {
+      "path": "contracts/zuz-its/v5/transition-incident.mjs",
+      "provider": "shared",
+      "sha256": "641d37f96d57fb20edb2acd71df0e89d23c634e9716d5b033c757843de8beae0"
+    },
+    {
+      "path": "contracts/zuz-its/v5/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "085ad68e888d31a1fe0ae120dae929ad7f3847e467bd45bb0ac320afc61faade"
+    },
+    {
+      "path": "docs/skills/decal-slice-dev-report.md",
+      "provider": "shared",
+      "sha256": "b08f81883c772d97c35eefdf54dea02d6b6d2cc27cf64684679d9f61583c5e4b"
+    },
+    {
+      "path": "docs/skills/decal-slice-hygiene.md",
+      "provider": "shared",
+      "sha256": "0734c410f315588b4ea6f04445a34223dc6f3dc84afdc7362c21597097930a11"
+    },
+    {
+      "path": "docs/skills/decal-slice-maintenance.md",
+      "provider": "shared",
+      "sha256": "853775c23d516c8f2573f552bee8cbcd67b02f548097b074ed922037b28676b3"
+    },
+    {
+      "path": "docs/skills/decal-slice-map.md",
+      "provider": "shared",
+      "sha256": "77d9784786c32a34c86e203a060df75cb5916fdf1c971d570531dc7030078346"
+    },
+    {
+      "path": "docs/skills/decal-slice-plan-report.md",
+      "provider": "shared",
+      "sha256": "3e32769d8242f34272b5893f20d19753e2efc36c367f693aa71e1ee63bb24c7f"
+    },
+    {
+      "path": "docs/skills/decal-slice-report.md",
+      "provider": "shared",
+      "sha256": "be260acccf55dffde4555374357d6a090615311a4239c7c584a97b686b07b4f0"
+    },
+    {
+      "path": "docs/skills/decal-slice-smoke.md",
+      "provider": "shared",
+      "sha256": "d903c453a93b85823d44bcffa1d54d13b28026d2e23e4893ab395b28ec7dc073"
+    },
+    {
+      "path": "docs/skills/decal-slice-test-report.md",
+      "provider": "shared",
+      "sha256": "e1b38e25f2cb6855e694e6fd92935181481ea0041f101a6b0e8f4251a0d3cf5f"
+    },
+    {
+      "path": "docs/skills/slice.md",
+      "provider": "shared",
+      "sha256": "ed11d0e785c08cbef581347eb6c3b23bbfa3ab1f780a823bca4fa4f29cfa7e52"
+    },
+    {
+      "path": "docs/skills/vendor/decal-project-pack/LICENSE",
+      "provider": "shared",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "docs/skills/vendor/decal-project-pack/NOTICE",
+      "provider": "shared",
+      "sha256": "01f2b41a8fb66f48501d957023988023d478adea76a98ba452eafb6e618e1f7e"
+    },
+    {
+      "path": "skills/decal-bug/SKILL.md",
+      "provider": "codex",
+      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+    },
+    {
+      "path": "skills/decal-incident/SKILL.md",
+      "provider": "codex",
+      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+    },
+    {
+      "path": "skills/decal-slice-dev-report/SKILL.md",
+      "provider": "codex",
+      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+    },
+    {
+      "path": "skills/decal-slice-hygiene/SKILL.md",
+      "provider": "codex",
+      "sha256": "4b9445d84318186d542421c8e9f8bdc507eedbd86d08958e6f1ca6fceeb51282"
+    },
+    {
+      "path": "skills/decal-slice-maintenance/SKILL.md",
+      "provider": "codex",
+      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+    },
+    {
+      "path": "skills/decal-slice-map/SKILL.md",
+      "provider": "codex",
+      "sha256": "fd47ebed14a0bef7ded59364fe1485263c2bbcc180e0012f88a57aa5ac5ff9ea"
+    },
+    {
+      "path": "skills/decal-slice-plan-report/SKILL.md",
+      "provider": "codex",
+      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+    },
+    {
+      "path": "skills/decal-slice-report/SKILL.md",
+      "provider": "codex",
+      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+    },
+    {
+      "path": "skills/decal-slice-smoke/SKILL.md",
+      "provider": "codex",
+      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+    },
+    {
+      "path": "skills/decal-slice-test-report/SKILL.md",
+      "provider": "codex",
+      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+    },
+    {
+      "path": "skills/decal-slice/SKILL.md",
+      "provider": "codex",
+      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+    },
+    {
+      "path": "skills/decal-task/SKILL.md",
+      "provider": "codex",
+      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+    },
+    {
+      "path": "skills/decal-work/SKILL.md",
+      "provider": "codex",
+      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+    },
+    {
+      "path": "skills/zuz-its/SKILL.md",
+      "provider": "codex",
+      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+    }
+  ],
+  "ruleFiles": [
+    {
+      "path": "AGENTS.md",
+      "blockSha256": "bba85e960bbeee943588e05206c3dbd30d40b5249702c76955c02998db8ee1a3"
+    },
+    {
+      "path": "CLAUDE.md",
+      "blockSha256": "bba85e960bbeee943588e05206c3dbd30d40b5249702c76955c02998db8ee1a3"
+    }
+  ],
+  "obsoleteManagedFiles": [],
+  "retiredFiles": []
+}

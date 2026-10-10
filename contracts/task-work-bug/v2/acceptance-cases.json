@@ -1,0 +1,15 @@
+{
+  "schema": "decal.task-work-bug.migration-acceptance-cases/v2",
+  "cases": [
+    { "id": "valid_read_only_preview", "expected": "eligible", "writeAllowed": false },
+    { "id": "future_document_schema", "expected": "unsupported_version", "writeAllowed": false },
+    { "id": "symlink_source_or_ancestor", "expected": "symlink_rejected", "writeAllowed": false },
+    { "id": "duplicate_source_or_target_id", "expected": "duplicate_id", "writeAllowed": false },
+    { "id": "existing_different_target", "expected": "target_path_exists", "writeAllowed": false },
+    { "id": "missing_task_ref", "expected": "eligible_with_diagnostic", "writeAllowed": false },
+    { "id": "stale_source_revision", "expected": "stale_revision", "writeAllowed": false },
+    { "id": "stale_persisted_mapping", "expected": "stale_mapping", "writeAllowed": false },
+    { "id": "project_or_generation_mismatch", "expected": "mismatch_rejected", "writeAllowed": false },
+    { "id": "partial_failure", "expected": "recovery_required", "automaticRetry": false }
+  ]
+}

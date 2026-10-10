@@ -1,0 +1,23 @@
+{
+  "schema": "decal.task-work-bug.contract/v10",
+  "contractId": "decal.task-work-bug/v10",
+  "dependsOn": [
+    {
+      "contractId": "decal.task-work-bug/v7",
+      "manifestSha256": "8651d80ffdeed955e583b06231415236975bf1c6a85e7360345e3743cdcad333"
+    },
+    {
+      "contractId": "decal.task-work-bug/v9",
+      "manifestSha256": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+    }
+  ],
+  "taskWriter": "contracts/task-work-bug/v10/register-task-batch.mjs",
+  "ticketWriter": "contracts/task-work-bug/v10/register-ticket.mjs",
+  "authority": {
+    "caller": "any-linked-worktree",
+    "writer": "existing-canonical-default-branch-worktree",
+    "worktreeMutation": "forbidden",
+    "missingOrAmbiguousAuthority": "fail-closed"
+  },
+  "portableSettlement": "contracts/task-work-bug/v9"
+}

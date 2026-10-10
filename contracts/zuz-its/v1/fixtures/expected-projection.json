@@ -1,0 +1,44 @@
+{
+  "schema": "zuz.its.inventory/v1",
+  "records": [
+    {
+      "schema": "zuz.its.ticket-identity/v1",
+      "ticketKind": "task",
+      "issueKind": null,
+      "legacyProductKind": "task",
+      "canonicalId": "675",
+      "displayKey": "TASK-675",
+      "title": "ZUZ ITS 호환 기반",
+      "status": "in_progress",
+      "priority": "P1 planned-next",
+      "taskRefs": [],
+      "settlement": { "versionImpact": "desktop-minor", "versionApplied": "pending" }
+    },
+    {
+      "schema": "zuz.its.ticket-identity/v1",
+      "ticketKind": "work",
+      "issueKind": null,
+      "legacyProductKind": "work",
+      "canonicalId": "WORK-083",
+      "displayKey": "WORK-083",
+      "title": "작은 호환 확인",
+      "status": "planned",
+      "priority": "P2",
+      "taskRefs": ["675"],
+      "settlement": { "versionImpact": "desktop-patch", "versionApplied": "pending" }
+    },
+    {
+      "schema": "zuz.its.ticket-identity/v1",
+      "ticketKind": "issue",
+      "issueKind": "bug",
+      "legacyProductKind": "bug",
+      "canonicalId": "BUG-116",
+      "displayKey": "BUG-116",
+      "title": "기존 버그",
+      "status": "confirmed",
+      "priority": "P1",
+      "taskRefs": ["675"],
+      "settlement": { "versionImpact": "desktop-patch", "versionApplied": "pending" }
+    }
+  ]
+}

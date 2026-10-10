@@ -1,0 +1,34 @@
+{
+  "schema": "decal.task-work-bug.contract/v4",
+  "contractId": "decal.task-work-bug/v4",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v3",
+    "manifestSha256": "438c36cede469a65e2e9f239200e485452bdc5111351879198779e5b139e6fc0"
+  },
+  "reader": "contracts/task-work-bug/v4/validate-task-index.mjs",
+  "readOnlyConsumerMode": "consumer-read-only accepts the pinned historical Jig v1/v2 digests and never enables the writer",
+  "writer": "contracts/task-work-bug/v4/register-task.mjs",
+  "startTransitionWriter": "contracts/task-work-bug/v4/transition-task.mjs",
+  "registrationIntentSchema": "decal.task-work-bug.task-registration-intent/v4",
+  "registrySectionTermination": "the next H2 heading; blank lines between canonical rows do not terminate validation",
+  "writeSet": [
+    "docs/tasks/task_<assigned-id>_<category>_<category-index>_<slug>.md",
+    "docs/tasks/index.md",
+    "docs/tasks/category_index.md"
+  ],
+  "preconditions": [
+    "current v1-v4 package digests",
+    "one canonical registry only",
+    "accepted numeric five-column baseline",
+    "plain files and non-symlink parents",
+    "unused assigned identity and target",
+    "matching expected source revision for writes"
+  ],
+  "authoringReadiness": {
+    "ready": "validator and writer bytes are current and baseline is accepted",
+    "reader_only": "registry can be read but a current writer is unavailable",
+    "update_required": "an immutable older package is present without v4",
+    "malformed": "baseline or identity validation failed",
+    "managed_externally": "Primer owns synchronization"
+  }
+}

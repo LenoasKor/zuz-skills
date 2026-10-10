@@ -1,0 +1,20 @@
+{
+  "schema": "zuz.its.contract/v2",
+  "contractId": "zuz.its/v2",
+  "dependsOn": {
+    "contractId": "zuz.its/v1",
+    "manifestSha256": "2dfc23b58614cc3a966d0d1353b60846eaaf68bb73dbf7408603f2aba093e0ef"
+  },
+  "incident": {
+    "schema": "zuz.its.incident-ticket",
+    "schemaVersion": 1,
+    "canonicalPath": "docs/work-items/incidents/INC-<number>.md",
+    "idPrefix": "INC-",
+    "flow": ["new", "confirmed", "in_progress", "development_complete", "release_ready", "closed"],
+    "normalClosure": "resolved",
+    "classificationValues": ["security", "regression", "provider", "remote", "os", "external-dependency", "user-reported"]
+  },
+  "remoteProjection": "ticket basics plus incident impact, classification tags, affected service count and recovery state; service names, incident timestamps and resolution evidence remain Desktop/project-private",
+  "writer": "contracts/zuz-its/v2/register-incident.mjs",
+  "lifecycleWriter": "contracts/zuz-its/v2/transition-incident.mjs"
+}

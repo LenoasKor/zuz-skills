@@ -1,0 +1,16 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v17",
+  "files": {
+    "README.md": "0d54d74b7136e5d55a9cd93974b42228bbcdbdbda7c3e638b9e29f2e0a66b9c7",
+    "contract.json": "c620026e457f1ecb81496f7a42a3f403975436a870b294749e5498e4d18c407b",
+    "release-settle.mjs": "342922517ad0952888138529e7a01bec094ed432deba225522f0874bdbf3a8da",
+    "settle-work-item.mjs": "5d7e79f80f7ba808ca45436fe9490a565ebc0c2d422fd6aa99a0535ec3e20d4b",
+    "settlement-mode.mjs": "d2d0248c2a027ff51302ff197c5d87d6b05a464002014ac204225061ab6f5d43",
+    "task-lifecycle.mjs": "df38c228c43425eec06ac351e33f5babce719e39dee4e87d19359297269a41fa",
+    "verify-contract.mjs": "12997ee31328908851aa8d3e79605ccffdfd452efea5cda73568e911592e1bd8"
+  },
+  "dependencies": {
+    "v4/manifest.json": "2a7a88aa8db122db00eb4c2cbea1e40b2770b6418448ac8c455d5ef5cb77fed4",
+    "v9/manifest.json": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+  }
+}

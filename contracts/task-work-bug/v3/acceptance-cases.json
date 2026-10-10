@@ -1,0 +1,10 @@
+{
+  "schema": "decal.task-work-bug.acceptance-cases/v3",
+  "cases": [
+    { "id": "canonical_numeric_five_columns", "fixture": "fixtures/project/docs/tasks/index.md", "expected": "accepted" },
+    { "id": "task_word_prefix", "fixture": "fixtures/malformed/task-word-prefix-index.md", "expected": "non_numeric_task_id" },
+    { "id": "missing_area_column", "fixture": "fixtures/malformed/missing-column-index.md", "expected": "missing_columns" },
+    { "id": "missing_contract_directory", "fixture": null, "expected": "contract_unavailable" },
+    { "id": "future_contract_version", "fixture": null, "expected": "unsupported_version" }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "decal.task-work-bug.acceptance-cases/v1",
+  "cases": [
+    {
+      "id": "valid_canonical_package",
+      "expected": "accepted"
+    },
+    {
+      "id": "future_schema_version",
+      "expected": "unsupported_version",
+      "writeAllowed": false
+    },
+    {
+      "id": "unknown_additive_field",
+      "expected": "accepted_and_preserved"
+    },
+    {
+      "id": "stale_revision",
+      "expected": "stale_revision",
+      "writeAllowed": false
+    },
+    {
+      "id": "invalid_status_transition",
+      "expected": "invalid_status_transition",
+      "writeAllowed": false
+    },
+    {
+      "id": "symlink_document",
+      "expected": "symlink_rejected",
+      "writeAllowed": false
+    },
+    {
+      "id": "duplicate_id_across_legacy_and_v1",
+      "expected": "duplicate_id",
+      "writeAllowed": false
+    },
+    {
+      "id": "missing_task_ref",
+      "expected": "accepted_with_diagnostic",
+      "diagnostic": "missing_task_ref"
+    }
+  ]
+}

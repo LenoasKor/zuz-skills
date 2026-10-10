@@ -1,0 +1,20 @@
+{
+  "schema": "zuz.its.contract/v3",
+  "contractId": "zuz.its/v3",
+  "dependsOn": {
+    "contractId": "zuz.its/v2",
+    "manifestSha256": "c9217686113672707fdb1357eb2df2ed9b1ea38fcc39025caa670fa9dcef63ed"
+  },
+  "portableContract": {
+    "contractId": "decal.task-work-bug/v9",
+    "manifestSha256": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559"
+  },
+  "identitySchema": "zuz.its.ticket-identity/v1",
+  "canonicalKey": "unpadded-positive-decimal",
+  "legacyPaddedAliases": true,
+  "rewriteExistingIds": false,
+  "rewriteExistingPaths": false,
+  "aliasCollision": "fail-closed",
+  "projector": "contracts/zuz-its/v3/project.mjs",
+  "incidentLifecycleWriter": "contracts/zuz-its/v3/transition-incident.mjs"
+}

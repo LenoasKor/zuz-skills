@@ -1,0 +1,42 @@
+{
+  "schema": "zuz.its.scoped-execution/v1",
+  "operations": {
+    "task-body": {
+      "supported": true,
+      "requires": [
+        "identity",
+        "revision",
+        "atomicExactCommit"
+      ]
+    },
+    "owned-edit": {
+      "supported": true,
+      "host": "portable",
+      "phases": [
+        "capture",
+        "apply",
+        "preview",
+        "commit",
+        "inspect"
+      ],
+      "requires": [
+        "officialBeforeAfterCapture",
+        "activeTaskRevision",
+        "independentTextChange",
+        "unchangedHeadAndTarget",
+        "approvalDigest",
+        "isolatedIndex",
+        "noHooks"
+      ],
+      "settlement": false
+    }
+  },
+  "waitTtlMs": 300000,
+  "correctionLimit": 1,
+  "remoteDisposition": [
+    "required",
+    "not-applicable",
+    "deferred"
+  ],
+  "nativeAdapter": "host-advertised-only"
+}

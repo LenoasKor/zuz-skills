@@ -1,0 +1,13 @@
+{
+  "schema": "decal.zuz-its.ticket-registration-intent/v7",
+  "intentId": "decal-v7-acceptance-work",
+  "kind": "work",
+  "title": "원자 발급 acceptance",
+  "priority": "P1",
+  "taskRefs": ["684"],
+  "nextAction": "동시 발급을 확인한다.",
+  "versionImpact": "desktop-patch",
+  "remoteVersionImpact": "none",
+  "releaseMode": "standalone",
+  "body": "## 소작업\n\n메인 발급기가 승인 시 번호와 커밋을 함께 확정한다.\n"
+}

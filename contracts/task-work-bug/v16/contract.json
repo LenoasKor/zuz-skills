@@ -1,0 +1,12 @@
+{
+  "schema": "zuz.its.canonical-incident-registration/v16",
+  "predecessor": "task-work-bug/v15",
+  "scope": "incident-only",
+  "ticketIntent": "v9",
+  "consumer": "zuz-its/v5",
+  "maxWaitMs": 300000,
+  "ownerTerminated": "preserve-and-reject",
+  "retryMutation": false,
+  "lockRemoval": "matching-owned-lock-only",
+  "nativeFallback": false
+}

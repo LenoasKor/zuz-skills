@@ -1,0 +1,48 @@
+{
+  "schema": "decal.task-work-bug.expected-dry-run/v2",
+  "status": "eligible",
+  "writeAllowed": false,
+  "counts": { "tasks": 1, "works": 3, "bugs": 1, "changes": 4, "diagnostics": 0 },
+  "mappings": [
+    {
+      "kind": "bug",
+      "sourceId": "BUG-003",
+      "targetId": "BUG-003",
+      "sourcePath": "docs/work-items/bugs/BUG-003.md",
+      "targetPath": "docs/work-items/bugs/BUG-003.md",
+      "operation": "rewrite_metadata"
+    },
+    {
+      "kind": "task",
+      "sourceId": "578",
+      "targetId": "578",
+      "sourcePath": "docs/slices/slice_578_workflow_023_task_work_bug_storage_migration.md",
+      "targetPath": "docs/tasks/task_578_workflow_023_task_work_bug_storage_migration.md",
+      "operation": "move_transform"
+    },
+    {
+      "kind": "work",
+      "sourceId": "IMP-001",
+      "targetId": "WORK-002",
+      "sourcePath": "docs/work-items/improvements/IMP-001.md",
+      "targetPath": "docs/work-items/work/WORK-002.md",
+      "operation": "move_transform"
+    },
+    {
+      "kind": "work",
+      "sourceId": "TASK-007",
+      "targetId": "WORK-007",
+      "sourcePath": "docs/work-items/tasks/TASK-007.md",
+      "targetPath": "docs/work-items/work/WORK-007.md",
+      "operation": "move_transform"
+    },
+    {
+      "kind": "work",
+      "sourceId": "WORK-001",
+      "targetId": "WORK-001",
+      "sourcePath": "docs/work-items/work/WORK-001.md",
+      "targetPath": "docs/work-items/work/WORK-001.md",
+      "operation": "preserve"
+    }
+  ]
+}

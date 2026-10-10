@@ -1,0 +1,15 @@
+{
+  "schema": "decal.task-work-bug.task-registration-expected/v4",
+  "assigned": {
+    "taskId": 2,
+    "category": "product",
+    "categoryIndex": 2,
+    "path": "docs/tasks/task_2_product_002_portable_writer_fixture.md",
+    "status": "planned"
+  },
+  "writeSet": [
+    "docs/tasks/task_2_product_002_portable_writer_fixture.md",
+    "docs/tasks/index.md",
+    "docs/tasks/category_index.md"
+  ]
+}

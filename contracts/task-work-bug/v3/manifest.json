@@ -1,0 +1,15 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v3",
+  "files": {
+    "README.md": "cdef4edb037360b5c628053fcfd912870d3e07685cf09a9be0ad32902bc9375d",
+    "acceptance-cases.json": "ca63684e90f09a0979524b7855f54e92b0f9ec413163fc54c0eaf223880d843c",
+    "contract.json": "5363e90b10aeb0a9de3c8db6d878967e2d835b222a08e5edd2f0e5d5b32e4d90",
+    "expected-projection.json": "23717d6712a26d651bca3bc5b8e1423fcbdf7fec57b9859876d5283a2befbf1e",
+    "fixtures/malformed/missing-column-index.md": "96e8b09fe2b1b1c4e617c7311cf01179fe6e133680fed23240a5ceb4a9910ba7",
+    "fixtures/malformed/task-word-prefix-index.md": "3d10acfb903590f371073b48295ced470359570f6dfa9ae4baf5b1af2daa56eb",
+    "fixtures/project/docs/tasks/category_index.md": "afc17a0b15babad2cd6370a803ecdf20463f148316a545e42b062dce96d3abf8",
+    "fixtures/project/docs/tasks/index.md": "100327847cb6458b86b011e9f4a887abfb301ee5aaf60971a97dc2cfbd3c6ed4",
+    "fixtures/project/docs/tasks/task_1_product_001_registry_acceptance_fixture.md": "2e1c851201ddf61233b10db89b90ecb44387595c80720ad10a5644f7ada6436c",
+    "validate-task-index.mjs": "a043e0b108b5da4034661a826bd30ffabe796b03973b77b2eca9452cfd20ae88"
+  }
+}

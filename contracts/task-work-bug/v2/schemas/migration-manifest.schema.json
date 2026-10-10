@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://decal.local/contracts/task-work-bug/v2/migration-manifest.schema.json",
+  "title": "Decal Task Work Bug migration manifest v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "contractFrom",
+    "contractTo",
+    "generation",
+    "projectRevision",
+    "previewDigest",
+    "mappings",
+    "exactWriteSet",
+    "terminalReceipt"
+  ],
+  "properties": {
+    "schema": { "const": "decal.task-work-bug.migration-manifest/v1" },
+    "contractFrom": { "const": "decal.task-work-bug/v1" },
+    "contractTo": { "const": "decal.task-work-bug/v2" },
+    "generation": { "type": "string", "minLength": 16, "pattern": "^[A-Za-z0-9._-]+$" },
+    "projectRevision": { "type": "string", "pattern": "^[0-9a-f]{40,64}$" },
+    "previewDigest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "sourceId",
+          "targetId",
+          "sourcePath",
+          "targetPath",
+          "sourceRevision",
+          "operation"
+        ],
+        "properties": {
+          "kind": { "enum": ["task", "work", "bug"] },
+          "sourceId": { "type": "string", "minLength": 1 },
+          "targetId": { "type": "string", "minLength": 1 },
+          "sourcePath": { "$ref": "#/$defs/relativePath" },
+          "targetPath": { "$ref": "#/$defs/relativePath" },
+          "sourceRevision": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "operation": { "enum": ["preserve", "move_transform", "rewrite_metadata"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "exactWriteSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/relativePath" }
+    },
+    "terminalReceipt": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["status", "summary", "verifiedRevision"],
+          "properties": {
+            "status": { "enum": ["applied", "recovery_required", "cancelled"] },
+            "summary": { "type": "string", "minLength": 1 },
+            "verifiedRevision": { "type": ["string", "null"] }
+          },
+          "additionalProperties": true
+        }
+      ]
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    }
+  }
+}

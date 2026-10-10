@@ -1,0 +1,20 @@
+{
+  "schema": "decal.task-work-bug.contract/v7",
+  "contractId": "decal.task-work-bug/v7",
+  "dependsOn": {
+    "contractId": "decal.task-work-bug/v6",
+    "manifestSha256": "6d5176a773e03724b36e1be333a533ae223988d56a1f924f43ba0def8529db5e"
+  },
+  "taskWriter": "contracts/task-work-bug/v7/register-task-batch.mjs",
+  "ticketWriter": "contracts/task-work-bug/v7/register-ticket.mjs",
+  "registrationIntentSchema": "decal.zuz-its.ticket-registration-intent/v7",
+  "kinds": ["task", "work", "bug", "incident"],
+  "canonicalDefaultBranch": {
+    "preferred": "non-dangling origin/HEAD resolving to origin/main or origin/master with the matching local branch",
+    "fallback": "only when refs/remotes/origin/HEAD is absent; then exactly one local main or master",
+    "rejects": ["feature-branch", "detached-head", "missing-candidate", "ambiguous-main-and-master", "non-symbolic-origin-head", "unsupported-origin-head", "dangling-allowed-origin-head", "missing-matching-local-branch"]
+  },
+  "identityAllocation": "approval-time on the canonical default branch under the shared repository lock",
+  "receiptFields": ["intentDigest", "commit", "assigned", "writeSet"],
+  "authorizationExcludes": ["push", "merge", "deploy", "lifecycle-completion", "version-settlement"]
+}

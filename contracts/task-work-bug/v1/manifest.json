@@ -1,0 +1,14 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v1",
+  "files": {
+    "README.md": "713568ac85e3ea8941e577e673df7d6af7b08251e5ed01349ed45ccfd69b51d5",
+    "acceptance-cases.json": "93516dbc7c64abd32f37aa0682304e714d89649697fa279f1e95c44ae36fe122",
+    "expected-projection.json": "6cd6f9a71d1e4ea717b5758008724aad421aa7ed786decf7adcda4272be0edb3",
+    "fixtures/docs/slices/index.md": "e70f5d9bda43f3e1e1872ab915b9880dd462a99b6c472377f525c6891bf8e0eb",
+    "fixtures/docs/slices/slice_541_integration_040_task_work_bug_contract_ledger_v1.md": "d98ab784177e865659f21bf6946a7b46cdeafc9042442e57f4af92937bac12d3",
+    "fixtures/docs/work-items/bugs/BUG-001.md": "8248809bfedb1ad429e38ec4ddf0fe292ec2cfbd421e58692264ecf9c0672574",
+    "fixtures/docs/work-items/work/WORK-001.md": "157f9b00ab200db0322b53122863e49e655728ecf3ec8ee8f997ac78bb05b055",
+    "schemas/bug-card.schema.json": "20d910a64c826be205705fadfeb6b53f21febff56a769e1387389b3fde1072eb",
+    "schemas/work-document.schema.json": "8ca62b51bfe00248857ed8503a186b9d6a830a5e0aaae749ed311860d3068c65"
+  }
+}

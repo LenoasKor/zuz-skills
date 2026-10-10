@@ -1,0 +1,12 @@
+{
+  "schema": "decal.zuz-its.ticket-registration-intent/v9",
+  "intentId": "zuz-its-v9-unpadded-work",
+  "kind": "work",
+  "title": "비패딩 번호 발급 확인",
+  "priority": "P2",
+  "taskRefs": [],
+  "versionImpact": "none",
+  "remoteVersionImpact": "none",
+  "releaseMode": "standalone",
+  "body": "## 목표\n\n새 소작업 번호가 앞자리 0 없이 발급되는지 확인한다."
+}

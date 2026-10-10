@@ -1,0 +1,17 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v4",
+  "files": {
+    "README.md": "3e47011a0c421aaf627c12fd311fffe1c045c0e39c95da7e97c09a3b40a6a495",
+    "acceptance-cases.json": "26e842a658ee224aeeb5b7b286515971cce1423a1fb33e2060a01b7f64871ace",
+    "contract.json": "543461d101f24d6a4d8b92ab8872b5f386a26d7fafc02a1f63dfe36028c234db",
+    "expected-registration.json": "85981c711946aa7384c8daffc7ec45bc3d828b62d3be8ab24172dcaa11f5819d",
+    "fixtures/project/docs/tasks/category_index.md": "afc17a0b15babad2cd6370a803ecdf20463f148316a545e42b062dce96d3abf8",
+    "fixtures/project/docs/tasks/index.md": "100327847cb6458b86b011e9f4a887abfb301ee5aaf60971a97dc2cfbd3c6ed4",
+    "fixtures/project/docs/tasks/task_1_product_001_registry_acceptance_fixture.md": "2e1c851201ddf61233b10db89b90ecb44387595c80720ad10a5644f7ada6436c",
+    "fixtures/task-2-intent.json": "c5badc01b0d8a18997e38348aba6beb6ba5791e4d72d4a07f3c6874c96557148",
+    "register-task.mjs": "c57fcf401ce4fbf8eaffbdf57c91946ab7e472a930930293bfa1a670eb8a6a43",
+    "registry.mjs": "22d9526c39a309bb9569e9f524d766c1417b717b999422280f562b39d681c465",
+    "transition-task.mjs": "d9075a3e91ef20a8e0f57679e4cd200fc04121575b4500233d73ed841663fbb1",
+    "validate-task-index.mjs": "0cd1ac7a30b3b5f83030a57e9ee26355732d91d935c8663b5dbbe601e76a21fe"
+  }
+}

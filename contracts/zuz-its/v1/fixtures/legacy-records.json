@@ -1,0 +1,32 @@
+{
+  "schema": "zuz.its.fixture-input/v1",
+  "records": [
+    {
+      "productKind": "task",
+      "id": "675",
+      "title": "ZUZ ITS 호환 기반",
+      "status": "in_progress",
+      "priority": "P1 planned-next",
+      "taskRefs": [],
+      "settlement": { "versionImpact": "desktop-minor", "versionApplied": "pending" }
+    },
+    {
+      "productKind": "work",
+      "id": "WORK-083",
+      "title": "작은 호환 확인",
+      "status": "planned",
+      "priority": "P2",
+      "taskRefs": ["675"],
+      "settlement": { "versionImpact": "desktop-patch", "versionApplied": "pending" }
+    },
+    {
+      "productKind": "bug",
+      "id": "BUG-116",
+      "title": "기존 버그",
+      "status": "confirmed",
+      "priority": "P1",
+      "taskRefs": ["675"],
+      "settlement": { "versionImpact": "desktop-patch", "versionApplied": "pending" }
+    }
+  ]
+}

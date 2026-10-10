@@ -1,0 +1,11 @@
+{
+  "schema": "zuz.its.fixture-manifest/v1",
+  "contractId": "zuz.its/v1",
+  "files": {
+    "README.md": "c3078d36f3e3d1e1a536db9a18b2788d24ce87b3b3fc1fdee9259cd297d0cdc3",
+    "contract.json": "6f6a376d310e8adb1ca32927e32f694b0cb7514a953b412b1ae5b2d3da3e03e5",
+    "fixtures/expected-projection.json": "2f76e56d56fce47bc5fd01ec04d69a036888ce5c4297d8710aa74053c771ee52",
+    "fixtures/legacy-records.json": "9cdfca9ebed8dad99baa18e979085e45fc03711cd8959bb5ad76a3179684c76d",
+    "project.mjs": "edf603d9629ad99ed81aac64d0dab59894265dfd84a46827e051112a3d08d378"
+  }
+}

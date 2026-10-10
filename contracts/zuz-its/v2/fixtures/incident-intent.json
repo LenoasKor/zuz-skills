@@ -1,0 +1,18 @@
+{
+  "schema": "zuz.its.incident-registration-intent/v1",
+  "intentId": "incident-fixture-001",
+  "title": "Remote 연결 품질 저하",
+  "priority": "P1",
+  "taskRefs": ["676"],
+  "nextAction": "원인을 확인하고 복구한다.",
+  "impact": "degraded",
+  "affectedServices": ["Decal Remote"],
+  "classifications": ["remote", "user-reported"],
+  "occurredAt": "2026-09-04T08:00:00.000Z",
+  "detectedAt": "2026-09-04T08:05:00.000Z",
+  "versionImpact": "desktop-patch",
+  "remoteVersionImpact": "remote-patch",
+  "releaseMode": "task-batch",
+  "releaseTaskRef": "676",
+  "body": "## 장애 영향\n\nRemote 연결이 느려졌습니다.\n\n## 대응 및 복구\n\n원인을 확인합니다."
+}
