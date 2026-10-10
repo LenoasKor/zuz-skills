@@ -1,0 +1,16 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v19",
+  "files": {
+    "README.md": "92972b7ec93394fef9edad68c74885fa1ed75d842107cdd630f97d1b8771efa2",
+    "contract.json": "58a3b99e823e2826d6d50ce595f8a2f3fd8cb22cd51043a60b3257767dc72ee2",
+    "lan-authority.mjs": "e2c259ec6c9b456fef8e8d1187759d6cf7be720d915a47d7866a8fc7e34690a8",
+    "lan-broker.mjs": "11749cf0b724abc7bd7314383c3646df14a63a1a05e6c3dff12fdc5f4abdb915",
+    "lan-client.mjs": "36585077b0a1eca7a3a3b1db650d6024476e5d0ec244b9bd17dcdeaee1dabf4f",
+    "lan-crypto.mjs": "6a9e15affeedaf132b7071b7747d5fc6bdca1d1b24b957c17016b768017c96dd",
+    "lan-discovery.mjs": "378407c696e76f2a69ad39661550b6d94175298bad98efba766adb27acbd56f8",
+    "verify-contract.mjs": "d6e81bb0424cea0874fafd1cfced2216db2aef7a70f4c3cec76d20e141d126b1"
+  },
+  "dependencies": {
+    "v18/manifest.json": "59788d9355e478b534fec491ea1188d690b3f712ead78c3652f696a57c6cc49d"
+  }
+}

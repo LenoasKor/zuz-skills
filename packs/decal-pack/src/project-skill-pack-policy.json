@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.7.1",
+  "packVersion": "3.8.0",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -116,6 +116,27 @@
       "scope": "incident-only",
       "nativeFallback": false,
       "consumer": "zuz-its/v5"
+    },
+    "capabilityResolution": {
+      "entry": "contracts/task-work-bug/its-register.mjs",
+      "table": "contracts/task-work-bug/capabilities.json",
+      "tableSchema": "decal.task-work-bug.capabilities/v1",
+      "verification": "each capability's contract manifest and dependencies before execution",
+      "fallback": "none",
+      "unlistedContracts": "never executed",
+      "nativeFallback": false,
+      "publicationState": "candidate"
+    },
+    "multiDeviceAuthority": {
+      "contract": "task-work-bug/v19",
+      "manualContract": "task-work-bug/v18",
+      "scope": "same-local-network",
+      "discovery": "udp-directed-broadcast",
+      "pairing": "commit-reveal-x25519-with-user-confirmed-check-code",
+      "transport": "aes-256-gcm-per-device-key",
+      "pairedProjectWithoutAuthority": "stop-never-register-locally",
+      "nativeFallback": false,
+      "publicationState": "candidate"
     }
   }
 }

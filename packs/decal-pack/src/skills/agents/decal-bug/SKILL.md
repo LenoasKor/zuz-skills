@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.11.0"
+  version: "1.12.0"
   portable: true
 ---
 
@@ -73,17 +73,17 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/v10/`, use it instead of hand-writing a record. The
+When the repository ships `contracts/task-work-bug/its-register.mjs`, use it instead of hand-writing a record (see Capability-resolved registration; never name a contract version yourself). The
 dry-run returns no final ID. From a linked feature or detached worktree, the broker locates the one
-existing canonical `main`/`master` worktree and runs the unchanged v9 writer there. It never switches,
+existing canonical `main`/`master` worktree and runs the unchanged ticket writer there. It never switches,
 detaches, creates, or removes a worktree. Missing, ambiguous, or changing main authority fails closed.
 The receipt reports both the requesting worktree and the authority worktree.
 
 ```sh
-node contracts/task-work-bug/v10/register-ticket.mjs \
+node contracts/task-work-bug/its-register.mjs --kind ticket \
   --root . --intent /path/to/approved-intent.json --dry-run
 
-node contracts/task-work-bug/v10/register-ticket.mjs \
+node contracts/task-work-bug/its-register.mjs --kind ticket \
   --root . --intent /path/to/approved-intent.json \
   --approved-digest sha256:<dry-run digest> --write
 ```
@@ -133,8 +133,10 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
 
 
-## Preserving registration locks
+## Capability-resolved registration
 
-When `compatibility.portablePreservingRegistration` advertises `task-work-bug/v15` and its installed verifier passes, use the same commands above from `contracts/task-work-bug/v15/` instead of `v10/`. v15 retains the v10 canonical-main resolver, existing intent/approval digest, exact registration commit and idempotent receipt. It waits at most five minutes, supports cancellation, and preserves locks belonging to terminated owners. An owner-terminated or unknown result requires inspection; never delete the lock or repeat an ambiguous write. A repository adapter explicitly selecting v15 is equivalent.
+Register through the stable entry `contracts/task-work-bug/its-register.mjs`; do not choose or name a contract version. The entry reads `contracts/task-work-bug/capabilities.json`, which maps each capability (`register-task-batch`, `register-ticket`, `register-incident`, `register-via-authority`) to exactly one contract. It runs a contract only when that contract is listed and its own manifest and dependency verification pass. It never runs an unlisted folder, never looks for "the latest" version, and never falls back to an older contract: if a capability is not advertised or its contract fails verification, the entry stops with `authoring_update_required` and the request is preserved until the Pack is updated.
 
-Hosts without this installed capability keep their pinned v10 path; do not claim that legacy registration preserves dead-owner locks. This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.
+A project paired with a number authority on the local network (`.decal/its-lan-client.json`) always registers through that authority, with the same approved digest, so two devices never issue the same number. If the authority client is unavailable or fails verification the entry stops with `authority_client_unavailable`; never register locally in that state. Pairing and approval are separate user-confirmed steps described by the multi-device authority contract; an agent never approves a pairing request without showing the user both check codes.
+
+This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.
