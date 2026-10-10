@@ -1,6 +1,6 @@
 # Task 1 · Pack · 001 — 기능 대응표 입구와 다기기 번호 권한자 계약(v18·v19) 편입
 
-상태: planned
+상태: in_progress
 
 Task Category: pack
 
