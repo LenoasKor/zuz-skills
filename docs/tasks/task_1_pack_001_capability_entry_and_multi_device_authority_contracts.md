@@ -84,3 +84,4 @@ Registration Intent: zs-capability-entry-multi-device-contracts-20261011:cap_ent
 | 시각 | 에이전트 | 처리 내용 | 검증 결과 | 남은 일 |
 | --- | --- | --- | --- | --- |
 | 2026-10-11 | Claude | zuz-skills에 자체 ITS를 도입(Pack 3.7.1 설치 7dddd50, 등록소 초기화 7379068)한 뒤 첫 Task로 등록. 데칼 Task 786·787·788과 연결 | 등록 전 verify:source·시험 238개 통과 | 구현 |
+| 2026-10-11 | Claude | 브랜치 task-1-capability-entry(커밋 890e239)에서 고정 입구 its-register.mjs·capabilities.json, v18·v19 편입, 스킬 4종의 번호 제거, 후보 Pack 3.8.0 반영. 데칼 Task 786·787·788과 연결 | npm test 242개 통과(신규 입구 시험 5·v18·v19 실전 시험 포함), verify:source 통과, 후보 패키지를 빈 프로젝트에 설치해 Task·Work·Bug·Incident를 입구로 등록 확인 | main 병합(승인 필요), Pack 버전 확정·tag·Store 게시, 소비 프로젝트 갱신 |
