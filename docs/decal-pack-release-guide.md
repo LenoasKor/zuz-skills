@@ -169,6 +169,7 @@ feature 또는 detached worktree에서 티켓을 등록할 때 현재 작업공�
 - Task 등록: `contracts/task-work-bug/v15/register-task-batch.mjs`
 - Work·Bug 등록: `contracts/task-work-bug/v15/register-ticket.mjs`
 - Incident 등록: `contracts/task-work-bug/v16/register-ticket.mjs`
+- 스킬이 부르는 고정 입구: `contracts/task-work-bug/its-register.mjs`는 `capabilities.json`에 적힌 계약만, 그 계약의 verify-contract 통과 뒤에만 실행한다. 위 세 명령은 이 입구가 기능별로 고르는 대상이며 스킬 문서는 번호를 직접 지시하지 않는다. 대응표에 없는 폴더는 실행하지 않고 낮은 버전으로 폴백하지 않는다.
 - lifecycle·정산: 기존 `v9` runner
 
 v15·v16은 v10의 main-authority resolver를 유지하며 동일 저장소에서 이미 canonical `main` 또는 `master`를 소유한 작업공간 하나를 찾아 등록만 위임한다. main 작업공간이 없거나 둘 이상으로 모호하면 `main_worktree_required` 또는 `main_worktree_ambiguous`로 멈춘다. 이때 checkout을 바꾸거나 새 worktree를 만들어 우회하지 않는다.

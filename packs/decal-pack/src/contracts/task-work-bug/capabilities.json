@@ -1,0 +1,10 @@
+{
+  "schema": "decal.task-work-bug.capabilities/v1",
+  "note": "Each capability names exactly one contract. its-register.mjs runs only what is listed here, and only after that contract's own verifier passes. There is no fallback to another version and no search for the latest folder.",
+  "capabilities": {
+    "register-task-batch": { "contract": "v15", "entry": "register-task-batch.mjs" },
+    "register-ticket": { "contract": "v15", "entry": "register-ticket.mjs" },
+    "register-incident": { "contract": "v16", "entry": "register-ticket.mjs" },
+    "register-via-authority": { "contract": "v19", "entry": "lan-client.mjs" }
+  }
+}

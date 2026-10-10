@@ -1,0 +1,40 @@
+{
+  "schema": "decal.task-work-bug.contract/v19",
+  "contractId": "decal.task-work-bug/v19",
+  "dependsOn": [
+    { "contractId": "decal.task-work-bug/v18", "manifest": "v18/manifest.json" }
+  ],
+  "zeroSetupLanAuthority": {
+    "authority": "contracts/task-work-bug/v19/lan-authority.mjs",
+    "client": "contracts/task-work-bug/v19/lan-client.mjs",
+    "discovery": {
+      "transport": "udp-directed-broadcast",
+      "port": 42099,
+      "portOverride": "DECAL_ITS_DISCOVERY_PORT",
+      "answersOnlyFor": "projects the authority serves",
+      "projectIdentity": "sha256 of the sorted root commit ids, first 32 hex"
+    },
+    "pairing": {
+      "keyAgreement": "X25519",
+      "commitReveal": "client commits sha256(suite, publicKey, nonce) before it sees the authority's key",
+      "checkCode": "six digits derived from the shared secret and the full transcript, shown on both devices",
+      "approval": "one click on the main device; unanswered requests expire after 120 seconds",
+      "limits": { "maxPending": 5, "minSecondsBetweenRequestsPerAddress": 10 }
+    },
+    "transport": {
+      "cipher": "aes-256-gcm",
+      "keyPerDevice": true,
+      "associatedData": "method, route, deviceId and time for requests; time and status for responses",
+      "maxBodyBytes": 1048576,
+      "maxClockSkewSeconds": 300,
+      "failureThrottle": "ten failures per source address within five minutes"
+    },
+    "admin": { "bind": "127.0.0.1", "authentication": "bearer token in the device home, mode 0600", "operations": ["pending", "approve", "deny", "devices", "revoke"] },
+    "reusedFromV18": ["registerLocal", "buildBundle", "applyBundle", "offline outbox", "idempotent intentId replay"],
+    "singleDevice": "a project with no pairing registers locally and opens no port"
+  },
+  "compatibility": {
+    "preserves": "v10, v15 and v18 entrypoints, intents, receipts and exact-commit behaviour are unchanged",
+    "doesNotAuthorize": ["push", "merge to a remote", "deploy", "lifecycle completion", "version settlement", "another repository", "connections outside the local network"]
+  }
+}

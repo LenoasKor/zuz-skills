@@ -222,7 +222,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.6" },
-    { id: "zuz-its", version: "1.5.1" },
+    { id: "zuz-its", version: "1.6.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.2" },
   ]);
@@ -231,10 +231,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.15.0",
-    "decal-work": "1.11.0",
-    "decal-bug": "1.11.0",
-    "decal-incident": "1.5.2",
+    "decal-task": "1.16.0",
+    "decal-work": "1.12.0",
+    "decal-bug": "1.12.0",
+    "decal-incident": "1.6.0",
     "zuz-its": "1.4.1",
     "decal-slice": "0.4.12",
     "decal-slice-maintenance": "0.8.2",
@@ -317,9 +317,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.15\.0"/);
+      assert.match(content, /version: "1\.16\.0"/);
       assert.match(content, /v17\/release-settle\.mjs/);
-      assert.match(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
+      assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
+      assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
     }
   }
 });
@@ -382,11 +383,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.7.1 keeps v10/v11 and v12 bookkeeping and adds v17 release settlement", async () => {
+test("Pack 3.8.0 keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.7.1");
+  assert.equal(packageValue.packVersion, "3.8.0");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v17");
   for (const file of ["release-settle.mjs", "settle-work-item.mjs", "settlement-mode.mjs", "task-lifecycle.mjs", "verify-contract.mjs"]) {
     assert.ok(packageValue.files.some((item) => item.sourcePath === `contracts/task-work-bug/v17/${file}`), file);
@@ -536,7 +537,7 @@ test("actual package routes only Incident registration to v16 and retains v15 pl
   const files=value.files.filter(f=>f.sourcePath.startsWith("contracts/task-work-bug/v16/"));assert.equal(files.length,6);
   for(const f of files){assert.equal(f.moduleId,"zuz-its");assert.deepEqual(Buffer.from(f.contentBase64,"base64"),await readFile(join(repositoryRoot,"packs/decal-pack/src",f.sourcePath)));}
   const incident=value.files.find(f=>f.sourcePath==="skills/agents/decal-incident/SKILL.md");assert.deepEqual(incident.installTargets.map(t=>t.provider),["codex","claude","gemini","acp"]);const content=Buffer.from(incident.contentBase64,"base64").toString("utf8");assert.equal(content,await readFile(join(repositoryRoot,"packs/decal-pack/src",incident.sourcePath),"utf8"));assert.match(content,/v15 remains.*Task\/Work\/Bug only/u);assert.match(content,/neither v15 nor v10 Incident output is a direct fallback/u);assert.match(content,/actual v5 consumer before any write/u);assert.match(content,/applicable user authority or explicit repository automatic policy authorizes that exact scope/u);assert.match(content,/not evidence of a human click or a new permission grant/u);
-  for(const id of ["decal-task","decal-work","decal-bug"]){const f=value.files.find(f=>f.sourcePath===`skills/agents/${id}/SKILL.md`);assert.match(Buffer.from(f.contentBase64,"base64").toString("utf8"),/Preserving registration locks/u);}
+  for(const id of ["decal-task","decal-work","decal-bug"]){const f=value.files.find(f=>f.sourcePath===`skills/agents/${id}/SKILL.md`);const text=Buffer.from(f.contentBase64,"base64").toString("utf8");assert.match(text,/Capability-resolved registration/u);assert.match(text,/never falls back to an older contract/u);}
 });
 
 
@@ -601,5 +602,27 @@ test("WORK-209 meaningful units and cause-local holds are preserved in all provi
     const value = JSON.parse(content(fixture.sourcePath));
     assert.ok(value.requiredCases.includes("meaningful-result-units-reuse-work-without-time-boxed-ticket-splitting"));
     assert.ok(value.requiredCases.includes("cause-local-recovery-preserves-authority-and-uncertain-write-holds"));
+  }
+});
+
+test("Pack 3.8.0 ships the capability entry, the multi-device authority contracts and number-free registration skills", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
+  assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v19");
+  assert.equal(packageValue.compatibility.portableMultiDeviceManualAuthority, "task-work-bug/v18");
+  assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
+  assert.equal(packageValue.executionPolicies.capabilityResolution.unlistedContracts, "never executed");
+  assert.equal(packageValue.executionPolicies.multiDeviceAuthority.pairedProjectWithoutAuthority, "stop-never-register-locally");
+  for (const sourcePath of [
+    "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
+    "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",
+    "contracts/task-work-bug/v19/lan-authority.mjs", "contracts/task-work-bug/v19/lan-client.mjs", "contracts/task-work-bug/v19/manifest.json",
+  ]) assert.ok(packageValue.files.some((file) => file.sourcePath === sourcePath), sourcePath);
+  // The registration guidance of the skills names capabilities and the stable entry, never a numbered contract.
+  for (const skill of ["decal-task", "decal-work", "decal-bug", "decal-incident"]) {
+    const text = await readFile(join(artifactRoot, `packs/decal-pack/src/skills/agents/${skill}/SKILL.md`), "utf8");
+    assert.doesNotMatch(text, /contracts\/task-work-bug\/v\d+\/register-/u, `${skill} still names a numbered registration contract`);
+    assert.match(text, /contracts\/task-work-bug\/its-register\.mjs/u, `${skill} must point at the stable entry`);
   }
 });
