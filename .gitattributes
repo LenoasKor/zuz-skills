@@ -1,0 +1,2 @@
+# Shared LF defaults; specific binary and immutable-byte rules below remain authoritative.
+* text=auto eol=lf
