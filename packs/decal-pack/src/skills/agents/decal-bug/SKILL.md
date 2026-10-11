@@ -2,13 +2,17 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.13.0"
+  version: "1.14.0"
   portable: true
 ---
 
 # Decal Bug
 
 Manage an observed defect using the repository's canonical zuz ITS contract.
+
+## Tracking decision first
+
+Read `contracts/its-tracking-policy.md` from the verified project root before proposing a ticket. It is the shared registration decision, not an extra approval step. Exempt operations return to the requested work without issuing a ticket; matching scope continues its existing record. The procedures below apply only when a ticket is needed or the user explicitly requests one. A session, commit, push, or verification step does not itself need a Work.
 
 ## Repository authority boundary
 
@@ -52,7 +56,7 @@ verification, canonical receipt/commit and remaining work after every operation.
 
 ## Bug record
 
-Register before modifying product files. Include the observation, expected behavior, cause or diagnostic plan, Remote parity, completion criteria, expected write-set, version impact, release mode, and parent Task references.
+When an independent Bug record is required by the tracking decision, register before modifying product files. Include the observation, expected behavior, cause or diagnostic plan, Remote parity, completion criteria, expected write-set, version impact, release mode, and parent Task references.
 
 Do not create a new Bug merely because a test fails while an existing Task, Work, or Bug is still earlier than `development_complete`. If the failure belongs to that record's current implementation or verification scope, fix it there and, when useful, record the cause, correction, and rerun evidence as trial-and-error history. Create a separate Bug or Incident only for a regression observed after development completion, a defect with an independent cause/scope/closure outside the active record, or a security, data-loss, or live-service condition that requires separate tracking.
 
@@ -130,7 +134,7 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
 
 
 ## Capability-resolved registration

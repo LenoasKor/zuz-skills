@@ -245,7 +245,7 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     const claude = await readFile(path.join(root, "CLAUDE.md"), "utf8");
     for (const source of [agents, claude]) {
       assert.equal(source.match(/<!-- decal-pack-rules:start -->/gu)?.length, 1);
-      assert.match(source, /외부 개발환경도 작업을 거부하지 않고/u);
+      assert.match(source, /등록 불필요 → 기존 기록 재사용 → 새 기록 필요/u);
       assert.match(source, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
       assert.match(source, /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
       assert.match(source, /배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않/u);
@@ -256,7 +256,7 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     await writeFile(path.join(root, "AGENTS.md"), outsideEdit);
     assert.equal(run(root, "--dry-run", null, { modules: ["zuz-its"], providers: ["codex"] }).value.status, "current");
 
-    await writeFile(path.join(root, "AGENTS.md"), outsideEdit.replace("외부 개발환경도 작업을 거부하지 않고", "사용자가 수정한 블록"));
+    await writeFile(path.join(root, "AGENTS.md"), outsideEdit.replace("등록 불필요 → 기존 기록 재사용 → 새 기록 필요", "사용자가 수정한 블록"));
     const blocked = run(root, "--dry-run", null, { modules: ["zuz-its"], providers: ["codex"] });
     assert.equal(blocked.value.status, "blocked");
     assert.equal(blocked.value.conflictDetails.find((item) => item.path === "AGENTS.md")?.reason, "managed_rule_block_modified");
@@ -735,4 +735,36 @@ test("schema 2 rejects missing, expanded and legacy-disguised required-file rule
 
 test.after(async () => {
   await rm(fixtureRoot, { recursive: true, force: true });
+});
+
+test("tracking policy comes from the verified package and upgrades locked legacy rules", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-tracking-policy-"));
+  try {
+    const legacy = structuredClone(packageValue);
+    legacy.files = legacy.files.filter(file => file.sourcePath !== "contracts/its-tracking-policy.md");
+    const legacyPath = path.join(fixtureRoot, "legacy-tracking-policy.json");
+    await writeFile(legacyPath, stableJson(sealPackage(legacy)));
+    const preview = run(root, "--dry-run", null, { packagePath: legacyPath });
+    assert.equal(preview.status, 0, preview.stderr);
+    assert.equal(run(root, "--write", preview.value.installationPlanDigest, { packagePath: legacyPath }).status, 0);
+    assert.match(await readFile(path.join(root, "AGENTS.md"), "utf8"), /Decal Pack 변경 등록 규칙/u);
+
+    // A different release must install its own bytes, even when the installer checkout differs.
+    const next = structuredClone(packageValue);
+    const policy = next.files.find(file => file.sourcePath === "contracts/its-tracking-policy.md");
+    const body = Buffer.from(`${Buffer.from(policy.contentBase64, "base64")}\n- Package-owned policy fixture.\n`);
+    Object.assign(policy, { contentBase64: body.toString("base64"), size: body.length, sha256: sha256(body) });
+    const nextPath = path.join(fixtureRoot, "next-tracking-policy.json");
+    await writeFile(nextPath, stableJson(sealPackage(next)));
+    const update = run(root, "--dry-run", null, { packagePath: nextPath });
+    assert.equal(update.status, 0, update.stderr);
+    assert.equal(run(root, "--write", update.value.installationPlanDigest, { packagePath: nextPath }).status, 0);
+    const installed = await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8");
+    for (const entry of ["AGENTS.md", "CLAUDE.md"]) {
+      const contents = await readFile(path.join(root, entry), "utf8");
+      assert.ok(contents.includes(installed.trimEnd()));
+      assert.ok(contents.includes(`content-sha256: ${sha256(Buffer.from(installed.trimEnd()))}`));
+      assert.doesNotMatch(contents, /Decal Pack 변경 등록 규칙/u);
+    }
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

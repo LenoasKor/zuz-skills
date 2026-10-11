@@ -221,8 +221,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.6" },
-    { id: "zuz-its", version: "1.7.0" },
+    { id: "development-core", version: "1.3.7" },
+    { id: "zuz-its", version: "1.7.1" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.2" },
   ]);
@@ -231,15 +231,15 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.17.0",
-    "decal-work": "1.13.0",
-    "decal-bug": "1.13.0",
-    "decal-incident": "1.7.0",
-    "zuz-its": "1.4.1",
-    "decal-slice": "0.4.12",
-    "decal-slice-maintenance": "0.8.2",
-    "decal-slice-smoke": "0.5.3",
-    "decal-commit-ready": "0.10.2",
+    "decal-task": "1.18.0",
+    "decal-work": "1.14.0",
+    "decal-bug": "1.14.0",
+    "decal-incident": "1.8.0",
+    "zuz-its": "1.5.0",
+    "decal-slice": "0.4.13",
+    "decal-slice-maintenance": "0.8.3",
+    "decal-slice-smoke": "0.5.4",
+    "decal-commit-ready": "0.10.3",
     "decal-debug": "0.3.0",
   };
   for (const [id, version] of Object.entries(expectedSkillVersions)) {
@@ -296,15 +296,15 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.match(buildContent, /읽기 전용 reader는 설정 도구가 아닙니다/u);
   assert.match(buildContent, /Decal 앱 데이터 파일을 직접 편집하지/u);
   const packPolicy = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/project-skill-pack-policy.json"), "utf8"));
-  assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.8.0");
+  assert.equal(packPolicy.minimumCompatible["decal-slice-maintenance"], "0.8.3");
   for (const [id, version] of Object.entries({
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.14.0",
-    "decal-work": "1.10.0",
-    "decal-bug": "1.10.0",
-    "zuz-its": "1.4.0",
+    "decal-task": "1.18.0",
+    "decal-work": "1.14.0",
+    "decal-bug": "1.14.0",
+    "zuz-its": "1.5.0",
     "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
   })) assert.equal(packPolicy.minimumCompatible[id], version, id);
@@ -317,7 +317,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.17\.0"/);
+      assert.match(content, /version: "1\.18\.0"/);
       assert.match(content, /v17\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
@@ -361,7 +361,7 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   for (const id of ["zuz-its", "decal-task", "decal-work", "decal-bug"]) {
     const file = pack.files.find((candidate) => candidate.sourcePath === `skills/agents/${id}/SKILL.md`);
     const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
-    assert.match(content, /same-day|same parent Task/u, id);
+    assert.match(content, /same-day|same.parent/u, id);
     assert.match(content, /reuse|continue an existing|reuse a matching/iu, id);
     assert.match(content, /source.revision/u, id);
   }
@@ -378,16 +378,16 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
     assert.match(template, /기존 사전·자동 승인/);
     assert.match(template, /저장소·브랜치·정확한 대상 파일과 변경 내용/);
     assert.doesNotMatch(source, /커밋은 별도 사용자 승인을 요구|외부 커밋은 정확한 경로의 별도 승인을 요구/);
-    assert.match(template, /register-task-batch/u);
+    assert.match(template, /its-register\.mjs/u);
     if (id === "decal-slice-maintenance") assert.match(template, /전이 준비됨 · 커밋 대기/u);
   }
 });
 
-test("Pack 3.9.0 keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
+test("Pack keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.9.0");
+  assert.equal(packageValue.packVersion, "3.9.1");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v17");
   for (const file of ["release-settle.mjs", "settle-work-item.mjs", "settlement-mode.mjs", "task-lifecycle.mjs", "verify-contract.mjs"]) {
     assert.ok(packageValue.files.some((item) => item.sourcePath === `contracts/task-work-bug/v17/${file}`), file);
@@ -437,10 +437,10 @@ for (const [id, sourcePath] of [
       const content = Buffer.from(file.contentBase64, "base64").toString("utf8");
       assert.doesNotMatch(content, /정확한 3경로 수기 transaction|registry의 다음 전역 번호와 카테고리 순번을 사용해/u, path);
       assert.match(content, /semantic intent/u, path);
-      assert.match(content, /v10 register-task-batch broker/u, path);
+      assert.match(content, /contracts\/task-work-bug\/its-register\.mjs/u, path);
       assert.match(content, /유일한 기존 canonical main worktree/u, path);
       assert.match(content, /수기 발급·checkout 전환.*(?:우회하지|중단)/u, path);
-      assert.match(content, /전역 번호·Category Index·최종 파일명.*(?:broker만 발급|broker가 발급)/u, path);
+      assert.match(content, /전역 번호·Category Index·최종 파일명.*(?:broker만 발급|broker가 발급|capability만 발급|입구만 발급)/u, path);
       if (path === generatedPath) assert.match(content, /explicit approval from the current user/u);
     }
   });
@@ -533,7 +533,7 @@ test("actual package routes only Incident registration to v16 and retains v15 pl
   assert.equal(value.compatibility.portableIncidentRegistration, "task-work-bug/v16");
   const profile = {contract:"task-work-bug/v16",manifestValidator:"contracts/task-work-bug/v16/verify-contract.mjs",runner:"contracts/task-work-bug/v16/register-ticket.mjs",scope:"incident-only",nativeFallback:false,consumer:"zuz-its/v5"};
   assert.deepEqual(value.executionPolicies.incidentRegistration,profile);
-  const policy=JSON.parse(await readFile(join(repositoryRoot,"packs/decal-pack/src/project-skill-pack-policy.json"),"utf8"));assert.deepEqual(policy.executionPolicies.incidentRegistration,profile);assert.equal(policy.minimumCompatible["decal-incident"],"1.5.2");
+  const policy=JSON.parse(await readFile(join(repositoryRoot,"packs/decal-pack/src/project-skill-pack-policy.json"),"utf8"));assert.deepEqual(policy.executionPolicies.incidentRegistration,profile);assert.equal(policy.minimumCompatible["decal-incident"],"1.8.0");
   const files=value.files.filter(f=>f.sourcePath.startsWith("contracts/task-work-bug/v16/"));assert.equal(files.length,6);
   for(const f of files){assert.equal(f.moduleId,"zuz-its");assert.deepEqual(Buffer.from(f.contentBase64,"base64"),await readFile(join(repositoryRoot,"packs/decal-pack/src",f.sourcePath)));}
   const incident=value.files.find(f=>f.sourcePath==="skills/agents/decal-incident/SKILL.md");assert.deepEqual(incident.installTargets.map(t=>t.provider),["codex","claude","gemini","acp"]);const content=Buffer.from(incident.contentBase64,"base64").toString("utf8");assert.equal(content,await readFile(join(repositoryRoot,"packs/decal-pack/src",incident.sourcePath),"utf8"));assert.match(content,/v15 remains.*Task\/Work\/Bug only/u);assert.match(content,/neither v15 nor v10 Incident output is a direct fallback/u);assert.match(content,/actual v5 consumer before any write/u);assert.match(content,/applicable user authority or explicit repository automatic policy authorizes that exact scope/u);assert.match(content,/not evidence of a human click or a new permission grant/u);

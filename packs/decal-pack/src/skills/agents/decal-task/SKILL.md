@@ -2,13 +2,17 @@
 name: decal-task
 description: Register and manage Decal/Jig Task records for new features or broad product changes. Use when the user asks to create, plan, update, complete, or settle a Task.
 metadata:
-  version: "1.17.0"
+  version: "1.18.0"
   portable: true
 ---
 
 # Decal Task
 
 Manage a project Task using the repository's canonical zuz ITS contract.
+
+## Tracking decision first
+
+Read `contracts/its-tracking-policy.md` from the verified project root before proposing a ticket. It is the shared registration decision, not an extra approval step. Exempt operations return to the requested work without issuing a ticket; matching scope continues its existing record. The procedures below apply only when a ticket is needed or the user explicitly requests one. A session, commit, push, or verification step does not itself need a Work.
 
 ## Repository authority boundary
 
@@ -53,14 +57,14 @@ verification, canonical receipt/commit and remaining work after every operation.
 - Express dependencies within one batch as stable `localRef` objects. Do not submit guessed final Task IDs or paths. A stale provisional ID is not a conflict because approval binds the semantic digest; changed title, scope, dependency, impact, or commit message requires a new dry-run and an authority recheck.
 - When the standard Project Pack is current and the v4 validator returns `missing_registry_file`, the repository may be initialized only with `contracts/task-work-bug/initialize-task-registry.mjs`. Prepare a stable v1 initialization intent with explicit categories, run `--dry-run`, show the exact write-set (the two registry files, plus `config/its-settlement.json` with `mode: release` when the project has not chosen a settlement mode), and run `--write` with its source revision only when the current user explicitly approves initialization for that repository. Never run the initializer during Pack installation or update. Partial, legacy, nonempty, symlinked, stale, or already initialized registries are blocking states, not repair-by-overwrite cases.
 - Repository lifecycle scripts remain canonical for status, Smoke, completion, and settlement when present. For a project explicitly adopting the packaged portable runner, read `contracts/task-work-bug/v17/README.md` and validate its manifest before using `v17/task-lifecycle.mjs` (it runs the v9 planner unchanged for per-ticket projects). Its project-approved `.decal/settlement-profile.json` names all version sources; do not guess paths or replace an existing repository engine. Preview the exact plan, obtain the operation's required approval, then apply the same digest. Finalization is automatic. Completion requires actual verification evidence bound to the tested HEAD/tree; never create a passing receipt merely to pass the gate. With no v9 runner, v4 supports only its advertised `planned → in_progress` start; report the missing completion runner as an update requirement rather than claiming completion support. When the committed `config/its-settlement.json` sets `mode: release`, Task completion records the result and leaves applied versions `pending`; versions are applied once at release with `v17/release-settle.mjs` (preview, separate user approval, same digest). A missing file keeps per-ticket settlement. Switching modes is a reviewed change to that one file, never a rewrite of applied history.
-- If either the validator or v10 broker is unavailable, stop and report `authoring_update_required` instead of extending the current index by inspection or relying on a network gateway. A repository explicitly pinned to v4 may keep its legacy file-only writer, but do not describe that path as atomic registration or reuse a v7 approval for a later manual commit.
+- If the validator or the advertised registration capability is unavailable, stop and report `authoring_update_required` instead of extending the current index by inspection or relying on a network gateway. A repository explicitly pinned to v4 may keep its legacy file-only writer, but do not describe that path as atomic registration or reuse a v7 approval for a later manual commit.
 - Never claim that a proposal, preview, or edited file has been registered until the canonical record actually exists.
 
 ## Task boundary
 
 Use a Task for a new feature, a broad redesign, or work spanning multiple product surfaces, protocols, storage contracts, or release units. Use Work for a bounded improvement and Bug for an observed defect that restores an existing contract.
 
-Register before implementation. Record scope, exclusions, completion criteria, dependencies, version impact, Remote parity, expected write-set, context budget, and the planned `App.tsx` impact when the repository requires them.
+When a new record is required by the tracking decision, register before implementation. Record scope, exclusions, completion criteria, dependencies, version impact, Remote parity, expected write-set, context budget, and the planned `App.tsx` impact when the repository requires them.
 
 While the Task is earlier than `development_complete`, test failures found while implementing or verifying its existing scope are normal development feedback. Fix them within the Task and, when useful, record the cause, correction, and rerun evidence in its work log. Do not automatically create a Bug. Split out a Bug or Incident only for a regression observed after development completion, a defect with an independent cause/scope/closure outside the Task, or a security, data-loss, or live-service condition that requires separate tracking.
 
@@ -79,7 +83,7 @@ While the Task is earlier than `development_complete`, test failures found while
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
 
 
 ## Capability-resolved registration

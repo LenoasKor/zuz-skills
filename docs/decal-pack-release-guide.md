@@ -20,7 +20,7 @@
 ## 1. 시작 전 확인
 
 - 제품명 `Decal`, 조직명 `zuz.dev`, 저장소명 `zuz-skills`의 표기를 확인한다. 사용자 노출에서 `zuz`는 소문자를 사용한다.
-- 새 기능이면 Task, 유계 개선이면 Work, 기존 계약과 다른 결함이면 Bug를 각 대상 저장소 규약에 먼저 등록한다.
+- `packs/decal-pack/src/contracts/its-tracking-policy.md`로 등록 필요성을 먼저 판단한다. 독립 목표가 필요하면 해당 저장소의 기존 기록을 재사용하거나 새 Task·Work·Bug로 등록한다. 단순 커밋·push·재검증에는 새 Work를 만들지 않는다.
 - Pack source 변경과 소비 프로젝트 변경은 서로 다른 저장소 작업이다. 한 저장소의 티켓이나 승인으로 다른 저장소 파일을 조용히 수정하지 않는다.
 - 이미 발행한 계약·tag·Release의 bytes는 수정하지 않는다. 호환 보강은 새 계약 버전과 새 Pack 버전으로 추가한다.
 - Pack SemVer는 기존 설치와 호환되는 결함 복원은 patch, 기존 모듈 안의 선택 기능 추가는 minor, 설치 구성을 새 모듈로 분리하거나 기존 기본 선택을 바꾸는 변화는 major를 기본으로 한다.
@@ -29,6 +29,8 @@
 ## 2. `zuz-skills` 정본 수정
 
 정본은 `packs/decal-pack/src/`와 `packs/decal-pack/pack.source.json`이다.
+
+작업 기록 판단은 `src/contracts/its-tracking-policy.md` 한 곳에서 관리한다. portable 설치기는 검증된 package의 해당 bytes로 AGENTS·CLAUDE 관리 구획을 만들고, Decal Native 설치기도 같은 고정 파일을 포함한다. 새 정책과 과거 구획 인식용 호환 문자열을 혼동하지 않는다.
 
 - 스킬 문서를 바꾸면 해당 스킬 version과 `minimumCompatible`을 함께 갱신한다.
 - 계약을 추가하면 이전 공개 계약 bytes를 유지하고 새 `contracts/.../vN`을 만든다.

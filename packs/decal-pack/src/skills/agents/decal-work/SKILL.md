@@ -1,14 +1,18 @@
 ---
 name: decal-work
-description: Register and manage bounded Decal/Jig Work items such as small improvements, wording or style changes, focused refactors, tests, or documentation. Use when the user asks to create, update, complete, or settle Work.
+description: Register and manage a bounded Work item when independent tracking is needed or explicitly requested. First check small-change exemptions and existing records; commit, push, and verification steps alone do not need Work.
 metadata:
-  version: "1.13.0"
+  version: "1.14.0"
   portable: true
 ---
 
 # Decal Work
 
 Manage a bounded Work item using the repository's canonical zuz ITS contract.
+
+## Tracking decision first
+
+Read `contracts/its-tracking-policy.md` from the verified project root before proposing a ticket. It is the shared registration decision, not an extra approval step. Exempt operations return to the requested work without issuing a ticket; matching scope continues its existing record. The procedures below apply only when a ticket is needed or the user explicitly requests one. A session, commit, push, or verification step does not itself need a Work.
 
 ## Repository authority boundary
 
@@ -54,7 +58,7 @@ verification, canonical receipt/commit and remaining work after every operation.
 
 Use Work for a bounded improvement that is not an observed product defect: wording or style adjustments, small refactors, focused test or documentation reinforcement, and other finite execution units. Link an existing parent Task through `taskRefs` when applicable. Do not use Work to hide a broad feature or a defect with an independently testable cause.
 
-Register before implementation with observed context, desired outcome, completion criteria, expected write-set, version/Remote impact, release mode, and parent Task references.
+When a new record is required by the tracking decision, register before implementation with observed context, desired outcome, completion criteria, expected write-set, version/Remote impact, release mode, and parent Task references.
 
 Before registering another Work, inspect the active work, open Work records under the same parent Task, and same-day records. If the goal, acceptance criteria, and release/settlement unit are shared, append the new step and evidence to the existing ID after source-revision recheck. The date alone is not a merge rule. A distinct outcome or release unit needs a separate linked record; preserve already issued duplicate IDs and their relationship instead of deleting or recycling them. State the checked IDs and reuse/separation reason in a new candidate.
 
@@ -132,7 +136,7 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
 
 
 ## Capability-resolved registration

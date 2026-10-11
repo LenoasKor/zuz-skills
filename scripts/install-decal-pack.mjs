@@ -42,7 +42,7 @@ const LEGACY_RELEASE_STAGE_RULES = [
   "실제 배포만 `official_release`이며 기존 정산 영수증·소스 결속·배포 승인을 요구합니다. 릴리즈 후보는 Build ID만 발급하고 SemVer·정산·설치·실행·배포 권한을 바꾸지 않습니다.",
 ].join("\n");
 
-function decalPackRulesBlock() {
+function legacyDecalPackRulesBlock() {
   const body = [
     "## Decal Pack 변경 등록 규칙",
     "",
@@ -54,6 +54,20 @@ function decalPackRulesBlock() {
     "- 프로젝트 출시 단계가 누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`로 해석합니다. 이 폴백은 저장값을 바꾸거나 배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않으며, `live`는 명시적으로 저장된 경우에만 사용합니다.",
     "- Work·Bug의 검증과 Smoke가 끝나면 `pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다. 명시 `live`만 `release_ready`에서 실제 출시·앱 적용을 기다리며, 이 구분은 검증·정산·배포 승인 gate를 생략하지 않습니다.",
   ].join("\n");
+  return `${PACK_RULES_BLOCK_START}\n<!-- schema: zuz.decal-pack.project-rules/v1; content-sha256: ${sha256(Buffer.from(body))} -->\n${body}\n${PACK_RULES_BLOCK_END}`;
+}
+
+// The installed release, not this checkout, owns the policy bytes. Old releases
+// without the shared policy keep their historical rule block during upgrades.
+function decalPackRulesBlock(packageValue) {
+  const file = packageValue.files.find((file) => file.sourcePath === "contracts/its-tracking-policy.md");
+  if (!file) return legacyDecalPackRulesBlock();
+  if (file.moduleId !== "zuz-its" || !file.installTargets.some((target) => target.provider === "shared" && target.path === file.sourcePath)) {
+    fail("invalid_tracking_policy_target");
+  }
+  const bytes = Buffer.from(file.contentBase64, "base64");
+  const body = bytes.toString("utf8").trimEnd();
+  if (!body || !Buffer.from(bytes.toString("utf8")).equals(bytes)) fail("invalid_tracking_policy_utf8");
   return `${PACK_RULES_BLOCK_START}\n<!-- schema: zuz.decal-pack.project-rules/v1; content-sha256: ${sha256(Buffer.from(body))} -->\n${body}\n${PACK_RULES_BLOCK_END}`;
 }
 
@@ -398,8 +412,8 @@ function retirePristineLegacyReleaseStageRules(source) {
   return source;
 }
 
-async function plannedPackRuleFiles(root, hasIts, lock) {
-  const desiredBlock = decalPackRulesBlock();
+async function plannedPackRuleFiles(root, hasIts, lock, packageValue) {
+  const desiredBlock = hasIts ? decalPackRulesBlock(packageValue) : legacyDecalPackRulesBlock();
   const desiredBlockSha256 = sha256(Buffer.from(desiredBlock));
   const previous = new Map((lock?.value.ruleFiles ?? []).map((file) => [file.path, file]));
   const entries = [];
@@ -593,7 +607,7 @@ async function createInstallationPlan({ packagePath, rootValue, modules: moduleI
   const hadIts = lockedModules.some((moduleId) => moduleId === "task-work-bug" || moduleId === "zuz-its");
   const hasIts = modules.includes("zuz-its");
   if (hadIts && !hasIts) await assertItsRemovalIsIdle(root);
-  const rulePlan = await plannedPackRuleFiles(root, hasIts, lock);
+  const rulePlan = await plannedPackRuleFiles(root, hasIts, lock, packageValue);
 
   const mode = !lock ? "initial-pack-bootstrap" : selectionChanged ? "change-modules" : "update";
   const previousManagedFiles = [

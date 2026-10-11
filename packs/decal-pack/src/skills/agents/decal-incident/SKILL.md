@@ -2,13 +2,17 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.7.0"
+  version: "1.8.0"
   portable: true
 ---
 
 # Decal Incident
 
 Manage a zuz ITS Incident using the repository's installed portable contract.
+
+## Tracking decision first
+
+Read `contracts/its-tracking-policy.md` from the verified project root before proposing a ticket. It is the shared registration decision, not an extra approval step. Exempt operations return to the requested work without issuing a ticket; matching scope continues its existing record. The procedures below apply only when a ticket is needed or the user explicitly requests one. A session, commit, push, or verification step does not itself need a Work.
 
 ## Repository authority boundary
 
@@ -78,10 +82,6 @@ A packaged candidate profile does not advertise or authorize a Native capability
 
 Use `@incident:INC-7` or `@incident:INC-7[title]` when referencing the Incident in a Decal conversation. Never guess a missing ID.
 
-## Same-issue reuse and reopen
-
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
-
 ## Capability-resolved registration
 
 Register through the stable entry `contracts/task-work-bug/its-register.mjs`; do not choose or name a contract version. The entry reads `contracts/task-work-bug/capabilities.json`, which maps each capability (`register-task-batch`, `register-ticket`, `register-incident`, `register-via-authority`) to exactly one contract. It runs a contract only when that contract is listed and its own manifest and dependency verification pass. It never runs an unlisted folder, never looks for "the latest" version, and never falls back to an older contract: if a capability is not advertised or its contract fails verification, the entry stops with `authoring_update_required` and the request is preserved until the Pack is updated.
@@ -92,7 +92,7 @@ This selection changes no Native fallback, cross-project, publication, lifecycle
 
 ## Canonical Incident registration profile
 
-For Incident registration, require the explicitly adopted `task-work-bug/v16` Incident-only profile and its installed manifest plus actual dependency validation. Use the stable entry (`register-incident` capability) with the same nested v9 semantic intent, dry-run, approved digest and exact registration commit flow. It emits top-level canonical Incident fields and validates them using the actual v5 consumer before any write. v15 remains the preserving registration path for Task/Work/Bug only; neither v15 nor v10 Incident output is a direct fallback for the v5 lifecycle consumer. If v16 is unavailable or validation fails, preserve the request and require a Pack update rather than generate a noncanonical record. Existing repository canonical registration engines remain canonical when explicitly supported; do not silently migrate old nested Incident records.
+For Incident registration, let the stable entry resolve and validate the advertised Incident-only profile and its actual dependencies. The current profile is `task-work-bug/v16`; this compatibility explanation is not a version-selection instruction. Use the stable entry (`register-incident` capability) with the same nested v9 semantic intent, dry-run, approved digest and exact registration commit flow. It emits top-level canonical Incident fields and validates them using the actual v5 consumer before any write. v15 remains the preserving registration path for Task/Work/Bug only; neither v15 nor v10 Incident output is a direct fallback for the v5 lifecycle consumer. If the advertised Incident capability is unavailable or its profile validation fails, preserve the request and require a Pack update rather than generate a noncanonical record. Existing repository canonical registration engines remain canonical when explicitly supported; do not silently migrate old nested Incident records.
 
 This profile changes no Native grant, lifecycle/settlement, cross-project, publication or installation authority. Missing/rejected advertised Native capability stays blocked; Native sessions never invoke the external writer. Candidate capability is not Native advertisement. Existing v15 waiting/cancellation/dead-owner preservation applies unchanged through the pinned lock implementation.
 
