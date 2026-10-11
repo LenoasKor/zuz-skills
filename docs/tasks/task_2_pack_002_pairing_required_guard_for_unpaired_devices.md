@@ -1,6 +1,6 @@
 # Task 2 · Pack · 002 — 연결 안 된 기기의 로컬 번호 발급 차단(pairing_required)과 Pack 3.9.0 후보
 
-상태: planned
+상태: in_progress
 
 Task Category: pack
 
