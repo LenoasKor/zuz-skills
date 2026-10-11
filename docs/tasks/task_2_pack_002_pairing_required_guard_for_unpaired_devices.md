@@ -72,3 +72,4 @@ Registration Intent: zs-pairing-required-unpaired-device-20261011:pairing_requir
 | --- | --- | --- | --- | --- |
 | 2026-10-11 | Claude | 데칼 Task 787 1단계에서 분리해 등록 | 등록만 수행 | 구현 |
 | 2026-10-11 | Claude | 브랜치 task-2-pairing-required(커밋 b6d9af0, 후보 Pack 3.9.0)에서 입구에 권한자 탐지(`detect-authority`)를 추가해 연결 안 된 기기의 쓰기를 `pairing_required`로 멈춤. 권한자 기기 자신·미리보기·단독 프로젝트·탐지가 없는 이전 대응표는 영향 없음. 스킬 4종에 안내 추가 | npm test 242개 통과(1b 시험: 실제 권한자 프로세스와 서로 다른 기기 흉내, 탐지 변조 시험), 두 번 빌드 결과 동일(manifestSha256 8b96ecb6…, package 4cf2191e…), 후보 패키지를 빈 프로젝트에 설치해 Task·Work·Bug·Incident 등록 확인 | main 병합·tag·Release·Store 게시(별도 승인), 데칼 스냅샷 갱신 |
+| 2026-10-11 | Claude | main 병합(6cfbd84)·push, tag decal-pack-v3.9.0, GitHub Release 발행(자산 해시 일치 확인), 데칼 스냅샷 고정(데칼 009a34c95) | 두 번 빌드 동일, npm test 242개 통과 | Skill Store 공개(사용자 관리자 로그인), 소비 프로젝트 갱신 |
