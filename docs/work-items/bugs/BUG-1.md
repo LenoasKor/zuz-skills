@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-1
 title: "최신 Pack 규약과 오래된 설치 영수증의 충돌 오판"
-status: confirmed
+status: in_progress
 priority: P1
 taskRefs:
   - "3"
@@ -15,7 +15,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-10-11T16:01:21.137Z"
-updatedAt: "2026-10-11T16:01:56.855Z"
+updatedAt: "2026-10-11T16:01:58.316Z"
 blocked: null
 completion: null
 closure: null
