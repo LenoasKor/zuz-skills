@@ -222,7 +222,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.6" },
-    { id: "zuz-its", version: "1.6.0" },
+    { id: "zuz-its", version: "1.7.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.2" },
   ]);
@@ -231,10 +231,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.16.0",
-    "decal-work": "1.12.0",
-    "decal-bug": "1.12.0",
-    "decal-incident": "1.6.0",
+    "decal-task": "1.17.0",
+    "decal-work": "1.13.0",
+    "decal-bug": "1.13.0",
+    "decal-incident": "1.7.0",
     "zuz-its": "1.4.1",
     "decal-slice": "0.4.12",
     "decal-slice-maintenance": "0.8.2",
@@ -317,7 +317,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.16\.0"/);
+      assert.match(content, /version: "1\.17\.0"/);
       assert.match(content, /v17\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
@@ -383,11 +383,11 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack 3.8.0 keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
+test("Pack 3.9.0 keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.8.0");
+  assert.equal(packageValue.packVersion, "3.9.0");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v17");
   for (const file of ["release-settle.mjs", "settle-work-item.mjs", "settlement-mode.mjs", "task-lifecycle.mjs", "verify-contract.mjs"]) {
     assert.ok(packageValue.files.some((item) => item.sourcePath === `contracts/task-work-bug/v17/${file}`), file);
@@ -605,7 +605,7 @@ test("WORK-209 meaningful units and cause-local holds are preserved in all provi
   }
 });
 
-test("Pack 3.8.0 ships the capability entry, the multi-device authority contracts and number-free registration skills", async () => {
+test("Pack 3.9.0 ships the capability entry, the multi-device authority contracts and number-free registration skills", async () => {
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
@@ -614,6 +614,8 @@ test("Pack 3.8.0 ships the capability entry, the multi-device authority contract
   assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
   assert.equal(packageValue.executionPolicies.capabilityResolution.unlistedContracts, "never executed");
   assert.equal(packageValue.executionPolicies.multiDeviceAuthority.pairedProjectWithoutAuthority, "stop-never-register-locally");
+  assert.equal(packageValue.compatibility.portableUnpairedDeviceGuard, "task-work-bug/its-register.mjs");
+  assert.equal(packageValue.executionPolicies.capabilityResolution.guardCapability, "detect-authority");
   for (const sourcePath of [
     "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
     "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",

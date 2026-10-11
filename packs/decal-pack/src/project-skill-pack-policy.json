@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.8.0",
+  "packVersion": "3.9.0",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -125,7 +125,9 @@
       "fallback": "none",
       "unlistedContracts": "never executed",
       "nativeFallback": false,
-      "publicationState": "candidate"
+      "publicationState": "candidate",
+      "unpairedDeviceGuard": "stop-with-pairing_required-when-another-device-is-the-authority",
+      "guardCapability": "detect-authority"
     },
     "multiDeviceAuthority": {
       "contract": "task-work-bug/v19",

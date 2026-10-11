@@ -138,6 +138,30 @@ try {
     }
     console.log("ok 5  a paired project whose authority client is missing or tampered stops instead of issuing a local number");
   }
+  // 6. The unpaired-device guard runs only through its verified capability and never loosens anything else.
+  {
+    const root = await makeProject("guard-capability");
+    const head = git(root, "rev-parse", "HEAD");
+    await appendFile(path.join(root, "contracts/task-work-bug/v19/lan-discovery.mjs"), "\n// tampered\n");
+    const file = await put(root, "g.json", taskIntent("entry-guard-tamper"));
+    const plan = entry(root, "task", file, "--dry-run");
+    assert.equal(plan.body.status, "planned", "a preview does not look for an authority");
+    const stopped = entry(root, "task", file, "--approved-digest", plan.body.intentDigest, "--write");
+    assert.equal(stopped.status, 2);
+    assert.equal(stopped.body.code, "authoring_update_required");
+    assert.equal(stopped.body.capability, "detect-authority");
+    assert.equal(git(root, "rev-parse", "HEAD"), head, "nothing was written while the guard could not be verified");
+
+    // An older capability table that does not list the guard behaves as before.
+    const older = await makeProject("guard-older-table");
+    const tablePath = path.join(older, "contracts/task-work-bug/capabilities.json");
+    const table = JSON.parse(await readFile(tablePath, "utf8"));
+    delete table.capabilities["detect-authority"];
+    await writeFile(tablePath, JSON.stringify(table));
+    const done = await register(older, "task", taskIntent("entry-guard-older"));
+    assert.equal(done.body.status, "committed", done.stdout);
+    console.log("ok 6  a tampered guard stops the write; an older table without the guard keeps working");
+  }
   console.log("capability entry acceptance passed");
 } finally {
   await rm(base, { recursive: true, force: true });

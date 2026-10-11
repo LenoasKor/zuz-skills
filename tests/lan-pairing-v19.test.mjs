@@ -156,6 +156,36 @@ try {
     console.log("ok 2  pairing endpoints throttle floods, enforce commit-reveal, and a key-swapping middleman is exposed by the check codes");
   }
 
+  // 1b. A device that is not paired yet must not issue a number while the project's authority answers elsewhere.
+  {
+    const context = "## 사용자 요약\n\n```zuz-its-context\n" + JSON.stringify({ schemaVersion: 1, reason: "시험", goal: "시험", completion: "시험", nextAction: "시험" }) + "\n```\n";
+    const guarded = intentFor("unpaired-guard", "unpaired_guard");
+    guarded.tasks[0].body = `## Context Budget\n\n- 시험\n\n${context}`;
+    const entryOf = (root) => path.join(root, "contracts/task-work-bug/its-register.mjs");
+    // Both "devices" run on this computer: device B is told its own address is elsewhere, so the authority's answer is a different device.
+    const call = (root, file, ...rest) => node(entryOf(root), ["--kind", "task", "--root", root, "--intent", file, ...rest], { cwd: root, env: root === p.b ? { DECAL_ITS_OWN_ADDRESSES: "203.0.113.99" } : {} });
+    const fileB = path.join(p.b, "unpaired-guard.json");
+    await writeFile(fileB, JSON.stringify(guarded));
+    const preview = lastJson(await call(p.b, fileB, "--dry-run"));
+    assert.equal(preview.status, "planned", "a preview is never blocked");
+    const headB = await git(p.b, "rev-parse", "HEAD");
+    const blocked = await call(p.b, fileB, "--approved-digest", preview.intentDigest, "--write");
+    assert.equal(blocked.code, 2);
+    assert.equal(lastJson(blocked).code, "pairing_required", blocked.out);
+    assert.equal(lastJson(blocked).authority.label, "main-mac");
+    assert.equal(await git(p.b, "rev-parse", "HEAD"), headB, "the unpaired device issued nothing");
+    // The authority's own device is not blocked by its own answer.
+    const own = intentFor("authority-own-device", "authority_own_device");
+    own.tasks[0].body = guarded.tasks[0].body;
+    const fileA = path.join(p.a, "authority-own-device.json");
+    await writeFile(fileA, JSON.stringify(own));
+    const planA = lastJson(await call(p.a, fileA, "--dry-run"));
+    const doneA = lastJson(await call(p.a, fileA, "--approved-digest", planA.intentDigest, "--write"));
+    assert.equal(doneA.status, "committed", JSON.stringify(doneA));
+    await assertSound(p.a, 2);
+    console.log("ok 1b an unpaired device stops with pairing_required; the authority's own device still registers locally");
+  }
+
   // Restart without the throttle for the functional flows; the authority gets a new port on purpose.
   await stop(authority.child);
   authority = await startAuthority(home, { DECAL_ITS_PAIR_MIN_INTERVAL_MS: "0" });
@@ -203,11 +233,11 @@ try {
     }
     const results = (await Promise.all(jobs)).map(lastJson);
     for (const result of results) assert.equal(result.status, "registered", JSON.stringify(result));
-    await assertSound(p.a, 1 + 8);
+    await assertSound(p.a, 2 + 8);
     const f = await writeIntent(p.b, "lan-last", "lan_last");
     assert.equal(lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })).status, "registered");
     assert.equal(await git(p.b, "rev-parse", "HEAD"), await git(p.a, "rev-parse", "HEAD"), "device B converges on A's HEAD");
-    await assertSound(p.b, 1 + 9);
+    await assertSound(p.b, 2 + 9);
     console.log("ok 5  eight concurrent registrations over the sealed transport: unique numbers, B converges on A");
   }
 
@@ -220,7 +250,7 @@ try {
     const f = await writeIntent(p.b, "lan-moved", "lan_moved");
     assert.equal(lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })).status, "registered");
     assert.equal(JSON.parse(await readFile(path.join(p.b, ".decal/its-lan-client.json"), "utf8")).port, authority.lanPort, "client updated its stored address");
-    await assertSound(p.b, 1 + 10);
+    await assertSound(p.b, 2 + 10);
     console.log("ok 6  authority restarted on a new port: the client re-discovered it and registered");
   }
 
@@ -235,8 +265,8 @@ try {
     const flushed = lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b }));
     assert.equal(flushed.status, "flushed");
     assert.equal(lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b })).results.length, 0);
-    await assertSound(p.b, 1 + 11);
-    await assertSound(p.a, 1 + 11);
+    await assertSound(p.b, 2 + 11);
+    await assertSound(p.a, 2 + 11);
     console.log("ok 7  main device off: request queued, delivered exactly once when it came back");
   }
 
@@ -252,11 +282,11 @@ try {
     assert.equal(preview.status, "planned");
     const wrong = lastJson(await adapter(p.b, "task", taskFile, "--approved-digest", `sha256:${"0".repeat(64)}`, "--write"));
     assert.equal(wrong.code, "approval_digest_mismatch", "a digest the user did not see writes nothing");
-    await assertSound(p.a, 1 + 11);
+    await assertSound(p.a, 2 + 11);
     const written = lastJson(await adapter(p.b, "task", taskFile, "--approved-digest", preview.intentDigest, "--write"));
     assert.equal(written.delegatedTo, "its-authority", JSON.stringify(written).slice(0, 700));
     assert.equal(written.status, "committed");
-    assert.equal(written.assigned[0].taskId, 13);
+    assert.equal(written.assigned[0].taskId, 14);
     const ticket = (kind, extra = {}) => ({
       schema: "decal.zuz-its.ticket-registration-intent/v9", intentId: `adapter-${kind}`, kind, title: `Adapter ${kind}`, priority: "P1", taskRefs: ["1"],
       versionImpact: "none", remoteVersionImpact: "none", releaseMode: "standalone", body: context, ...extra,
@@ -280,7 +310,7 @@ try {
       }
     }
     assert.equal(await git(p.b, "rev-parse", "HEAD"), await git(p.a, "rev-parse", "HEAD"), "device B holds the same commits as A");
-    await assertSound(p.b, 1 + 12);
+    await assertSound(p.b, 2 + 12);
     console.log("ok 7b an outside AI session using the stable entry is routed to the authority for Task, Work, Bug and Incident; a wrong approval digest writes nothing");
   }
 
@@ -338,7 +368,7 @@ try {
     const f = await writeIntent(p.b, "lan-revoked", "lan_revoked");
     const denied = lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b }));
     assert.equal(denied.code, "authority_rejected_device");
-    await assertSound(p.a, 1 + 12);
+    await assertSound(p.a, 2 + 12);
     console.log("ok 9  a revoked device is refused at once and nothing is registered");
   }
 
