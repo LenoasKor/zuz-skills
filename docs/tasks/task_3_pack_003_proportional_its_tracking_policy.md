@@ -74,3 +74,12 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - 최종 전체 재검증: `npm test` 243/243 통과(0 실패). 원본 저장소의 기존 zuz-its 모듈과 acp·claude·codex 선택을 유지한 공식 설치기 갱신도 성공했다.
 - 선행 source commit: `e2597a420707ee4386b33c3b3f2e85cf4b06a151`. 설치 영수증의 정확한 gitWriteSet만 별도 커밋한다.
 - 저장소에 승인된 `.decal/settlement-profile.json`이 없어 portable 완료 상태 전이·정산은 수행하지 않는다. 구현·자동 검증·커밋 준비 사실을 이 기록에 남기고, 기존 in_progress 상태와 적용 버전 이력을 보존한다. 공개 출시와 정산은 다음 승인 단계다.
+
+## 공개 배포 진행과 소비 앱 Smoke · 2026-10-11
+
+- 사용자가 두 저장소 main 병합·push, Pack 3.9.1 공개 배포와 Decal 적용·Smoke를 승인했다. 원본 main과 feature branch를 `2d56fcc16310c44a1c65a2b91bf627c79b5c2d4d`로 push했다.
+- 같은 source로 두 번 빌드한 결과가 일치했고 GitHub tag/Release `decal-pack-v3.9.1`을 발행했다: https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v3.9.1 . 291 files / 31 skills / 4 modules.
+- 업로드 asset 재다운로드 검증: manifest identity `914aefb3b24c0af0d9eef12bfcc6448734780903e954f241438da6d4f9ecb6d8`, manifest 파일 SHA-256 `53edf79e88d5c4ed15d5c6a0c16098e862d813265d168cc53518101178d9d4eb`, package SHA-256 `33cfaab77e863d3032e6feb02f4bdecab7787d0cd337719f4cd244dc17e99fb3`. 로컬 영수증과 일치하며 공개 tag/assets는 이후 기록 커밋과 독립된 불변 source를 유지한다.
+- Store는 source/license/package와 격리 문법 검사(97 files, 4 batches)를 통과해 비공개 후보를 생성했다. 이어 세션 AI 검수 자료 생성에서 `session-review-batches-invalid`로 실패했다. 자료 ID나 검수 통과를 임의 생성하지 않았고 공개 gate를 우회하지 않았다. 공개 카탈로그는 3.6.2여서 Store 3.9.1 공개는 미완료다. Store 원본은 이번 승인된 두 저장소 밖이므로 별도 접근·수정·배포 승인을 요청했다.
+- Decal main `c85c64b243b31a85f6e4be92dd64880183577a93` 병합·push 후 Pack/규약/portable 검사를 재통과했다. Showcase 빌드와 표준 재실행을 통해 Desktop 0.474.6 / Remote 0.321.3 Build 16을 적용했고 실제 GUI에서 Pack 3.9.1 최신 상태 및 설치 지침 파일 지문을 확인했다. 닫힌 Remote preview Build ID 전파도 검증했다. 제품 SemVer 변경은 없다.
+- 원본 Task 3의 in_progress 상태는 승인된 portable settlement profile 부재 때문에 유지한다. Decal Task 791은 실제 Smoke를 공식 기록하고 release_ready로 두었다. Store 공개와 다른 소비 프로젝트 전파를 완료로 보고하지 않는다. 새 Work를 만들지 않았다.
