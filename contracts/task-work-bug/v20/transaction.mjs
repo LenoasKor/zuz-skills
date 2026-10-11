@@ -116,6 +116,8 @@ function summary(value) {
 export async function draftPlan(plan, approvedDigest) {
   await verifyContract();
   if (approvedDigest !== planDigest(plan)) fail("approval_digest_mismatch");
+  // Root/Host/Git validation precedes even temporary lock creation.
+  await validatePlan(plan);
   const release = await acquireLock(plan.root);
   try {
     await validatePlan(plan);

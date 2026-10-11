@@ -160,3 +160,19 @@ test("symlink draft directory, unapproved and staged writes fail without canonic
   await assert.rejects(executePlan(plan, planDigest(plan)), { code: "staged_changes_present" });
   assert.equal((await git(root, ["diff", "--cached", "--name-only"])).trim(), "unrelated.txt");
 });
+test("Native Host rejects before waiting on another writer or saving a draft", async t => {
+  const { root, plan } = await fixture(t);
+  const lock = path.join(root, ".decal-slice-completion.lock");
+  await writeFile(lock, "another writer owns this lock\n");
+  const previous = process.env.DECAL_SESSION_ID;
+  process.env.DECAL_SESSION_ID = "";
+  try {
+    await assert.rejects(draftPlan(plan, planDigest(plan)), { code: "native_authority_required" });
+  } finally {
+    if (previous === undefined) delete process.env.DECAL_SESSION_ID;
+    else process.env.DECAL_SESSION_ID = previous;
+  }
+  assert.equal(await lstat(path.join(root, ".decal/settlement-drafts-v1")).catch(() => null), null);
+  assert.equal(await readFile(lock, "utf8"), "another writer owns this lock\n");
+  assert.equal(await gitBoundary(root), plan.baseHead);
+});
