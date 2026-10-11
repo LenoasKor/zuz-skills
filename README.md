@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Pack 3.10.0 is an **unpublished candidate** for Task 792 (Decal): isolated settlement drafts, safe compensation after commit failure, and historical exact-commit finalization after unrelated commits. It keeps released contracts unchanged and preserves repository-owned and Native authority. The preceding published Pack is 3.9.1; editing or building this source is not a Store publication or a consumer installation.
+First-party contents are licensed under Apache-2.0. Pack 3.10.0 was **published on 2026-10-12 KST** for Task 792 (Decal): isolated settlement drafts, safe compensation after commit failure, and historical exact-commit finalization after unrelated commits. It keeps released contracts unchanged and preserves repository-owned and Native authority. The signed Store release is `decal-project-pack-r24`, built from `99d367f2a077265dd6566811aa78e69496234a39`. Its public package SHA-256 is `02d55674c6058cba8d7d5eb561de2830d34ddc4956fc1c020af62619513f9e19`. Decal development app/closed Remote preview and five approved project tool installations were verified; project-owned lifecycle engines remain unchanged.
 
-- preceding public source tag/release: `decal-pack-v3.9.1`
+- public source tag/release: [`decal-pack-v3.10.0`](https://github.com/LenoasKor/zuz-skills/releases/tag/decal-pack-v3.10.0)
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
