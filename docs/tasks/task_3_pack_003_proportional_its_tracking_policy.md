@@ -1,6 +1,6 @@
 # Task 3 · Pack · 003 — 추적 필요성 기반 ITS 규약과 스킬·설치기 일치
 
-상태: planned
+상태: in_progress
 
 Task Category: pack
 
