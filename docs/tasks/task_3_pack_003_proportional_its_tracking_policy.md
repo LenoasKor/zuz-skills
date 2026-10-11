@@ -83,3 +83,12 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - Store는 source/license/package와 격리 문법 검사(97 files, 4 batches)를 통과해 비공개 후보를 생성했다. 이어 세션 AI 검수 자료 생성에서 `session-review-batches-invalid`로 실패했다. 자료 ID나 검수 통과를 임의 생성하지 않았고 공개 gate를 우회하지 않았다. 공개 카탈로그는 3.6.2여서 Store 3.9.1 공개는 미완료다. Store 원본은 이번 승인된 두 저장소 밖이므로 별도 접근·수정·배포 승인을 요청했다.
 - Decal main `c85c64b243b31a85f6e4be92dd64880183577a93` 병합·push 후 Pack/규약/portable 검사를 재통과했다. Showcase 빌드와 표준 재실행을 통해 Desktop 0.474.6 / Remote 0.321.3 Build 16을 적용했고 실제 GUI에서 Pack 3.9.1 최신 상태 및 설치 지침 파일 지문을 확인했다. 닫힌 Remote preview Build ID 전파도 검증했다. 제품 SemVer 변경은 없다.
 - 원본 Task 3의 in_progress 상태는 승인된 portable settlement profile 부재 때문에 유지한다. Decal Task 791은 실제 Smoke를 공식 기록하고 release_ready로 두었다. Store 공개와 다른 소비 프로젝트 전파를 완료로 보고하지 않는다. 새 Work를 만들지 않았다.
+
+
+## Store 3.9.1 공개 반영 · 2026-10-11
+
+- 사용자 추가 승인으로 Store 원본의 자료 크기 오류와 일회성 sandbox snapshot 저장 한도를 수정했다. Store main `da1a0d4`·`3afdc91`을 push하고 Worker `1ec62d9f-c5f2-44c2-807b-ead0bbd4f355`, Vercel production `dpl_9BQkwAHuxSSMgf2jW4rpu67rwamQ`를 배포했다. 일반 자료 한도와 검수·공개 gate, 격리 실행은 유지했다.
+- 현 세션 AI가 291 파일·4 라이선스 사본 전문 및 97 자동 검사 증거를 검토하고 인증된 22개 자료 묶음과 원문 hash를 대조했다. 여섯 항목 보고서 `ai-review-58dc8120-6cdb-40c3-9d03-7cb60877a570` 등록 후 정상 공개 UI와 재검사를 통과했다.
+- Store https://skills.zuz.dev/ 공개 release `decal-project-pack-r23`, 3.9.1, publishedAt `2026-10-11T10:26:59.134Z`. 정상 공개 다운로드의 package SHA-256 `33cfaab77e863d3032e6feb02f4bdecab7787d0cd337719f4cd244dc17e99fb3`, source `2d56fcc16310c44a1c65a2b91bf627c79b5c2d4d`, 291개 파일이 GitHub asset과 일치한다. 공개 JWK로 manifest ES256 서명도 검증했다. 앞의 Store 미공개 기록은 당시 이력이며 현재 해소됐다.
+- 소비 Decal Task 791은 기존 앱 Build 16의 Pack 3.9.1 Smoke 및 현재 main 관련 검증과 공개 증거를 공식 완료 절차로 기록하고 `90c337786`에 completed 정산했다. 실제 공급자 세션 주입·모든 OS·다기기 실행·다른 소비 프로젝트 설치를 검증했다고 확대하지 않는다.
+- Task 3의 in_progress는 승인된 `.decal/settlement-profile.json` 부재로 유지한다. 공개·앱 적용은 끝났지만 정식 기록 완료 전이는 아직 수행하지 않았다. 임의 profile·상태 수정이나 중복 Work 생성은 하지 않았다.
