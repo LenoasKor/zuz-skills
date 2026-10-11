@@ -265,6 +265,36 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
   }
 });
 
+test("ITS reconciles an already current rule block without trusting stale receipt bytes", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-current-rules-"));
+  try {
+    await writeFile(path.join(root, "AGENTS.md"), "# Custom owner rules\nKeep unchanged.\n");
+    await installSelection(root, ["zuz-its"], ["codex"]);
+    const before = await readFile(path.join(root, "AGENTS.md"), "utf8");
+    const receiptPath = path.join(root, ".decal/decal-pack.lock.json");
+    const receipt = JSON.parse(await readFile(receiptPath, "utf8"));
+    // Published 3.6.2 receipt retained after rules were separately upgraded.
+    for (const file of receipt.ruleFiles) file.blockSha256 = "55e346eb113c0ae928aaf7e9396ec27d4a6ed671720f3fc76dc87c5aa46f9f06";
+    await writeFile(receiptPath, JSON.stringify(receipt));
+    const options = { modules: ["zuz-its"], providers: ["codex"] };
+    const preview = run(root, "--dry-run", null, options);
+    assert.equal(preview.value.status, "planned");
+    assert.deepEqual(preview.value.conflicts, []);
+    assert.ok(preview.value.plannedRuleFiles.every((file) => file.state === "unchanged"));
+    // Exact desired bytes authorize preservation, never removal or arbitrary edits.
+    assert.equal(run(root, "--dry-run", null, { modules: ["development-core"], providers: ["codex"] }).value.status, "blocked");
+    await writeFile(path.join(root, "AGENTS.md"), before.replace("등록 불필요 → 기존 기록 재사용 → 새 기록 필요", "Custom policy"));
+    assert.equal(run(root, "--dry-run", null, options).value.status, "blocked");
+    await writeFile(path.join(root, "AGENTS.md"), before);
+    const result = run(root, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(result.status, 0, result.stdout);
+    assert.equal(await readFile(path.join(root, "AGENTS.md"), "utf8"), before);
+    assert.equal(run(root, "--dry-run", null, options).value.status, "current");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("ITS update retires only the pristine legacy unset-stop section", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-legacy-release-stage-"));
   try {

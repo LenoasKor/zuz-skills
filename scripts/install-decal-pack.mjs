@@ -432,7 +432,10 @@ async function plannedPackRuleFiles(root, hasIts, lock, packageValue) {
     let reason = null;
     if (found) {
       const blockSha256 = sha256(Buffer.from(found.block));
-      if (prior ? blockSha256 !== prior.blockSha256 : blockSha256 !== desiredBlockSha256) {
+      // A separately upgraded block can already equal the verified package. Keep it
+      // byte-for-byte and refresh the receipt; removal still requires prior ownership.
+      const alreadyDesired = hasIts && blockSha256 === desiredBlockSha256;
+      if (!alreadyDesired && (prior ? blockSha256 !== prior.blockSha256 : blockSha256 !== desiredBlockSha256)) {
         reason = prior ? "managed_rule_block_modified" : "unmanaged_rule_block_present";
       } else if (hasIts) {
         next = `${source.slice(0, found.start)}${desiredBlock}${source.slice(found.end)}`;
