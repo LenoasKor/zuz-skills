@@ -5,7 +5,11 @@
 // The entry looks up the capability in capabilities.json, verifies that contract's own manifest, and only then runs it.
 // A project paired with a number authority on the local network is always routed to the authority; if that route is
 // unavailable the entry stops instead of registering locally, because a local number could collide with another device.
+// A project that is not paired but whose authority answers on the local network from another device is stopped too
+// (`pairing_required`): the device must pair first, otherwise it would silently issue a colliding number.
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import os from "node:os";
 import { existsSync, lstatSync, readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -108,6 +112,34 @@ if (write && paired) {
     process.stdout.write(`${line || JSON.stringify({ schema: RESULT_SCHEMA, status: "rejected", code: "authority_delegation_failed" })}\n`);
   }
   process.exit(delegated.status ?? 1);
+}
+
+/** True when another device on the local network is the number authority for this project and this device is not paired with it. */
+async function authorityElsewhere(projectRoot) {
+  if (!Object.hasOwn(table, "detect-authority")) return null; // an older capability table does not know the guard
+  const detector = resolve(table, "detect-authority");
+  const roots = spawnSync("git", ["-C", projectRoot, "rev-list", "--max-parents=0", "HEAD"], { encoding: "utf8" });
+  const commits = String(roots.stdout ?? "").split("\n").filter(Boolean).sort();
+  if (roots.status !== 0 || commits.length === 0) return null;
+  const projectId = createHash("sha256").update(commits.join(",")).digest("hex").slice(0, 32);
+  const { discoverAuthority } = await import(pathToFileURL(detector).href);
+  // This device's own addresses; DECAL_ITS_OWN_ADDRESSES (comma separated) replaces them for VPNs, containers and tests.
+  const override = String(process.env.DECAL_ITS_OWN_ADDRESSES ?? "").split(",").map((item) => item.trim()).filter(Boolean);
+  const own = new Set(override.length > 0 ? override : ["127.0.0.1", "::1"]);
+  if (override.length === 0) for (const addresses of Object.values(os.networkInterfaces())) for (const item of addresses ?? []) own.add(item.address);
+  const answers = await discoverAuthority(projectId, { timeoutMs: 700 });
+  return answers.find((answer) => !own.has(answer.address)) ?? null;
+}
+
+if (write && !paired) {
+  const other = await authorityElsewhere(root);
+  if (other) {
+    stop("pairing_required", {
+      reason: "an_authority_for_this_project_is_on_the_local_network",
+      authority: { label: other.label, address: other.address },
+      next: "Pair this device first (contracts/task-work-bug/v19/lan-client.mjs pair) and approve it on the main device after comparing the check code. Nothing was registered.",
+    });
+  }
 }
 
 const forwarded = [];

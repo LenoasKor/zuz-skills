@@ -2,7 +2,7 @@
 name: decal-incident
 description: Register and manage zuz ITS Incident tickets for real service interruption or quality degradation.
 metadata:
-  version: "1.6.0"
+  version: "1.7.0"
   portable: true
 ---
 
@@ -86,7 +86,7 @@ Before a new Work/Bug, inspect the current record and same-parent open/closed re
 
 Register through the stable entry `contracts/task-work-bug/its-register.mjs`; do not choose or name a contract version. The entry reads `contracts/task-work-bug/capabilities.json`, which maps each capability (`register-task-batch`, `register-ticket`, `register-incident`, `register-via-authority`) to exactly one contract. It runs a contract only when that contract is listed and its own manifest and dependency verification pass. It never runs an unlisted folder, never looks for "the latest" version, and never falls back to an older contract: if a capability is not advertised or its contract fails verification, the entry stops with `authoring_update_required` and the request is preserved until the Pack is updated.
 
-A project paired with a number authority on the local network (`.decal/its-lan-client.json`) always registers through that authority, with the same approved digest, so two devices never issue the same number. If the authority client is unavailable or fails verification the entry stops with `authority_client_unavailable`; never register locally in that state. Pairing and approval are separate user-confirmed steps described by the multi-device authority contract; an agent never approves a pairing request without showing the user both check codes.
+A project paired with a number authority on the local network (`.decal/its-lan-client.json`) always registers through that authority, with the same approved digest, so two devices never issue the same number. If the authority client is unavailable or fails verification the entry stops with `authority_client_unavailable`; never register locally in that state. A device that is not paired but whose project has a number authority on the local network is stopped the same way with `pairing_required`: nothing is registered, the entry names the authority, and the agent runs the pairing step (`lan-client.mjs pair`), shows the user the check code, and continues only after the user approved the request on the main device. Pairing and approval are separate user-confirmed steps described by the multi-device authority contract; an agent never approves a pairing request without showing the user both check codes.
 
 This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.
 
