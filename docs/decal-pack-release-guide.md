@@ -209,3 +209,10 @@ v15·v16은 v10의 main-authority resolver를 유지하며 동일 저장소에�
 Pack 3.6.2 candidate adds Incident-only task-work-bug/v16 registration. Task/Work/Bug stay on v15, Task body/wait on v13, owned text edits on v14, identity/read on zuz.its/v3 and Incident transition on zuz-its/v5. The nested semantic intent and approved digest stay compatible, while the writer emits canonical top-level Incident fields and validates actual v5 parsing before writing. Both source and editable policy advertise the separate profile; no Native capability or grant is implied. Legacy nested Incident records require explicit review, not automatic migration or old-writer fallback. Published contracts and Pack3.6.1 are immutable. New source commit, deterministic artifacts and explicit adoption are required before public use.
 
 The 3.6.2 candidate uses the new v5 exact-time consumer with v16 registration. v4 mixed-precision transition limitations remain in immutable old bytes; v16 padding alone is not evidence that legacy v4 is corrected. The v5 consumer supports exact UTC ordering without reducing fractional precision.
+
+
+## 원본 저장소의 ITS 완료·출시 정산
+
+2026-10-11 사용자 승인으로 `.decal/settlement-profile.json`을 채택했다. 저장소의 portable v17 lifecycle과 기존 `config/its-settlement.json`의 `release` 모드를 사용한다. 프로필의 desktop 채널은 Decal 앱이 아니라 이 저장소 제품 `decal-pack`을 가리키며, 버전 정본은 `packs/decal-pack/pack.source.json`의 `/packVersion`이다. Remote 제품 채널은 없다. private 도구용 package.json 버전과 배포 산출물은 버전 원본으로 등록하지 않는다.
+
+Task 완료는 검증한 HEAD/tree와 완료 증거를 묶어 `contracts/task-work-bug/v17/task-lifecycle.mjs`로 dry-run하고 같은 plan digest로 write한다. 상태와 정산 기록은 공식 transaction이 격리 커밋·finalize한다. 완료만으로 Pack 버전을 올리거나 이미 공개한 tag/assets를 덮어쓰지 않는다. 새 출시의 버전 정산·Pack 빌드·검수·공개는 이 문서의 기존 출시 절차와 별도 승인 경계를 따른다.

@@ -92,3 +92,8 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - Store https://skills.zuz.dev/ 공개 release `decal-project-pack-r23`, 3.9.1, publishedAt `2026-10-11T10:26:59.134Z`. 정상 공개 다운로드의 package SHA-256 `33cfaab77e863d3032e6feb02f4bdecab7787d0cd337719f4cd244dc17e99fb3`, source `2d56fcc16310c44a1c65a2b91bf627c79b5c2d4d`, 291개 파일이 GitHub asset과 일치한다. 공개 JWK로 manifest ES256 서명도 검증했다. 앞의 Store 미공개 기록은 당시 이력이며 현재 해소됐다.
 - 소비 Decal Task 791은 기존 앱 Build 16의 Pack 3.9.1 Smoke 및 현재 main 관련 검증과 공개 증거를 공식 완료 절차로 기록하고 `90c337786`에 completed 정산했다. 실제 공급자 세션 주입·모든 OS·다기기 실행·다른 소비 프로젝트 설치를 검증했다고 확대하지 않는다.
 - Task 3의 in_progress는 승인된 `.decal/settlement-profile.json` 부재로 유지한다. 공개·앱 적용은 끝났지만 정식 기록 완료 전이는 아직 수행하지 않았다. 임의 profile·상태 수정이나 중복 Work 생성은 하지 않았다.
+
+
+## 정산 설정 채택 · 2026-10-11
+
+사용자가 원본 정산 설정 구성과 Task 3 완료 정산을 명시 승인했다. Pack 버전 정본 `/packVersion`에 연결한 portable profile을 추가하고 기존 release 모드를 유지했다. Task 3은 Version Impact none이므로 완료 시 버전 적용은 not-required로 기록하며 공개 Pack 3.9.1과 tag/assets를 변경하지 않는다. 기존 profile 부재로 인한 완료 전이 보류는 이 설정 검증과 정식 lifecycle 실행으로 해소한다.

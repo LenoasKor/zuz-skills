@@ -1,0 +1,22 @@
+{
+  "schema": "zuz.its.settlement-profile/v1",
+  "engine": "portable",
+  "channels": {
+    "desktop": "decal-pack",
+    "remote": null
+  },
+  "products": [
+    {
+      "id": "decal-pack",
+      "files": [
+        {
+          "path": "packs/decal-pack/pack.source.json",
+          "format": "json",
+          "pointers": [
+            "/packVersion"
+          ]
+        }
+      ]
+    }
+  ]
+}
