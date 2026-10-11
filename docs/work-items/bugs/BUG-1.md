@@ -3,11 +3,11 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-1
 title: "최신 Pack 규약과 오래된 설치 영수증의 충돌 오판"
-status: development_complete
+status: closed
 priority: P1
 taskRefs:
   - "3"
-nextAction: "최신 패키지와 동일한 규약 구획을 보존 승인하고 실제 수정본 차단과 Decal 개발 루트 갱신을 검증한다."
+nextAction: null
 versionImpact: none
 remoteVersionImpact: none
 releaseMode: standalone
@@ -15,7 +15,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-10-11T16:01:21.137Z"
-updatedAt: "2026-10-11T16:05:37.851Z"
+updatedAt: "2026-10-11T16:05:39.267Z"
 blocked: null
 completion:
   summary: "Installer regression and actual Decal root update verified"
@@ -23,7 +23,11 @@ completion:
     - "node --test tests/portable-installer.test.mjs: 20/20 passed"
     - "Decal root 286 managed files exact; rule documents byte preserved; app latest 3.10.0"
   completedAt: "2026-10-11T16:05:37.851Z"
-closure: null
+closure:
+  reason: fixed
+  note: null
+  duplicateOf: null
+  closedAt: "2026-10-11T16:05:39.267Z"
 ---
 
 ## 사용자 요약
