@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.14.0"
+  version: "1.15.0"
   portable: true
 ---
 
@@ -101,11 +101,11 @@ from `development_complete` after the required verification and Smoke; do not cr
 
 If the project explicitly adopts the packaged v11 runner, read `contracts/task-work-bug/v11/README.md`
 and validate its manifest. Use `v11/work-item-lifecycle.mjs` for release-stage-aware normal transitions and
-`v17/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
+`v20/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
 Task, not separately. When the committed `config/its-settlement.json` sets `mode: release`, closing does
 not settle: the record keeps `pending`, the settlement runner returns `deferred_to_release`, and the
-version is applied once at release with `v17/release-settle.mjs` (separately approved). A missing file
+version is applied once at release with `v20/release-settle.mjs` (separately approved). A missing file
 keeps per-ticket settlement. The approved project profile must name its version sources. Preserve existing
 repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
 writer after a v11 rejection. A project that only has the published v9 runner retains its legacy
@@ -120,11 +120,15 @@ node contracts/task-work-bug/v5/transition-work-item.mjs \
 `development_complete` additionally requires `--summary` and at least one `--evidence`. `closed` requires
 `--reason`. A repository that ships its own lifecycle scripts takes precedence over this package.
 
+## Interrupted portable settlement
+
+For a project adopting v20, follow `contracts/task-work-bug/v20/README.md`. `--draft` saves an approved plan without changing canonical records or versions; ordinary `--write` includes the exact commit and finalization. A failed commit retains an isolated draft after safe compensation. Resume through the normal planner with a fresh preview, verification and authorized digest; never copy saved output over a newer registry or replay an old version increment. Use `drafts.mjs --action list` to inspect, and the digest-bound `--action park` only for an explicitly authorized legacy recovery. Mixed changes and live/unknown locks stay protected. A draft is not completion; a different Task can proceed when no unsafe application state remains.
+
 ## Safety and completion
 
 - Preserve unrelated dirty files and other sessions' work.
 - Recheck the source revision, canonical path, symlink boundary, and exact write-set before every lifecycle write.
-- Outside Decal, an explicit request to settle or close the Bug authorizes the immediate isolated commit of
+- For a repository-owned writer outside Decal, an explicit request to settle or close the Bug authorizes the immediate isolated commit of
   only the exact settlement write-set produced by that operation. Commit it before any other edit, then run
   the repository settlement finalizer. If commit or finalization is blocked, preserve the pending marker and
   report `settlement prepared; commit pending`; do not report the Bug as durably settled. This authority does

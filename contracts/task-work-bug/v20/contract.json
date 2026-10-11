@@ -1,0 +1,30 @@
+{
+  "schema": "decal.task-work-bug.contract/v20",
+  "contractId": "decal.task-work-bug/v20",
+  "dependsOn": [
+    {
+      "contractId": "decal.task-work-bug/v4",
+      "manifest": "v4/manifest.json"
+    },
+    {
+      "contractId": "decal.task-work-bug/v9",
+      "manifest": "v9/manifest.json"
+    },
+    {
+      "contractId": "decal.task-work-bug/v17",
+      "manifest": "v17/manifest.json"
+    }
+  ],
+  "portableSettlement": {
+    "taskLifecycle": "contracts/task-work-bug/v20/task-lifecycle.mjs",
+    "standaloneSettlement": "contracts/task-work-bug/v20/settle-work-item.mjs",
+    "releaseSettlement": "contracts/task-work-bug/v20/release-settle.mjs",
+    "finalizer": "contracts/task-work-bug/v20/finalize.mjs",
+    "drafts": "contracts/task-work-bug/v20/drafts.mjs"
+  },
+  "draftSchema": "zuz.its.settlement-draft/v1",
+  "draftDirectory": ".decal/settlement-drafts-v1",
+  "resume": "fresh-planner-and-current-approved-digest",
+  "legacyPolicy": "explicit-park-or-verified-historical-commit",
+  "repositoryEngine": "unchanged"
+}

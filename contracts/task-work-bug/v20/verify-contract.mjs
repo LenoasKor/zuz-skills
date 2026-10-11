@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+import { createHash } from "node:crypto";
+import { lstat, readFile, readdir, realpath } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const required = ["README.md", "contract.json", "drafts.mjs", "finalize.mjs", "release-settle.mjs", "settle-work-item.mjs", "task-lifecycle.mjs", "transaction.mjs", "verify-contract.mjs"];
+function fail(code) { const error = new Error(code); error.code = code; throw error; }
+async function plain(file) {
+  if (await realpath(file) !== file) fail("unsafe_contract_path");
+  const stat = await lstat(file);
+  if (!stat.isFile() || stat.nlink !== 1 || stat.size > 16 * 1024 * 1024) fail("unsafe_contract_path");
+  return readFile(file);
+}
+
+export async function verifyContract(directory = path.dirname(fileURLToPath(import.meta.url))) {
+  if (await realpath(directory) !== directory) fail("unsafe_contract_path");
+  const manifest = JSON.parse(await plain(path.join(directory, "manifest.json")));
+  if (manifest.schema !== "decal.task-work-bug.fixture-manifest/v20" || !manifest.files || Array.isArray(manifest.files)
+      || JSON.stringify(Object.keys(manifest.files).sort()) !== JSON.stringify([...required].sort())) fail("invalid_contract_manifest");
+  const actual = (await readdir(directory)).sort();
+  if (JSON.stringify(actual) !== JSON.stringify([...required, "manifest.json"].sort())) fail("unexpected_contract_file");
+  for (const name of required) {
+    const expected = manifest.files[name];
+    if (!/^[a-f0-9]{64}$/u.test(expected)
+        || createHash("sha256").update(await plain(path.join(directory, name))).digest("hex") !== expected) fail("contract_digest_mismatch");
+  }
+  const dependencies = ["v4/manifest.json", "v9/manifest.json", "v17/manifest.json"];
+  if (!manifest.dependencies || JSON.stringify(Object.keys(manifest.dependencies).sort()) !== JSON.stringify(dependencies.sort())) fail("invalid_contract_dependencies");
+  for (const [relative, expected] of Object.entries(manifest.dependencies)) {
+    if (!/^[a-f0-9]{64}$/u.test(expected)
+        || createHash("sha256").update(await plain(path.join(directory, "..", relative))).digest("hex") !== expected) fail("contract_dependency_mismatch");
+  }
+  for (const version of ["v9", "v17"]) {
+    const verifier = await import(new URL(`../${version}/verify-contract.mjs`, import.meta.url));
+    await verifier.verifyContract(path.join(directory, "..", version));
+  }
+  return { status: "accepted", schema: manifest.schema, fileCount: required.length };
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    if (process.argv.length !== 2) fail("usage_error");
+    process.stdout.write(`${JSON.stringify(await verifyContract())}\n`);
+  } catch (error) {
+    process.stdout.write(`${JSON.stringify({ status: "rejected", code: error.code ?? "contract_validation_failed" })}\n`);
+    process.exitCode = 2;
+  }
+}

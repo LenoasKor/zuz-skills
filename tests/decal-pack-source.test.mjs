@@ -222,7 +222,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.7" },
-    { id: "zuz-its", version: "1.7.1" },
+    { id: "zuz-its", version: "1.8.0" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.2" },
   ]);
@@ -231,9 +231,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.18.0",
-    "decal-work": "1.14.0",
-    "decal-bug": "1.14.0",
+    "decal-task": "1.19.0",
+    "decal-work": "1.15.0",
+    "decal-bug": "1.15.0",
     "decal-incident": "1.8.0",
     "zuz-its": "1.5.0",
     "decal-slice": "0.4.13",
@@ -317,8 +317,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.18\.0"/);
-      assert.match(content, /v17\/release-settle\.mjs/);
+      assert.match(content, /version: "1\.19\.0"/);
+      assert.match(content, /v20\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
     }
@@ -383,12 +383,16 @@ test("ITS and maintenance entrypoints retain scoped external commit approval for
   }
 });
 
-test("Pack keeps v10/v11 and v12 bookkeeping and v17 release settlement", async () => {
+test("Pack keeps old contracts and advertises isolated v20 release settlement", async () => {
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.9.1");
-  assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v17");
+  assert.equal(packageValue.packVersion, "3.10.0");
+  assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
+  assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
+  for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
+    assert.ok(packageValue.files.some(item => item.sourcePath === `contracts/task-work-bug/v20/${file}`), file);
+  }
   for (const file of ["release-settle.mjs", "settle-work-item.mjs", "settlement-mode.mjs", "task-lifecycle.mjs", "verify-contract.mjs"]) {
     assert.ok(packageValue.files.some((item) => item.sourcePath === `contracts/task-work-bug/v17/${file}`), file);
   }

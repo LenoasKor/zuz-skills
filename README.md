@@ -11,9 +11,9 @@ It is intentionally separate from the catalog service:
 
 ## Current status
 
-First-party contents are licensed under Apache-2.0. Decal Pack 3.1.6 is the latest released line. The 3.2.0 candidate adds a recurring-work load gate to `decal-debug`: before editing code, agents inventory cumulative timers, watchers, IPC, I/O and render fan-out, justify the required freshness, and prefer events, revisions, exact deadlines, background work, deduplication and bounded active-only supervision. Settlement, deployment, user-file, and authority boundaries remain unchanged.
+First-party contents are licensed under Apache-2.0. Pack 3.10.0 is an **unpublished candidate** for Task 792 (Decal): isolated settlement drafts, safe compensation after commit failure, and historical exact-commit finalization after unrelated commits. It keeps released contracts unchanged and preserves repository-owned and Native authority. The preceding published Pack is 3.9.1; editing or building this source is not a Store publication or a consumer installation.
 
-- source tag/release: `decal-pack-v3.1.6`
+- preceding public source tag/release: `decal-pack-v3.9.1`
 - signed catalog: [skills.zuz.dev](https://skills.zuz.dev/)
 - stable Pack identity: `decal-project-pack`
 
