@@ -1,6 +1,6 @@
 # Task 3 · Pack · 003 — 추적 필요성 기반 ITS 규약과 스킬·설치기 일치
 
-상태: in_progress
+상태: completed
 
 Task Category: pack
 
@@ -14,7 +14,7 @@ Index Summary: 단순 실행에 티켓을 만들지 않고 추적 필요성에 �
 
 Version Impact: none
 
-Version Applied: pending
+Version Applied: not-required
 
 Remote Version Impact: none
 
@@ -97,3 +97,23 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 ## 정산 설정 채택 · 2026-10-11
 
 사용자가 원본 정산 설정 구성과 Task 3 완료 정산을 명시 승인했다. Pack 버전 정본 `/packVersion`에 연결한 portable profile을 추가하고 기존 release 모드를 유지했다. Task 3은 Version Impact none이므로 완료 시 버전 적용은 not-required로 기록하며 공개 Pack 3.9.1과 tag/assets를 변경하지 않는다. 기존 profile 부재로 인한 완료 전이 보류는 이 설정 검증과 정식 lifecycle 실행으로 해소한다.
+
+## 완료 확인 기록
+
+<!-- decal-slice-completion:v1 -->
+- Kind: automated-smoke
+- Confirmed At: 2026-10-11T10:40:22.282Z
+- Confirmed By: ai
+- Environment: macOS; zuz-skills main; Pack 3.9.1 public r23
+- Summary: 승인된 portable 정산 profile 검증과 현재 clean HEAD 전체 243개 테스트 통과. 기존 Pack 3.9.1 공개·서명/해시·Decal 앱 Smoke 증거 유지. release 모드, Task impact none으로 공개 버전 변경 없이 완료.
+- Source Status: in_progress
+- Target Status: completed
+- Verified HEAD: 600f6ea7fca53734fdb4b0cd032757cb242077ac
+- Verified Tree: ac12e8a1906c46d7471413a7e2e4bbe388e8af14
+- Verification Source: clean-snapshot
+- Verification Receipt: sha256:8a26a655775e14b6dfa95738a65331f8eede4ab347a2348ac669d1522c3f5bd6
+- Evidence: npm test: 243 passed / 0 failed on current clean HEAD
+- Evidence: v17 verify-contract and v4 registry validation accepted
+- Evidence: read-only profile plan: Pack 3.9.1 source resolves correctly; no version mutation
+- Evidence: Store decal-project-pack-r23 package sha256:33cfaab77e863d3032e6feb02f4bdecab7787d0cd337719f4cd244dc17e99fb3; ES256 verified 2026-10-11T10:27:53Z
+- Evidence: Decal Task 791 completed commit 90c337786; Pack 3.9.1 app smoke, Desktop 0.474.6 Build 16
