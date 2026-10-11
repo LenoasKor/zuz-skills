@@ -1,13 +1,19 @@
 {
   "schema": "zuz.decal-pack.installation-lock/v2",
   "packId": "decal-project-pack",
-  "packVersion": "3.7.1",
-  "sourceRevision": "bd0820b1cce49e8c6221de24570c4e0a65682960",
-  "manifestSha256": "723dcb759c482fcbbf399a0138b0d940178bc5bcea592ecab1c0d5a027e815ed",
-  "packageSha256": "add34ad334f7674b66536b1dbf5284c4e544210f2e7e33c723039f8596684910",
-  "mode": "initial-pack-bootstrap",
-  "installationPlanDigest": "sha256:9e8be01096b4ae1308d5004655a95a6ed4727f5122e3935dc72b5c6ced95dfc2",
-  "previousRelease": null,
+  "packVersion": "3.9.1",
+  "sourceRevision": "e2597a420707ee4386b33c3b3f2e85cf4b06a151",
+  "manifestSha256": "c2c31cd011c17eb1ad9d02fa5ade82287e2231f3fc3f3d5752d3a97509781a52",
+  "packageSha256": "82e5563ab213fa285e6676a92037dfef940ecfcd6d711157dbe72b670b402e0a",
+  "mode": "update",
+  "installationPlanDigest": "sha256:4ee01e28d03f7a4883b85bdf60916fde550a5b486365bcd9dabf9a4c66ebb6e2",
+  "previousRelease": {
+    "packVersion": "3.7.1",
+    "sourceRevision": "bd0820b1cce49e8c6221de24570c4e0a65682960",
+    "manifestSha256": "723dcb759c482fcbbf399a0138b0d940178bc5bcea592ecab1c0d5a027e815ed",
+    "packageSha256": "add34ad334f7674b66536b1dbf5284c4e544210f2e7e33c723039f8596684910",
+    "installationPlanDigest": "sha256:9e8be01096b4ae1308d5004655a95a6ed4727f5122e3935dc72b5c6ced95dfc2"
+  },
   "modules": [
     "zuz-its"
   ],
@@ -26,14 +32,14 @@
     },
     {
       "id": "development-core",
-      "version": "1.3.6",
-      "digest": "2914c9bfba04e5f1d69e0aa5322b144940eb3196825e77c70a03865cbf29c099",
+      "version": "1.3.7",
+      "digest": "ee8e7499056f53ac0c512da382485609c8e225522cd64b5b2db4888946bd1fed",
       "status": "removed"
     },
     {
       "id": "zuz-its",
-      "version": "1.5.1",
-      "digest": "0e414db4ddc36e170399e7b4b9c25d81c459a30ea3ff22e0f2c5a709f171e1f6",
+      "version": "1.7.1",
+      "digest": "10296b6ee29f146535bd8af52025d1f071d89b912a635b5ccb39e0ecf946b142",
       "status": "installed"
     }
   ],
@@ -46,17 +52,17 @@
     {
       "path": ".agents/skills/decal-bug/SKILL.md",
       "provider": "acp",
-      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+      "sha256": "7f6af418106350d578554e3663a2344d2419afe69498b0206a0162af56a4b9f8"
     },
     {
       "path": ".agents/skills/decal-incident/SKILL.md",
       "provider": "acp",
-      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+      "sha256": "8fcdabfb6d96e9f09bdde107b76530f2538a6e0e5a084c70f60820afde037d90"
     },
     {
       "path": ".agents/skills/decal-slice-dev-report/SKILL.md",
       "provider": "acp",
-      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+      "sha256": "b066f21b8ae619c825f06256ac6a588ec2bba820ccef9f99db01c048b277f836"
     },
     {
       "path": ".agents/skills/decal-slice-hygiene/SKILL.md",
@@ -66,7 +72,7 @@
     {
       "path": ".agents/skills/decal-slice-maintenance/SKILL.md",
       "provider": "acp",
-      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+      "sha256": "57f33856f0e2440e1a26e0213d412db70b9d451ed3ca40f1da1f9f24803224af"
     },
     {
       "path": ".agents/skills/decal-slice-map/SKILL.md",
@@ -76,57 +82,57 @@
     {
       "path": ".agents/skills/decal-slice-plan-report/SKILL.md",
       "provider": "acp",
-      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+      "sha256": "cffaf612b9e3bf6e0470c3879a6a704a526d74439107b5a907508ea09a48f33e"
     },
     {
       "path": ".agents/skills/decal-slice-report/SKILL.md",
       "provider": "acp",
-      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+      "sha256": "1ad0837d37ee6b4982f1a076b42ee50b9c1b1e7011330e09f509f4509f5d79e7"
     },
     {
       "path": ".agents/skills/decal-slice-smoke/SKILL.md",
       "provider": "acp",
-      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+      "sha256": "ccb9582845817953465d0918a54df6043b76e34df47077643a1fcf97f09297fa"
     },
     {
       "path": ".agents/skills/decal-slice-test-report/SKILL.md",
       "provider": "acp",
-      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+      "sha256": "ff34306a082d65fb573ca66edfb3a1412d0078ac058b8b14f82293d8d54e6612"
     },
     {
       "path": ".agents/skills/decal-slice/SKILL.md",
       "provider": "acp",
-      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+      "sha256": "4d37bfde0c81414232e5d5d759f18e7c06de8f1a7f658e8fb23faed1e6b87415"
     },
     {
       "path": ".agents/skills/decal-task/SKILL.md",
       "provider": "acp",
-      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+      "sha256": "cbc15f085e99b29b6c351d4378aace2ee2a342def09e0fffc89f7c6beb852350"
     },
     {
       "path": ".agents/skills/decal-work/SKILL.md",
       "provider": "acp",
-      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+      "sha256": "e617b85cb7a9c6c1b42bdfc27e413f1b9fa94bac92ed54869f6d968e2c22cfa4"
     },
     {
       "path": ".agents/skills/zuz-its/SKILL.md",
       "provider": "acp",
-      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+      "sha256": "fad4e8860fa36a37b8b25d16101430c2764d07261a361c8f618c59457a956376"
     },
     {
       "path": ".claude/skills/decal-bug/SKILL.md",
       "provider": "claude",
-      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+      "sha256": "7f6af418106350d578554e3663a2344d2419afe69498b0206a0162af56a4b9f8"
     },
     {
       "path": ".claude/skills/decal-incident/SKILL.md",
       "provider": "claude",
-      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+      "sha256": "8fcdabfb6d96e9f09bdde107b76530f2538a6e0e5a084c70f60820afde037d90"
     },
     {
       "path": ".claude/skills/decal-slice-dev-report/SKILL.md",
       "provider": "claude",
-      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+      "sha256": "b066f21b8ae619c825f06256ac6a588ec2bba820ccef9f99db01c048b277f836"
     },
     {
       "path": ".claude/skills/decal-slice-hygiene/SKILL.md",
@@ -136,7 +142,7 @@
     {
       "path": ".claude/skills/decal-slice-maintenance/SKILL.md",
       "provider": "claude",
-      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+      "sha256": "57f33856f0e2440e1a26e0213d412db70b9d451ed3ca40f1da1f9f24803224af"
     },
     {
       "path": ".claude/skills/decal-slice-map/SKILL.md",
@@ -146,47 +152,62 @@
     {
       "path": ".claude/skills/decal-slice-plan-report/SKILL.md",
       "provider": "claude",
-      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+      "sha256": "cffaf612b9e3bf6e0470c3879a6a704a526d74439107b5a907508ea09a48f33e"
     },
     {
       "path": ".claude/skills/decal-slice-report/SKILL.md",
       "provider": "claude",
-      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+      "sha256": "1ad0837d37ee6b4982f1a076b42ee50b9c1b1e7011330e09f509f4509f5d79e7"
     },
     {
       "path": ".claude/skills/decal-slice-smoke/SKILL.md",
       "provider": "claude",
-      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+      "sha256": "ccb9582845817953465d0918a54df6043b76e34df47077643a1fcf97f09297fa"
     },
     {
       "path": ".claude/skills/decal-slice-test-report/SKILL.md",
       "provider": "claude",
-      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+      "sha256": "ff34306a082d65fb573ca66edfb3a1412d0078ac058b8b14f82293d8d54e6612"
     },
     {
       "path": ".claude/skills/decal-slice/SKILL.md",
       "provider": "claude",
-      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+      "sha256": "4d37bfde0c81414232e5d5d759f18e7c06de8f1a7f658e8fb23faed1e6b87415"
     },
     {
       "path": ".claude/skills/decal-task/SKILL.md",
       "provider": "claude",
-      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+      "sha256": "cbc15f085e99b29b6c351d4378aace2ee2a342def09e0fffc89f7c6beb852350"
     },
     {
       "path": ".claude/skills/decal-work/SKILL.md",
       "provider": "claude",
-      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+      "sha256": "e617b85cb7a9c6c1b42bdfc27e413f1b9fa94bac92ed54869f6d968e2c22cfa4"
     },
     {
       "path": ".claude/skills/zuz-its/SKILL.md",
       "provider": "claude",
-      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+      "sha256": "fad4e8860fa36a37b8b25d16101430c2764d07261a361c8f618c59457a956376"
+    },
+    {
+      "path": "contracts/its-tracking-policy.md",
+      "provider": "shared",
+      "sha256": "7810c70daadbbdbcc461cfd0bbbec6ebf22927516e6d251c9b84b75748772c1b"
+    },
+    {
+      "path": "contracts/task-work-bug/capabilities.json",
+      "provider": "shared",
+      "sha256": "cacba0252f77d5bc28650fdf278b6f0cc7aa88d044920a50ad2ea53c99ef1e4b"
     },
     {
       "path": "contracts/task-work-bug/initialize-task-registry.mjs",
       "provider": "shared",
       "sha256": "8b3ce12bef5a90dd4d489975fd1ab0fb648bfd05f01ec4038ea642f257a98fa0"
+    },
+    {
+      "path": "contracts/task-work-bug/its-register.mjs",
+      "provider": "shared",
+      "sha256": "02342b2a318ea8d2b3d2feb007d2676fa1237c6849e51bab940393905edc11fe"
     },
     {
       "path": "contracts/task-work-bug/repair-task-registry-summary.mjs",
@@ -517,6 +538,86 @@
       "path": "contracts/task-work-bug/v17/verify-contract.mjs",
       "provider": "shared",
       "sha256": "12997ee31328908851aa8d3e79605ccffdfd452efea5cda73568e911592e1bd8"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/authority-client.mjs",
+      "provider": "shared",
+      "sha256": "56dce6a28abf2bf14abc79685b953ba4843a816e040e7122c64f0d8b82750ec8"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/authority-common.mjs",
+      "provider": "shared",
+      "sha256": "b0fa9fb70b8cd161c243b40722b159c062b2a68d46f37889671b90426bd52e60"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/authority-server.mjs",
+      "provider": "shared",
+      "sha256": "27bb93cf871af18e38007f808b7b88a9b1dcc77a472fc6cef5f2da3972b126f2"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/contract.json",
+      "provider": "shared",
+      "sha256": "e5f4e964ee383a8ad955e353a56f399fd5f63d955569d8662f196f6f096de454"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/manifest.json",
+      "provider": "shared",
+      "sha256": "59788d9355e478b534fec491ea1188d690b3f712ead78c3652f696a57c6cc49d"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/README.md",
+      "provider": "shared",
+      "sha256": "fb9235e0e61a19ebf30a505085bcded07be5558c531387f50ff381bc6d508e6b"
+    },
+    {
+      "path": "contracts/task-work-bug/v18/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "8dcb0178f901357b1c5d8638c03bc3c61035bc01da1423db18fb9bc6e6187643"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/contract.json",
+      "provider": "shared",
+      "sha256": "58a3b99e823e2826d6d50ce595f8a2f3fd8cb22cd51043a60b3257767dc72ee2"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/lan-authority.mjs",
+      "provider": "shared",
+      "sha256": "e2c259ec6c9b456fef8e8d1187759d6cf7be720d915a47d7866a8fc7e34690a8"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/lan-broker.mjs",
+      "provider": "shared",
+      "sha256": "11749cf0b724abc7bd7314383c3646df14a63a1a05e6c3dff12fdc5f4abdb915"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/lan-client.mjs",
+      "provider": "shared",
+      "sha256": "36585077b0a1eca7a3a3b1db650d6024476e5d0ec244b9bd17dcdeaee1dabf4f"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/lan-crypto.mjs",
+      "provider": "shared",
+      "sha256": "6a9e15affeedaf132b7071b7747d5fc6bdca1d1b24b957c17016b768017c96dd"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/lan-discovery.mjs",
+      "provider": "shared",
+      "sha256": "378407c696e76f2a69ad39661550b6d94175298bad98efba766adb27acbd56f8"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/manifest.json",
+      "provider": "shared",
+      "sha256": "cf5bf80c63b815e6d4a653a657b6e42252c86570a48425229bd865bce6091d26"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/README.md",
+      "provider": "shared",
+      "sha256": "92972b7ec93394fef9edad68c74885fa1ed75d842107cdd630f97d1b8771efa2"
+    },
+    {
+      "path": "contracts/task-work-bug/v19/verify-contract.mjs",
+      "provider": "shared",
+      "sha256": "d6e81bb0424cea0874fafd1cfced2216db2aef7a70f4c3cec76d20e141d126b1"
     },
     {
       "path": "contracts/task-work-bug/v2/acceptance-cases.json",
@@ -1136,7 +1237,7 @@
     {
       "path": "docs/skills/decal-slice-dev-report.md",
       "provider": "shared",
-      "sha256": "b08f81883c772d97c35eefdf54dea02d6b6d2cc27cf64684679d9f61583c5e4b"
+      "sha256": "8bddbdbd6f2be6ff4a77b2372d9019f2728063a708e8d65d9408f212234e2585"
     },
     {
       "path": "docs/skills/decal-slice-hygiene.md",
@@ -1146,7 +1247,7 @@
     {
       "path": "docs/skills/decal-slice-maintenance.md",
       "provider": "shared",
-      "sha256": "853775c23d516c8f2573f552bee8cbcd67b02f548097b074ed922037b28676b3"
+      "sha256": "dd7821fbbc2f34fbddbf15a8d1f1aaa13d2874009c0309cb2bbe74feda46536e"
     },
     {
       "path": "docs/skills/decal-slice-map.md",
@@ -1156,27 +1257,27 @@
     {
       "path": "docs/skills/decal-slice-plan-report.md",
       "provider": "shared",
-      "sha256": "3e32769d8242f34272b5893f20d19753e2efc36c367f693aa71e1ee63bb24c7f"
+      "sha256": "15f763cf11a01e8c10a6193ac7b980297be4028c33f518bb6a5b411c171325dc"
     },
     {
       "path": "docs/skills/decal-slice-report.md",
       "provider": "shared",
-      "sha256": "be260acccf55dffde4555374357d6a090615311a4239c7c584a97b686b07b4f0"
+      "sha256": "2281609efc83eb8903958daca28037ab689bc0ce636e3ceebfb5714ecc80462b"
     },
     {
       "path": "docs/skills/decal-slice-smoke.md",
       "provider": "shared",
-      "sha256": "d903c453a93b85823d44bcffa1d54d13b28026d2e23e4893ab395b28ec7dc073"
+      "sha256": "cd709996990d191aa99d1adf031b80592eafe99e678bc4c44db90a4532842ef0"
     },
     {
       "path": "docs/skills/decal-slice-test-report.md",
       "provider": "shared",
-      "sha256": "e1b38e25f2cb6855e694e6fd92935181481ea0041f101a6b0e8f4251a0d3cf5f"
+      "sha256": "37f6a7ea101884047af833cc5223f3e768e1725b00f7c75fd761caf59ca2bacc"
     },
     {
       "path": "docs/skills/slice.md",
       "provider": "shared",
-      "sha256": "ed11d0e785c08cbef581347eb6c3b23bbfa3ab1f780a823bca4fa4f29cfa7e52"
+      "sha256": "e2e8b8194532af6781620a7ead706c09807e7ed3e029a5449d37e883075819db"
     },
     {
       "path": "docs/skills/vendor/decal-project-pack/LICENSE",
@@ -1191,17 +1292,17 @@
     {
       "path": "skills/decal-bug/SKILL.md",
       "provider": "codex",
-      "sha256": "680c44f210ee97da02299e69a6f2ee1ca33ba8aa6772cd0aa201989bf0a096ed"
+      "sha256": "7f6af418106350d578554e3663a2344d2419afe69498b0206a0162af56a4b9f8"
     },
     {
       "path": "skills/decal-incident/SKILL.md",
       "provider": "codex",
-      "sha256": "336b0ca9d2bf4f94d1cf2c4a2f2192c8024891f7a23bbaaa9d0d1f2fe98753f4"
+      "sha256": "8fcdabfb6d96e9f09bdde107b76530f2538a6e0e5a084c70f60820afde037d90"
     },
     {
       "path": "skills/decal-slice-dev-report/SKILL.md",
       "provider": "codex",
-      "sha256": "2edd9af93e0393c0027c0e2cd2f9c22c9177fcd0538c16863639e06abf7cc3d0"
+      "sha256": "b066f21b8ae619c825f06256ac6a588ec2bba820ccef9f99db01c048b277f836"
     },
     {
       "path": "skills/decal-slice-hygiene/SKILL.md",
@@ -1211,7 +1312,7 @@
     {
       "path": "skills/decal-slice-maintenance/SKILL.md",
       "provider": "codex",
-      "sha256": "2f25d803dc890a1e1b1e2d38f44e4646137d331c5bffc1a696e9744e0a73421f"
+      "sha256": "57f33856f0e2440e1a26e0213d412db70b9d451ed3ca40f1da1f9f24803224af"
     },
     {
       "path": "skills/decal-slice-map/SKILL.md",
@@ -1221,52 +1322,52 @@
     {
       "path": "skills/decal-slice-plan-report/SKILL.md",
       "provider": "codex",
-      "sha256": "2ab5ac8df6933f2f2428a1b6984b8b555016bd677d2ed548ca25f849d845ca04"
+      "sha256": "cffaf612b9e3bf6e0470c3879a6a704a526d74439107b5a907508ea09a48f33e"
     },
     {
       "path": "skills/decal-slice-report/SKILL.md",
       "provider": "codex",
-      "sha256": "2c2cb64f6502d0ad4223ba168fa08ff3bee780a3e14fc7fd73fe4cc20aeb7c22"
+      "sha256": "1ad0837d37ee6b4982f1a076b42ee50b9c1b1e7011330e09f509f4509f5d79e7"
     },
     {
       "path": "skills/decal-slice-smoke/SKILL.md",
       "provider": "codex",
-      "sha256": "96786ee57325feafad99a933565a2eb81f60efbb7fd54a7dfb2e4c9e43c6ad1f"
+      "sha256": "ccb9582845817953465d0918a54df6043b76e34df47077643a1fcf97f09297fa"
     },
     {
       "path": "skills/decal-slice-test-report/SKILL.md",
       "provider": "codex",
-      "sha256": "8b9e22af0ddeba6b071f76899ff88465353a341883dd7fc26bcea1eff2db5287"
+      "sha256": "ff34306a082d65fb573ca66edfb3a1412d0078ac058b8b14f82293d8d54e6612"
     },
     {
       "path": "skills/decal-slice/SKILL.md",
       "provider": "codex",
-      "sha256": "79f3b3cb3d221169db8a606ca596486560a72aef6a14d40d89f2597f35838541"
+      "sha256": "4d37bfde0c81414232e5d5d759f18e7c06de8f1a7f658e8fb23faed1e6b87415"
     },
     {
       "path": "skills/decal-task/SKILL.md",
       "provider": "codex",
-      "sha256": "60c946f405013406470425cf1a36d6e1ac6cfa01ea992929c011fbb5a792a16a"
+      "sha256": "cbc15f085e99b29b6c351d4378aace2ee2a342def09e0fffc89f7c6beb852350"
     },
     {
       "path": "skills/decal-work/SKILL.md",
       "provider": "codex",
-      "sha256": "cacfa29bf03cd3611ab1a496f2bf9397893247198269f77d143fc8339723d018"
+      "sha256": "e617b85cb7a9c6c1b42bdfc27e413f1b9fa94bac92ed54869f6d968e2c22cfa4"
     },
     {
       "path": "skills/zuz-its/SKILL.md",
       "provider": "codex",
-      "sha256": "9faa8b69a202fa777d8eff43e3f066714cdbe9562d5cb70d48234ccd262a4f3f"
+      "sha256": "fad4e8860fa36a37b8b25d16101430c2764d07261a361c8f618c59457a956376"
     }
   ],
   "ruleFiles": [
     {
       "path": "AGENTS.md",
-      "blockSha256": "bba85e960bbeee943588e05206c3dbd30d40b5249702c76955c02998db8ee1a3"
+      "blockSha256": "880d53206a94d37e76058e547b09808b2e4b78ac42d140f8d631473941ec474a"
     },
     {
       "path": "CLAUDE.md",
-      "blockSha256": "bba85e960bbeee943588e05206c3dbd30d40b5249702c76955c02998db8ee1a3"
+      "blockSha256": "880d53206a94d37e76058e547b09808b2e4b78ac42d140f8d631473941ec474a"
     }
   ],
   "obsoleteManagedFiles": [],

@@ -2,13 +2,17 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.4.1"
+  version: "1.5.0"
   portable: true
 ---
 
 # zuz ITS
 
 Use the repository's installed zuz Issue Tracking System without replacing its existing Task, Work, or Bug records.
+
+## Tracking decision first
+
+Read `contracts/its-tracking-policy.md` from the verified project root before proposing a ticket. It is the shared registration decision, not an extra approval step. Exempt operations return to the requested work without issuing a ticket; matching scope continues its existing record. The procedures below apply only when a ticket is needed or the user explicitly requests one. A session, commit, push, or verification step does not itself need a Work.
 
 ## Repository authority boundary
 
@@ -49,8 +53,6 @@ Task Space, session work activity, Office work, Jig planning, and Slice implemen
 
 Preserve the repository's current statuses and lifecycle. Do not invent a Slice object, rewrite IDs, or force a separate Task for every Issue.
 
-Before proposing a new Work or Bug, check the active record, open records under the same parent Task, and especially records issued that day. Continue an existing Work when its goal, acceptance criteria, and release/settlement unit still cover the added step. Continue an existing Bug when the cause, fix, and verification scope match; similar symptoms or dates alone are not enough. Add evidence and work-log history to the original ID after source-revision recheck. Keep distinct kinds, causes, closure criteria, release units, post-completion regressions, and security/data-loss/service incidents separate. For a new candidate, identify the records considered and why none can be reused. Never delete or recycle an already issued duplicate ID; retain its duplicate relationship.
-
 ## Chat references
 
 When a ticket is relevant, prefer the canonical reference tokens understood by Decal:
@@ -67,10 +69,10 @@ Never guess a missing ticket. Search the canonical repository records first. Out
 ## Contract routing
 
 - Read current identity and Incident alias rules from `contracts/zuz-its/v3`; v1 and v2 remain immutable compatibility contracts.
-- Preserve `contracts/task-work-bug/v1` through `v10` as pinned compatibility dependencies. Use the v10 main-authority broker for Task, Work, Bug, and Incident registration. It delegates the existing v7/v9 transaction to the one existing canonical default-branch worktree without changing the caller's worktree.
-- Use the v11 Work·Bug lifecycle with an approval-bound release context when installed. Explicit `live` keeps `release_ready`; explicit/defaulted `pre_live` closes after verified development completion without creating that state. Task lifecycle, Work·Bug settlement, identity aliases, finalization, and recovery remain v9. Legacy v9-only installations keep their published lifecycle until updated.
+- Registration uses the installed `contracts/task-work-bug/its-register.mjs` and its advertised, verified capability; do not choose a version or bypass unavailable authority. Published version directories remain compatibility dependencies, not competing current instructions.
+- Lifecycle and settlement use the repository's official engine, or the project's explicitly adopted portable execution profile. Read only the relevant operation's guidance. With `config/its-settlement.json` set to `release`, closure leaves applied versions pending until release; a missing mode file preserves per-ticket behavior.
 - Use the more specific `decal-task`, `decal-work`, `decal-bug`, or `decal-incident` skill when creating or changing a ticket.
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Closed records use the formal reopen operation and retain earlier completion and version history; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.

@@ -61,7 +61,7 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - [x] 등록 필요성 판정을 통일하고 커밋·push·기존 작업 단계의 중복 등록을 제거한다.
 - [x] 현재 운영 지시와 legacy 호환 설명을 분리하고 기존 보호 조건을 유지한다.
 - [x] 원본 스킬·설치기·공급자별 사본과 관련 검증이 일치한다.
-- [ ] 변경을 격리 커밋하고 push·배포 준비 상태와 미검증 범위를 보고한다.
+- [x] 변경을 격리 커밋하고 push·배포 준비 상태와 미검증 범위를 보고한다.
 
 ## 검증 기록 · 2026-10-11
 
@@ -70,3 +70,7 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - 독립 AI 검수의 12개 사례와 재검수에서 지적한 등록 면제·종료 기록·기존 승인·Incident 선택 조건을 반영했다.
 - Decal Task 791이 내장본·Rust 설치기·저장소 규약·번역 fallback을 소비한다. 기존 Task 1·2의 등록 입구와 계약 bytes는 변경하지 않았다.
 - 후보 Pack 3.9.1. source commit 후 결정적 빌드와 소비본 검증을 이어가며 공개 tag·push·배포는 미실행이다.
+
+- 최종 전체 재검증: `npm test` 243/243 통과(0 실패). 원본 저장소의 기존 zuz-its 모듈과 acp·claude·codex 선택을 유지한 공식 설치기 갱신도 성공했다.
+- 선행 source commit: `e2597a420707ee4386b33c3b3f2e85cf4b06a151`. 설치 영수증의 정확한 gitWriteSet만 별도 커밋한다.
+- 저장소에 승인된 `.decal/settlement-profile.json`이 없어 portable 완료 상태 전이·정산은 수행하지 않는다. 구현·자동 검증·커밋 준비 사실을 이 기록에 남기고, 기존 in_progress 상태와 적용 버전 이력을 보존한다. 공개 출시와 정산은 다음 승인 단계다.

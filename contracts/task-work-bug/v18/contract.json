@@ -1,0 +1,26 @@
+{
+  "schema": "decal.task-work-bug.contract/v18",
+  "contractId": "decal.task-work-bug/v18",
+  "dependsOn": [
+    { "contractId": "decal.task-work-bug/v10", "manifest": "v10/manifest.json" },
+    { "contractId": "decal.task-work-bug/v15", "manifest": "v15/manifest.json" }
+  ],
+  "multiDeviceAuthority": {
+    "server": "contracts/task-work-bug/v18/authority-server.mjs",
+    "client": "contracts/task-work-bug/v18/authority-client.mjs",
+    "brokerOnAuthority": ["contracts/task-work-bug/v15", "contracts/task-work-bug/v10"],
+    "transport": "http-json",
+    "authentication": "hmac-sha256 over method, route, time and body with a shared 256-bit key; responses are signed the same way",
+    "maxBodyBytes": 1048576,
+    "maxClockSkewSeconds": 300,
+    "projectIdentity": "sha256 of the sorted root commit ids, first 32 hex",
+    "synchronization": "git bundle of the registration commit and its unseen ancestors, verified and merged on the client's default branch",
+    "offlineQueue": ".decal/its-outbox",
+    "idempotency": "intentId plus the v7/v9 intent digest; a resent intent returns the original commit",
+    "localFallback": "a device with no client config registers exactly like the v15 broker"
+  },
+  "compatibility": {
+    "preserves": "v10 and v15 entrypoints, intent formats, receipts and exact-commit behaviour are unchanged",
+    "doesNotAuthorize": ["push", "merge to a remote", "deploy", "lifecycle completion", "version settlement", "another repository"]
+  }
+}
