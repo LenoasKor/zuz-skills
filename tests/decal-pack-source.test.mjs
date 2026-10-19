@@ -224,7 +224,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     { id: "development-core", version: "1.3.7" },
     { id: "zuz-its", version: "1.8.0" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.1.2" },
+    { id: "decal-maintainer", version: "1.1.3" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
@@ -387,7 +387,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.10.0");
+  assert.equal(packageValue.packVersion, "3.10.1");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
