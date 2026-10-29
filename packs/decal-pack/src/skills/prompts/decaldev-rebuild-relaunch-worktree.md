@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch-worktree
 label: 데칼 워크트리 테스트 빌드
-version: 0.8.0
+version: 0.8.1
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -46,3 +46,7 @@ Node.js 26 이상(현재 검증 환경)에서 `node tools/collab-sidecar/showcas
 - `run http://127.0.0.1:<포트> <기기파일> <세션ID> <프로젝트ID> [--remove]`: 사용자가 지정한 유휴 Native 세션에 이 내장 스킬만 전달합니다. 대상은 그 세션의 현재 Task와 연결된 작업본이며, 외부 CLI의 현재 디렉터리를 대신 등록하지 않습니다. 기존 제어권이 있어야 하며 다른 기기나 Desktop의 제어권을 가져오지 않습니다. 기본은 검수 뒤 정지·반납이며, `--remove`를 명시하면 이번 테스트 등록·산출물 제거도 요청합니다.
 
 입력 접수는 작업 완료가 아닙니다. 이 호출의 입력 이후 실제 Host가 게시한 관리 도구 결과만 받아 같은 run의 상태를 출력합니다. 과거 기록·모델이 쓴 성공 문구는 완료 증거가 아닙니다. 연결 단절·시간 초과·결과 불명확 시 자동 재접속이나 재전송 없이 미확정으로 보고하고 기존 Desktop/Remote에서 실제 상태를 확인합니다. 기기 승인은 현재 Task·작업본·빌드 권한을 대신하지 않습니다.
+
+## 릴리즈 앱 요청
+
+릴리즈 후보·정식 앱 빌드와 로컬 업데이트는 [데칼 릴리즈 빌드·업데이트](decal-release-build-update.md)를 사용한다. 이 스킬의 디버그 앱 재시작 절차로 대체하지 않는다.

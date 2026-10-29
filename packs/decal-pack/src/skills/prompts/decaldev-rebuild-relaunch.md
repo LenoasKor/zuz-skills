@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch
 label: 데칼 개발빌드 재시작
-version: 0.12.0
+version: 0.12.1
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -36,3 +36,7 @@ Tauri build hook과 Remote 정적 preview는 제품 SemVer를 바꾸지 않습�
 ## 승인 재사용 경계
 
 같은 요청·앱·종료 영향·닫힌 preview·비용·권한 범위의 승인은 같은 수정/검증 루프에 재사용한다. 실행 직전 소스·artifact·프로세스 소유권을 재검증한다. 정상 main 커밋 전진만으로 재질문하지 않는다. 다른 작업의 미커밋 혼입은 준비 문제이며 임의 삭제하거나 타 세션을 종료하지 않는다. Native는 지원된 grant 재사용 기능만 사용하고 문구만으로 새 grant를 만들지 않는다. 기능 부재는 해당 재시작만 보류한다.
+
+## 릴리즈 앱 요청
+
+릴리즈 후보·정식 앱 빌드와 로컬 업데이트는 [데칼 릴리즈 빌드·업데이트](decal-release-build-update.md)를 사용한다. 이 스킬의 디버그 앱 재시작 절차로 대체하지 않는다.

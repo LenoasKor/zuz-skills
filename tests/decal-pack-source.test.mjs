@@ -224,7 +224,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     { id: "development-core", version: "1.3.8" },
     { id: "zuz-its", version: "1.8.0" },
     { id: "design-motion", version: "1.0.1" },
-    { id: "decal-maintainer", version: "1.1.3" },
+    { id: "decal-maintainer", version: "1.1.4" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
