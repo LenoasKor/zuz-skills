@@ -86,7 +86,8 @@ test('bounded read-only wait times out, stops on cancellation/owner end; unknown
  assert.equal(policy.retryDecision({requestState:'not_created',retryability:'correct_and_retry_same_turn',correctionCount:1}),'blocked');
 });
 
-import { previewOwnedCommit, beginOwnedEdit, applyOwnedEdit, commitOwnedEdit as commitOwnedEditRaw } from '../packs/decal-pack/src/contracts/task-work-bug/v13/owned-edit.mjs';
+const ownedContract=process.platform==='win32'?'v21':'v13';
+const { previewOwnedCommit, beginOwnedEdit, applyOwnedEdit, commitOwnedEdit: commitOwnedEditRaw } = await import(`../packs/decal-pack/src/contracts/task-work-bug/${ownedContract}/owned-edit.mjs`);
 async function prepareOwned(root) {
  const source=Array.from({length:30},(_,i)=>`line ${i}`).join('\n')+'\n';
  await writeFile(path.join(root,'code.txt'),source);await writeFile(path.join(root,'other.txt'),'other baseline\n');

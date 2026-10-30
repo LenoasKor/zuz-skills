@@ -137,7 +137,7 @@ test("concurrent replacement is never overwritten and retains recovery backup an
     const preview = repair(root, "--dry-run");
     const index = join(root, "docs/tasks/index.md");
     const before = await readFile(index, "utf8");
-    const injection = `import fs from 'node:fs/promises'; import {syncBuiltinESMExports} from 'node:module'; const original=fs.rename; fs.rename=async(a,b)=>{await original(a,b); if(a.endsWith('/docs/tasks/index.md'))await fs.writeFile(a,'concurrent user bytes\\n',{flag:'wx'});}; syncBuiltinESMExports();`;
+    const injection = `import fs from 'node:fs/promises'; import {syncBuiltinESMExports} from 'node:module'; const original=fs.rename; fs.rename=async(a,b)=>{await original(a,b); if(a === ${JSON.stringify(index)})await fs.writeFile(a,'concurrent user bytes\\n',{flag:'wx'});}; syncBuiltinESMExports();`;
     const result = spawnSync(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(injection)}`, join(root, "contracts/task-work-bug", repairFile), "--root", root, "--expected-source-revision", preview.value.sourceRevision, "--writers-paused", "--write"], { encoding: "utf8" });
     const body = JSON.parse(result.stdout);
     assert.equal(body.code, "recovery_required");

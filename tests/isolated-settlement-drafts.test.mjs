@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { chmod, mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile, lstat } from "node:fs/promises";
+import { chmod, mkdtemp, mkdir, readFile, realpath, rm, rename, symlink, writeFile, lstat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { draftPlan, executePlan, finalizeSettlement, listDrafts, parkSettlement,
@@ -36,7 +36,7 @@ async function hook(root, source = "#!/bin/sh\nexit 1\n") {
 async function legacyInterrupted(root, plan) {
   const target = await hook(root);
   await assert.rejects(legacyExecute(plan, planDigest(plan)));
-  await chmod(target, 0o644);
+  await rename(target, target + ".disabled");
 }
 async function exactCommit(root, plan) {
   await git(root, ["commit", "--only", "-m", plan.message, "-m", `Zuz-ITS-Settlement: ${planDigest(plan)}`,
@@ -73,7 +73,7 @@ test("failed Git hook restores only own files and preserves draft and unrelated 
   assert.equal(await readFile(path.join(root, "unrelated.txt"), "utf8"), "preserve dirty\n");
   assert.equal(await lstat(path.join(root, pending)).catch(() => null), null);
   assert.equal((await listDrafts(root))[0].state, "draft");
-  await chmod(path.join(root, ".git/hooks/pre-commit"), 0o644);
+  await rename(path.join(root, ".git/hooks/pre-commit"), path.join(root, ".git/hooks/pre-commit.disabled"));
   assert.equal((await executePlan(plan, planDigest(plan))).state, "committed");
   assert.equal((await git(root, ["rev-list", "--count", "HEAD"])).trim(), "2");
 });

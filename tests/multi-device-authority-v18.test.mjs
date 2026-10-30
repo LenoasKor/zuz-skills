@@ -147,10 +147,19 @@ try {
   {
     const jobs = [];
     for (let i = 0; i < 4; i += 1) {
-      jobs.push(writeIntent(p.b, `remote-${i}`, `remote_${i}`).then((f) => node(client, ["register", "--root", p.b, "--intent", f], { cwd: p.b, env: { DECAL_ITS_HOME: homeB } })));
-      jobs.push(writeIntent(p.a, `local-${i}`, `local_${i}`).then((f) => node(client, ["register", "--root", p.a, "--intent", f], { cwd: p.a, env: { DECAL_ITS_HOME: home } })));
+      jobs.push(writeIntent(p.b, `remote-${i}`, `remote_${i}`).then((f) => { const submit = () => node(client, ["register", "--root", p.b, "--intent", f], { cwd: p.b, env: { DECAL_ITS_HOME: homeB } }); return submit().then(output => ({ output, submit })); }));
+      jobs.push(writeIntent(p.a, `local-${i}`, `local_${i}`).then((f) => { const submit = () => node(client, ["register", "--root", p.a, "--intent", f], { cwd: p.a, env: { DECAL_ITS_HOME: home } }); return submit().then(output => ({ output, submit })); }));
     }
-    const results = (await Promise.all(jobs)).map(json);
+    const attempts = await Promise.all(jobs);
+    const results = [];
+    const deadline = Date.now() + 120_000;
+    for (const attempt of attempts) {
+      let result = json(attempt.output);
+      while (["queued", "sync_pending"].includes(result.status) && Date.now() < deadline) {
+        result = json(await attempt.submit());
+      }
+      results.push(result);
+    }
     for (const result of results) assert.equal(result.status, "registered", JSON.stringify(result));
     const ids = results.map((result) => result.assigned?.[0]?.taskId ?? result.result?.assigned?.[0]?.taskId);
     assert.equal(new Set(ids).size, 8, `eight distinct numbers, got ${ids}`);
@@ -244,6 +253,8 @@ try {
   }
   console.log("ITS authority v18 acceptance passed");
 } finally {
-  for (const child of children) if (child.exitCode === null) child.kill("SIGTERM");
-  await rm(base, { recursive: true, force: true });
+  await Promise.all(children
+    .filter(child => child.exitCode === null && child.signalCode === null)
+    .map(stop));
+  await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 }

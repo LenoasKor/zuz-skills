@@ -1,6 +1,6 @@
 {
   "schema": "decal.task-work-bug.capabilities/v1",
-  "note": "Each capability names exactly one contract. its-register.mjs runs only what is listed here, and only after that contract's own verifier passes. There is no fallback to another version and no search for the latest folder.",
+  "note": "Each capability names one default contract and optional explicit platformContracts. its-register.mjs selects only the current platform entry, verifies it, and never falls back or searches for the latest folder.",
   "capabilities": {
     "register-task-batch": {
       "contract": "v15",
@@ -16,11 +16,17 @@
     },
     "register-via-authority": {
       "contract": "v19",
-      "entry": "lan-client.mjs"
+      "entry": "lan-client.mjs",
+      "platformContracts": {
+        "win32": "v22"
+      }
     },
     "detect-authority": {
       "contract": "v19",
-      "entry": "lan-discovery.mjs"
+      "entry": "lan-discovery.mjs",
+      "platformContracts": {
+        "win32": "v22"
+      }
     }
   }
 }

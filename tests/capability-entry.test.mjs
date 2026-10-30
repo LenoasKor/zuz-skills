@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
+const selectedLan = process.platform === "win32" ? "v22" : "v19";
 const contracts = path.join(repositoryRoot, "packs/decal-pack/src/contracts");
 const base = await mkdtemp(path.join(tmpdir(), "its-entry-"));
 const env = { ...process.env, GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_SYSTEM: "/dev/null", GIT_CONFIG_NOSYSTEM: "1", GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@example.test", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@example.test" };
@@ -124,8 +125,8 @@ try {
       const root = await makeProject(`paired-${how}`);
       await mkdir(path.join(root, ".decal"), { recursive: true });
       await writeFile(path.join(root, ".decal/its-lan-client.json"), "{}");
-      if (how === "missing") await rm(path.join(root, "contracts/task-work-bug/v19"), { recursive: true });
-      else await appendFile(path.join(root, "contracts/task-work-bug/v19/lan-client.mjs"), "\n// tampered\n");
+      if (how === "missing") await rm(path.join(root, `contracts/task-work-bug/${selectedLan}`), { recursive: true });
+      else await appendFile(path.join(root, `contracts/task-work-bug/${selectedLan}/lan-client.mjs`), "\n// tampered\n");
       const head = git(root, "rev-parse", "HEAD");
       const file = await put(root, "p.json", taskIntent(`entry-paired-${how}`));
       const plan = entry(root, "task", file, "--dry-run");
@@ -142,7 +143,7 @@ try {
   {
     const root = await makeProject("guard-capability");
     const head = git(root, "rev-parse", "HEAD");
-    await appendFile(path.join(root, "contracts/task-work-bug/v19/lan-discovery.mjs"), "\n// tampered\n");
+    await appendFile(path.join(root, `contracts/task-work-bug/${selectedLan}/lan-discovery.mjs`), "\n// tampered\n");
     const file = await put(root, "g.json", taskIntent("entry-guard-tamper"));
     const plan = entry(root, "task", file, "--dry-run");
     assert.equal(plan.body.status, "planned", "a preview does not look for an authority");

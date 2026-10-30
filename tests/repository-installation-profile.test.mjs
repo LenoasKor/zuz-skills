@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, mkdir, rm, realpath } from 'node:fs/promises';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { planInstallation, installPackage } from '../scripts/install-decal-pack.mjs';
 import { repositoryRoot } from '../scripts/pack-lib.mjs';
@@ -9,7 +10,7 @@ const descriptor = JSON.parse(await readFile(path.join(repositoryRoot, 'packs/de
 execFileSync(process.execPath, [path.join(repositoryRoot, 'scripts/build-decal-pack.mjs'), '--source-revision', 'a'.repeat(40)]);
 const original = await readFile(path.join(repositoryRoot, `dist/decal-pack-${descriptor.packVersion}.zuz-pack.json`));
 async function fixture(t) {
-  const parent = await mkdtemp('/private/tmp/common-installation-profile-');
+  const parent = await realpath(await mkdtemp(path.join(tmpdir(),'common-installation-profile-')));
   t.after(() => rm(parent, { recursive: true, force: true }));
   const root = path.join(parent, 'project'); await mkdir(root);
   const packagePath = path.join(parent, 'pack.json'); await writeFile(packagePath, original);

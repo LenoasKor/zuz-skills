@@ -46,7 +46,7 @@ for(const kind of ["work","bug"]) {
   await writeFile(path.join(root,"package.json"),'{"version":"1.2.3"}\n');
   const old=source(kind),input=request(kind,old),rel=`docs/work-items/${kind==="work"?"work":"bugs"}/${input.id}.md`;
   await mkdir(path.dirname(path.join(root,rel)),{recursive:true});await writeFile(path.join(root,rel),old);await writeFile(path.join(root,"unrelated"),"original");
-  await git(root,["init","-b","main"]);await git(root,["config","user.name","Fixture"]);await git(root,["config","user.email","fixture@example.invalid"]);await git(root,["add","."]);await git(root,["commit","-m","fixture"]);
+  await git(root,["init","-b","main"]);await git(root,["config","core.autocrlf","false"]);await git(root,["config","user.name","Fixture"]);await git(root,["config","user.email","fixture@example.invalid"]);await git(root,["add","."]);await git(root,["commit","-m","fixture"]);
   await writeFile(path.join(root,"unrelated"),"other owner");
   const {plan}=await planBookkeeping({root,...input});
   const result=await executePlan(plan,planDigest(plan));assert.equal(result.state,"committed");

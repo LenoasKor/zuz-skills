@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, writeFile, mkdtemp, realpath, mkdir, cp, lstat, chmod } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, realpath, mkdir, cp, lstat, chmod, unlink } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-const selected=process.env.OWNED_EDIT_BUDGET_TEST_CONTRACT??'v14';
-assert(['v13','v14'].includes(selected));
+const selected=process.env.OWNED_EDIT_BUDGET_TEST_CONTRACT??(process.platform==='win32'?'v21':'v14');
+assert(['v13','v14','v21'].includes(selected));
 const source=fileURLToPath(new URL('../packs/decal-pack/src/',import.meta.url));
 const api=await import(new URL(`../packs/decal-pack/src/contracts/task-work-bug/${selected}/owned-edit.mjs`,import.meta.url));
 const digest=v=>'sha256:'+createHash('sha256').update(v).digest('hex');
@@ -14,7 +15,7 @@ const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8
 const TEXT=1024*1024,JOURNAL=4*1024*1024,ownerId='budget-fixture';
 const roots=[];
 async function fixture(before='marker\n') {
- const root=await realpath(await mkdtemp('/private/tmp/bug323-v14-test-'));roots.push(root);
+ const root=await realpath(await mkdtemp(path.join(tmpdir(),'bug323-v14-test-')));roots.push(root);
  await cp(path.join(source,'contracts'),path.join(root,'contracts'),{recursive:true});
  await mkdir(path.join(root,'docs/tasks'),{recursive:true});await mkdir(path.join(root,'.decal'));
  await writeFile(path.join(root,'.decal/settlement-profile.json'),'{}\n');
@@ -55,7 +56,7 @@ test('invalid Unicode and NUL replacement leave the captured state unchanged',as
 test('capture rejects escaped receipt overflow without creating edit storage or integrity key',async()=>{
  const f=await fixture();const before=await snapshot(f);
  await writeFile(path.join(f.root,'code.txt'),'\u0001'.repeat(TEXT));
- const captureRoot=await realpath(await mkdtemp('/private/tmp/bug323-v14-capture-'));roots.push(captureRoot);
+ const captureRoot=await realpath(await mkdtemp(path.join(tmpdir(),'bug323-v14-capture-')));roots.push(captureRoot);
  await cp(f.root,captureRoot,{recursive:true});
  // A copied Git tree is an isolated fixture; remove nothing and use a new Git-private directory name by moving the old one.
  const storage=path.resolve(captureRoot,git(captureRoot,'rev-parse','--git-path','decal-owned-edits-v1'));
@@ -94,12 +95,10 @@ test('owner, source drift, staged target, hooks, mode and Native-host protection
 });
 test('partial committing failure retains an inspectable journal and refuses blind replay',async()=>{
  const f=await fixture();await apply(f,'marker','new');const args=commitArgs(f),preview=await api.previewOwnedCommit(args),beforeHead=git(f.root,'rev-parse','HEAD');
- const realGit=execFileSync('/bin/sh',['-c','command -v git'],{encoding:'utf8'}).trim();const wrapper=path.join(f.root,'fixture-bin');await mkdir(wrapper);
- await writeFile(path.join(wrapper,'git'),'#!/usr/bin/env node\nimport {spawnSync} from "node:child_process";\nconst args=process.argv.slice(2);if(args.includes("update-ref"))process.exit(2);const r=spawnSync('+JSON.stringify(realGit)+',args,{stdio:"inherit"});process.exit(r.status??2);\n',{mode:0o755});
- // ESM syntax is enabled only for this test wrapper, with no source instrumentation.
- await writeFile(path.join(wrapper,'package.json'),' {"type":"module"}\n');
- const previous=process.env.PATH;process.env.PATH=wrapper+path.delimiter+previous;
- try{await assert.rejects(api.commitOwnedEdit({...args,approvedDigest:preview.approvalDigest}));}finally{process.env.PATH=previous;}
+ // A real Git reference lock rejects update-ref after the receipt enters committing.
+ const lock=path.resolve(f.root,git(f.root,'rev-parse','--git-path','refs/heads/main.lock'));
+ await writeFile(lock,'synthetic competing ref writer\n',{flag:'wx'});
+ try{await assert.rejects(api.commitOwnedEdit({...args,approvedDigest:preview.approvalDigest}));}finally{await unlink(lock);}
  assert.equal(git(f.root,'rev-parse','HEAD'),beforeHead);assert.equal((await inspect(f)).status,'committing');
  await assert.rejects(api.commitOwnedEdit({...args,approvedDigest:preview.approvalDigest}),errorCode('edit_receipt_required'));
 });
@@ -119,9 +118,9 @@ for(const name of ['task-body.mjs','execution-policy.mjs','verify-contract.mjs']
  test(`actual imported legacy dependency ${name} drift rejects with unchanged project state`,async()=>{
   const f=await fixture(),before=await snapshot(f);const file=path.join(f.root,'contracts/task-work-bug/v13',name);
   await writeFile(file,Buffer.concat([await readFile(file),Buffer.from('\n// inert synthetic dependency drift\n')]));
-  const {verifyContract}=await import('../packs/decal-pack/src/contracts/task-work-bug/v14/verify-contract.mjs');
-  await assert.rejects(verifyContract(path.join(f.root,'contracts/task-work-bug/v14')));
-  const copiedApi=await import(pathToFileURL(path.join(f.root,'contracts/task-work-bug/v14/owned-edit.mjs')).href);
+  const {verifyContract}=await import(`../packs/decal-pack/src/contracts/task-work-bug/${selected}/verify-contract.mjs`);
+  await assert.rejects(verifyContract(path.join(f.root,`contracts/task-work-bug/${selected}`)));
+  const copiedApi=await import(pathToFileURL(path.join(f.root,`contracts/task-work-bug/${selected}/owned-edit.mjs`)).href);
   await assert.rejects(copiedApi.beginOwnedEdit({root:f.root,relative:'code.txt',taskId:1,ownerId}));
   assert.deepEqual(await snapshot(f),before);
  });

@@ -80,12 +80,14 @@ test("v5 package verifies pinned source dependencies", async () => {
 });
 test("forward transition preserves schema, identity, createdAt, unknown fields, body, mode and CRLF", async (t) => {
   const text = source.replaceAll("\n", "\r\n"); const f = await fixture(t, text); await chmod(f.target, 0o640);
+  const originalMode = (await stat(f.target)).mode & 0o777;
+  if (process.platform !== "win32") assert.equal(originalMode, 0o640);
   const result = await run(f, [], { source: text }); assert.equal(result.code, 0);
   const final = await readFile(f.target, "utf8"); const record = parseStrictIncident(final, "INC-1.md");
   assert.equal(record.status, "confirmed");
   for (const line of ["schema: zuz.its.incident-ticket", "schemaVersion: 1", "id: INC-1", 'createdAt: "2026-10-06T00:02:00.000Z"', 'x-custom: "preserve me"']) assert.ok(final.includes(line + "\r\n"));
   assert.equal(final.split("\r\n---\r\n")[1], text.split("\r\n---\r\n")[1]);
-  assert.equal(final.includes("\n") && !/(?<!\r)\n/u.test(final), true); assert.equal((await stat(f.target)).mode & 0o777, 0o640);
+  assert.equal(final.includes("\n") && !/(?<!\r)\n/u.test(final), true); assert.equal((await stat(f.target)).mode & 0o777, originalMode);
 });
 test("normal lifecycle, blocked resume, recovery/completion and resolved closure", async (t) => {
   const f = await fixture(t); const created = 'createdAt: "2026-10-06T00:02:00.000Z"';
@@ -173,10 +175,12 @@ test("mixed CRLF header and LF body preserves raw body bytes and trailing blanks
 });
 test("isolated child umask cannot narrow original 0664 or 0666 permission mode", async (t) => {
   for (const mode of [0o664, 0o666]) {
-    const f = await fixture(t); await chmod(f.target, mode); const preload = path.join(f.root, "umask-preload.cjs");
+    const f = await fixture(t); await chmod(f.target, mode); const originalMode = (await stat(f.target)).mode & 0o777;
+    if (process.platform !== "win32") assert.equal(originalMode, mode);
+    const preload = path.join(f.root, "umask-preload.cjs");
     await writeFile(preload, "process.umask(0o022);\n");
     const result = await run(f, [], { preload }); assert.equal(result.code, 0);
-    assert.equal((await stat(f.target)).mode & 0o777, mode); assert.equal(parseStrictIncident(await readFile(f.target, "utf8"), "INC-1.md").status, "confirmed");
+    assert.equal((await stat(f.target)).mode & 0o777, originalMode); assert.equal(parseStrictIncident(await readFile(f.target, "utf8"), "INC-1.md").status, "confirmed");
   }
 });
 
@@ -224,9 +228,11 @@ for (const [name, mitigation, recovery, accepted] of [
   ["forward", moment+"Z", moment+".5001Z", true],
 ]) test(`official v5 transition ${name} physical runtime preserves raw body and fractional precision`, async t => {
   const text=source.replace("status: new","status: in_progress");const f=await fixture(t,text);await chmod(f.target,0o664);
+  const originalMode=(await stat(f.target)).mode&0o777;
+  if(process.platform!=="win32") assert.equal(originalMode,0o664);
   const result=await run(f,["--mitigated-at",mitigation,"--recovered-at",recovery,"--resolution-evidence","Synthetic evidence","--summary","Synthetic recovery","--evidence","Synthetic evidence"],{status:"development_complete",source:text});
   const after=await readFile(f.target,"utf8");
   if (!accepted) {assert.equal(result.result.code,"incident_timestamp_order_invalid");assert.equal(after,text);}
   else {assert.equal(result.code,0,result.stdout);const record=parseStrictIncident(after);assert.equal(record.mitigatedAt,mitigation);assert.equal(record.recoveredAt,recovery);assert.equal(record.status,"development_complete");assert.equal(after.split("\n---\n")[1],text.split("\n---\n")[1]);}
-  assert.equal((await stat(f.target)).mode&0o777,0o664);
+  assert.equal((await stat(f.target)).mode&0o777,originalMode);
 });

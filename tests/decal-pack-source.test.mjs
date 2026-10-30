@@ -387,7 +387,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.10.2");
+  assert.equal(packageValue.packVersion, "3.11.0");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
@@ -614,6 +614,9 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
   assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v19");
+  assert.deepEqual(packageValue.compatibility.platformOverrides, {win32: {
+    portableOwnedTextEdit: "task-work-bug/v21", portableMultiDeviceRegistration: "task-work-bug/v22"
+  }});
   assert.equal(packageValue.compatibility.portableMultiDeviceManualAuthority, "task-work-bug/v18");
   assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
   assert.equal(packageValue.executionPolicies.capabilityResolution.unlistedContracts, "never executed");
@@ -623,6 +626,8 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   for (const sourcePath of [
     "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
     "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",
+    "contracts/task-work-bug/v21/private-storage.mjs", "contracts/task-work-bug/v21/manifest.json",
+    "contracts/task-work-bug/v22/authority-storage.mjs", "contracts/task-work-bug/v22/manifest.json",
     "contracts/task-work-bug/v19/lan-authority.mjs", "contracts/task-work-bug/v19/lan-client.mjs", "contracts/task-work-bug/v19/manifest.json",
   ]) assert.ok(packageValue.files.some((file) => file.sourcePath === sourcePath), sourcePath);
   // The registration guidance of the skills names capabilities and the stable entry, never a numbered contract.

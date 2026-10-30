@@ -30,7 +30,7 @@ async function crashedFixture() {
   };
   await writeFile(path.join(root, "plan.json"), JSON.stringify(plan));
   await writeFile(path.join(root, "unrelated.txt"), "other owner\n");
-  const injection = "import fs from 'node:fs/promises'; import {syncBuiltinESMExports} from 'node:module'; const rename=fs.rename; fs.rename=async(a,b)=>{await rename(a,b); if(b.endsWith('/record.md')) process.exit(86);}; syncBuiltinESMExports();";
+  const injection = "import fs from 'node:fs/promises'; import path from 'node:path'; import {syncBuiltinESMExports} from 'node:module'; const rename=fs.rename; fs.rename=async(a,b)=>{await rename(a,b); if(path.basename(b)==='record.md') process.exit(86);}; syncBuiltinESMExports();";
   const script = "import {readFile} from 'node:fs/promises'; import {executePlan,planDigest} from './contracts/task-work-bug/v8/transaction.mjs'; const plan=JSON.parse(await readFile('plan.json','utf8')); await executePlan(plan,planDigest(plan));";
   await assert.rejects(run(process.execPath, ["--import", `data:text/javascript,${encodeURIComponent(injection)}`, "--input-type=module", "-e", script], { cwd: root }), { code: 86 });
   assert.equal(JSON.parse(await readFile(path.join(root, ".decal/settlement-pending-v1.json"), "utf8")).phase, "preparing");

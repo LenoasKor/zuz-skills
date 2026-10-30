@@ -33,7 +33,7 @@ for (const kind of ["work", "bug"]) {
     await mkdir(path.dirname(path.join(root, relative)), { recursive: true });
     await writeFile(path.join(root, relative), source(kind));
     await writeFile(path.join(root, "unrelated"), "original");
-    await git(root, ["init", "-b", "main"]); await git(root, ["config", "user.name", "Fixture"]); await git(root, ["config", "user.email", "fixture@example.invalid"]);
+    await git(root, ["init", "-b", "main"]); await git(root, ["config", "core.autocrlf", "false"]); await git(root, ["config", "user.name", "Fixture"]); await git(root, ["config", "user.email", "fixture@example.invalid"]);
     await git(root, ["add", "."]); await git(root, ["commit", "-m", "fixture"]);
     await writeFile(path.join(root, "unrelated"), "other owner");
     const env = { ...process.env }; delete env.DECAL_SESSION_ID;

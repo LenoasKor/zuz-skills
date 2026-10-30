@@ -1,0 +1,2 @@
+# Keep text and byte-verified contracts consistent on every checkout.
+* text=auto eol=lf

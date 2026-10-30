@@ -50,6 +50,13 @@ function loadTable() {
       stop("invalid_capability_table", { capability: name });
     }
   }
+  for (const item of Object.values(table.capabilities)) {
+    if (item.platformContracts !== undefined) {
+      if (!item.platformContracts || typeof item.platformContracts !== "object" || Array.isArray(item.platformContracts)
+          || Object.entries(item.platformContracts).some(([platform, contract]) => !["win32", "darwin", "linux"].includes(platform) || !/^v[0-9]{1,3}$/u.test(contract))) stop("invalid_capability_table");
+      item.contract = item.platformContracts[process.platform] ?? item.contract;
+    }
+  }
   return table.capabilities;
 }
 

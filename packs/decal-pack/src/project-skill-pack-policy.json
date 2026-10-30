@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.10.2",
+  "packVersion": "3.11.0",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -146,6 +146,12 @@
       "pairedProjectWithoutAuthority": "stop-never-register-locally",
       "nativeFallback": false,
       "publicationState": "candidate"
+    }
+  },
+  "platformOverrides": {
+    "win32": {
+      "ownedEditContract": "task-work-bug/v21",
+      "multiDeviceRegistrationContract": "task-work-bug/v22"
     }
   }
 }

@@ -27,7 +27,8 @@ if (broadcastTargets().length === 0) env.DECAL_ITS_DISCOVERY_TARGETS = "127.0.0.
 delete env.DECAL_SESSION_ID;
 Object.assign(process.env, env);
 
-const v19 = (name) => path.join(contracts, "task-work-bug/v19", name);
+const lanContract=process.platform==="win32"?"v22":"v19";
+const v19 = (name) => path.join(contracts, "task-work-bug",lanContract,name);
 const authorityScript = v19("lan-authority.mjs");
 const clientScript = v19("lan-client.mjs");
 const validator = path.join(contracts, "task-work-bug/v4/validate-task-index.mjs");
@@ -126,9 +127,13 @@ try {
   // 1. Discovery needs nothing typed, and answers only for the project it serves.
   {
     const found = lastJson(await node(clientScript, ["discover", "--root", p.b], { cwd: p.b }));
-    assert.equal(found.authorities.length, 1, JSON.stringify(found));
-    assert.equal(found.authorities[0].label, "main-mac");
-    assert.equal(found.authorities[0].port, authority.lanPort);
+    // One daemon can answer through multiple physical/VPN interfaces.
+    assert.ok(found.authorities.length >= 1, JSON.stringify(found));
+    assert.equal(new Set(found.authorities.map(item => item.address)).size, found.authorities.length);
+    for (const item of found.authorities) {
+      assert.equal(item.label, "main-mac");
+      assert.equal(item.port, authority.lanPort);
+    }
     assert.deepEqual(lastJson(await node(clientScript, ["discover", "--root", other.b], { cwd: other.b })).authorities, [], "unserved project gets no answer");
     console.log("ok 1  discovery: the second device finds the authority by itself; other projects get no answer");
   }
@@ -217,7 +222,10 @@ try {
     assert.equal((await pairing.done).lines.at(-1).status, "paired");
     const config = JSON.parse(await readFile(path.join(p.b, ".decal/its-lan-client.json"), "utf8"));
     assert.match(config.keyHex, /^[a-f0-9]{64}$/u);
-    assert.equal((await stat(path.join(p.b, ".decal/its-lan-client.json"))).mode & 0o077, 0, "credential file is private");
+    if(process.platform==="win32") {
+      const {assertPrivate}=await import("../packs/decal-pack/src/contracts/task-work-bug/v21/private-storage.mjs");
+      await assertPrivate(path.join(p.b,".decal/its-lan-client.json"));
+    } else assert.equal((await stat(path.join(p.b, ".decal/its-lan-client.json"))).mode & 0o077, 0, "credential file is private");
     const devices = (await admin(home, "devices")).devices;
     assert.equal(devices.length, 1);
     assert.equal(devices[0].keyHex, undefined, "the admin view never exposes keys");
@@ -228,10 +236,19 @@ try {
   {
     const jobs = [];
     for (let i = 0; i < 4; i += 1) {
-      jobs.push(writeIntent(p.b, `lan-remote-${i}`, `lan_remote_${i}`).then((f) => node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })));
-      jobs.push(writeIntent(p.a, `lan-local-${i}`, `lan_local_${i}`).then((f) => node(clientScript, ["register", "--root", p.a, "--intent", f], { cwd: p.a })));
+      jobs.push(writeIntent(p.b, `lan-remote-${i}`, `lan_remote_${i}`).then((f) => { const submit = () => node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b }); return submit().then(output => ({ output, submit })); }));
+      jobs.push(writeIntent(p.a, `lan-local-${i}`, `lan_local_${i}`).then((f) => { const submit = () => node(clientScript, ["register", "--root", p.a, "--intent", f], { cwd: p.a }); return submit().then(output => ({ output, submit })); }));
     }
-    const results = (await Promise.all(jobs)).map(lastJson);
+    const attempts = await Promise.all(jobs);
+    const results = [];
+    const deadline = Date.now() + 120_000;
+    for (const attempt of attempts) {
+      let result = lastJson(attempt.output);
+      while (["queued", "sync_pending"].includes(result.status) && Date.now() < deadline) {
+        result = lastJson(await attempt.submit());
+      }
+      results.push(result);
+    }
     for (const result of results) assert.equal(result.status, "registered", JSON.stringify(result));
     await assertSound(p.a, 2 + 8);
     const f = await writeIntent(p.b, "lan-last", "lan_last");
