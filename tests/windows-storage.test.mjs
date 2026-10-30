@@ -4,7 +4,7 @@ import { mkdtemp, realpath, writeFile, symlink, link, rm, cp, appendFile } from 
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { privateDirectory, assertPrivate } from '../packs/decal-pack/src/contracts/task-work-bug/v21/private-storage.mjs';
+import { privateDirectory, assertPrivate } from '../packs/decal-pack/src/contracts/task-work-bug/v22/private-storage.mjs';
 
 test('Windows private storage rejects public ACLs, symbolic links and hard links', {skip: process.platform !== 'win32'}, async () => {
   const root = await realpath(await mkdtemp(path.join(tmpdir(), 'zuz-private-')));
@@ -38,10 +38,10 @@ test('Windows LAN contract rejects actual dependency byte tampering', async () =
   const root = await realpath(await mkdtemp(path.join(tmpdir(), 'zuz-lan-integrity-')));
   try {
     await cp(new URL('../packs/decal-pack/src/contracts/task-work-bug/', import.meta.url), root, {recursive: true});
-    const verifier = path.join(root, 'v22/verify-contract.mjs');
+    const verifier = path.join(root, 'v23/verify-contract.mjs');
     const check = () => JSON.parse(execFileSync(process.execPath, [verifier], {encoding: 'utf8'}));
     assert.equal(check().status, 'accepted');
-    for (const relative of ['v18/authority-common.mjs', 'v21/private-storage.mjs']) {
+    for (const relative of ['v18/authority-common.mjs', 'v22/private-storage.mjs']) {
       const file = path.join(root, relative);
       await appendFile(file, '\n// tampered dependency\n');
       assert.throws(check);

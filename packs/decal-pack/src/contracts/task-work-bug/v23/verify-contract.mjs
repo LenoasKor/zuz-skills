@@ -4,7 +4,7 @@ import { lstat, readFile, readdir, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const required = ["README.md", "contract.json", "verify-contract.mjs", "owned-edit.mjs", "owned-edit-cli.mjs", "private-storage.mjs"];
+const required = ["README.md", "contract.json", "lan-authority.mjs", "lan-broker.mjs", "lan-client.mjs", "lan-crypto.mjs", "lan-discovery.mjs", "verify-contract.mjs", "authority-storage.mjs"];
 function fail(code) { const error = new Error(code); error.code = code; throw error; }
 async function plain(file) {
   if (await realpath(file) !== file) fail("unsafe_contract_path");
@@ -16,7 +16,7 @@ async function plain(file) {
 export async function verifyContract(directory = path.dirname(fileURLToPath(import.meta.url))) {
   if (await realpath(directory) !== directory) fail("unsafe_contract_path");
   const manifest = JSON.parse(await plain(path.join(directory, "manifest.json")));
-  if (manifest.schema !== "decal.task-work-bug.fixture-manifest/v21" || !manifest.files || Array.isArray(manifest.files)
+  if (manifest.schema !== "decal.task-work-bug.fixture-manifest/v23" || !manifest.files || Array.isArray(manifest.files)
       || JSON.stringify(Object.keys(manifest.files).sort()) !== JSON.stringify([...required].sort())) fail("invalid_contract_manifest");
   const actual = (await readdir(directory)).sort();
   if (JSON.stringify(actual) !== JSON.stringify([...required, "manifest.json"].sort())) fail("unexpected_contract_file");
@@ -25,22 +25,20 @@ export async function verifyContract(directory = path.dirname(fileURLToPath(impo
     if (!/^[a-f0-9]{64}$/u.test(expected)
         || createHash("sha256").update(await plain(path.join(directory, name))).digest("hex") !== expected) fail("contract_digest_mismatch");
   }
-  const dependencies = ["v9/manifest.json", "v13/manifest.json"];
+  const dependencies = ["v18/manifest.json", "v22/manifest.json"];
   if (!manifest.dependencies || JSON.stringify(Object.keys(manifest.dependencies).sort()) !== JSON.stringify(dependencies.sort())) fail("invalid_contract_dependencies");
   for (const [relative, expected] of Object.entries(manifest.dependencies)) {
     if (!/^[a-f0-9]{64}$/u.test(expected)
         || createHash("sha256").update(await plain(path.join(directory, "..", relative))).digest("hex") !== expected) fail("contract_dependency_mismatch");
   }
-  // Pin the actual checker before importing it, then verify all immutable v13
-  // files, including the task/body and wait-policy modules this adapter uses.
-  const legacyDirectory = path.join(directory, "..", "v13");
-  const legacyManifest = JSON.parse(await plain(path.join(legacyDirectory, "manifest.json")));
-  const legacyVerifier = path.join(legacyDirectory, "verify-contract.mjs");
-  const verifierDigest = legacyManifest.files?.["verify-contract.mjs"];
-  if (!/^[a-f0-9]{64}$/u.test(verifierDigest)
-      || createHash("sha256").update(await plain(legacyVerifier)).digest("hex") !== verifierDigest) fail("contract_dependency_mismatch");
-  const { verifyContract: verifyLegacy } = await import(pathToFileURL(legacyVerifier).href);
-  await verifyLegacy(legacyDirectory);
+  for (const version of ["v18", "v22"]) {
+    const dependencyDirectory = path.join(directory, "..", version);
+    const pinned = JSON.parse(await plain(path.join(dependencyDirectory, "manifest.json")));
+    const verifier = path.join(dependencyDirectory, "verify-contract.mjs");
+    if (createHash("sha256").update(await plain(verifier)).digest("hex") !== pinned.files?.["verify-contract.mjs"]) fail("contract_dependency_mismatch");
+    const { verifyContract } = await import(pathToFileURL(verifier).href);
+    await verifyContract(dependencyDirectory);
+  }
   return { status: "accepted", schema: manifest.schema, fileCount: required.length };
 }
 

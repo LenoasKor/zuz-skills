@@ -1,6 +1,7 @@
-# LAN authority v22 Windows storage candidate
+# Owned text edit v22
 
-Preserves the v19 network wire format, pairing, replay and authorization rules.
-Windows credential and state JSON use an owner-only DACL from creation through atomic replacement.
-Published v1-v20 are unchanged. Requires pinned v18 and v21 dependencies.
+Additive Windows candidate derived from v14. Published v1-v20 bytes are unchanged. v21 is not used here: it is Decal's own LAN authority reliability contract.
+Git path separators are normalized without relaxing canonical realpath equality.
+Windows private journals use an owner-only DACL before writing integrity keys.
+The legacy Native-host, ownership, approval, byte budgets and isolated-index gates remain.
 Not published or installed.

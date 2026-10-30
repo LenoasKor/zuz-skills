@@ -27,7 +27,7 @@ if (broadcastTargets().length === 0) env.DECAL_ITS_DISCOVERY_TARGETS = "127.0.0.
 delete env.DECAL_SESSION_ID;
 Object.assign(process.env, env);
 
-const lanContract=process.platform==="win32"?"v22":"v19";
+const lanContract=process.platform==="win32"?"v23":"v19";
 const v19 = (name) => path.join(contracts, "task-work-bug",lanContract,name);
 const authorityScript = v19("lan-authority.mjs");
 const clientScript = v19("lan-client.mjs");
@@ -223,7 +223,7 @@ try {
     const config = JSON.parse(await readFile(path.join(p.b, ".decal/its-lan-client.json"), "utf8"));
     assert.match(config.keyHex, /^[a-f0-9]{64}$/u);
     if(process.platform==="win32") {
-      const {assertPrivate}=await import("../packs/decal-pack/src/contracts/task-work-bug/v21/private-storage.mjs");
+      const {assertPrivate}=await import("../packs/decal-pack/src/contracts/task-work-bug/v22/private-storage.mjs");
       await assertPrivate(path.join(p.b,".decal/its-lan-client.json"));
     } else assert.equal((await stat(path.join(p.b, ".decal/its-lan-client.json"))).mode & 0o077, 0, "credential file is private");
     const devices = (await admin(home, "devices")).devices;

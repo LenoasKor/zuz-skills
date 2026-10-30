@@ -145,8 +145,8 @@
     "portableIsolatedSettlement": "task-work-bug/v20",
     "platformOverrides": {
       "win32": {
-        "portableOwnedTextEdit": "task-work-bug/v21",
-        "portableMultiDeviceRegistration": "task-work-bug/v22"
+        "portableOwnedTextEdit": "task-work-bug/v22",
+        "portableMultiDeviceRegistration": "task-work-bug/v23"
       }
     }
   },

@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
-const selectedLan = process.platform === "win32" ? "v22" : "v19";
+const selectedLan = process.platform === "win32" ? "v23" : "v19";
 const contracts = path.join(repositoryRoot, "packs/decal-pack/src/contracts");
 const base = await mkdtemp(path.join(tmpdir(), "its-entry-"));
 const env = { ...process.env, GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_SYSTEM: "/dev/null", GIT_CONFIG_NOSYSTEM: "1", GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@example.test", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@example.test" };

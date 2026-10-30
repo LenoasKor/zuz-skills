@@ -615,7 +615,7 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
   assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v19");
   assert.deepEqual(packageValue.compatibility.platformOverrides, {win32: {
-    portableOwnedTextEdit: "task-work-bug/v21", portableMultiDeviceRegistration: "task-work-bug/v22"
+    portableOwnedTextEdit: "task-work-bug/v22", portableMultiDeviceRegistration: "task-work-bug/v23"
   }});
   assert.equal(packageValue.compatibility.portableMultiDeviceManualAuthority, "task-work-bug/v18");
   assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
@@ -626,8 +626,8 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   for (const sourcePath of [
     "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
     "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",
-    "contracts/task-work-bug/v21/private-storage.mjs", "contracts/task-work-bug/v21/manifest.json",
-    "contracts/task-work-bug/v22/authority-storage.mjs", "contracts/task-work-bug/v22/manifest.json",
+    "contracts/task-work-bug/v22/private-storage.mjs", "contracts/task-work-bug/v22/manifest.json",
+    "contracts/task-work-bug/v23/authority-storage.mjs", "contracts/task-work-bug/v23/manifest.json",
     "contracts/task-work-bug/v19/lan-authority.mjs", "contracts/task-work-bug/v19/lan-client.mjs", "contracts/task-work-bug/v19/manifest.json",
   ]) assert.ok(packageValue.files.some((file) => file.sourcePath === sourcePath), sourcePath);
   // The registration guidance of the skills names capabilities and the stable entry, never a numbered contract.

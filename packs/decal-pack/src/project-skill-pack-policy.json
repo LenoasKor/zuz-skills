@@ -150,8 +150,8 @@
   },
   "platformOverrides": {
     "win32": {
-      "ownedEditContract": "task-work-bug/v21",
-      "multiDeviceRegistrationContract": "task-work-bug/v22"
+      "ownedEditContract": "task-work-bug/v22",
+      "multiDeviceRegistrationContract": "task-work-bug/v23"
     }
   }
 }

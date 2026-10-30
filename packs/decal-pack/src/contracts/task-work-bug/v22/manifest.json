@@ -1,18 +1,15 @@
 {
   "schema": "decal.task-work-bug.fixture-manifest/v22",
   "files": {
-    "authority-storage.mjs": "062bd68524c89a865d9efdf8ce5fba32ec5f17671dfaae66e3494f23b2d70b9f",
-    "contract.json": "8b54be6b9085abf53ec783b7d936373088da94f1668f7a874c9ed49f6a3cefbd",
-    "lan-authority.mjs": "2867cb6a2f1a7deff0b08770650739ed84db1a1e56fdce7c9ebf25817a317c8b",
-    "lan-broker.mjs": "11749cf0b724abc7bd7314383c3646df14a63a1a05e6c3dff12fdc5f4abdb915",
-    "lan-client.mjs": "8b00fc610b5e43fb104555f7c868ba2b39be42dfd3bc1e352985aa4d54d36b9c",
-    "lan-crypto.mjs": "6a9e15affeedaf132b7071b7747d5fc6bdca1d1b24b957c17016b768017c96dd",
-    "lan-discovery.mjs": "378407c696e76f2a69ad39661550b6d94175298bad98efba766adb27acbd56f8",
-    "README.md": "847582c75970df5aea095293121779461b70d015029800516d737807ad32484a",
-    "verify-contract.mjs": "00252ebe49a2b45718043722a006acae9691276934631544d033b903c7b5f3a5"
+    "contract.json": "3978f9c60b1c6fa2af98bbdc96418460053175c6170ff7e700b5be87f7459b42",
+    "owned-edit-cli.mjs": "49a927764e6c62fab7dcd8c3e46ded7c5a5f1357ab8239e73bcf27ae723290b4",
+    "owned-edit.mjs": "7a2c727f440d7d1b6819d7e59d6272c12019d144f7af9e38462a3126f544258f",
+    "private-storage.mjs": "0f0170223df64188139abf6275b511f931d792f4f79155ff68a3a7cbf606c37d",
+    "README.md": "05ed2e75f9f132f6a2b9bca18fbe104a3ffe31ba55694a80745b860f259cfd48",
+    "verify-contract.mjs": "dc08401716d5d1e81c139341f045442c9b556e08af610f16d685d8e4770ffd20"
   },
   "dependencies": {
-    "v18/manifest.json": "59788d9355e478b534fec491ea1188d690b3f712ead78c3652f696a57c6cc49d",
-    "v21/manifest.json": "bd73614468fdd0a50e95a6a96ef2dabcd5e570d8b22b74f019ad2952ee369ca2"
+    "v9/manifest.json": "b7fc398da5a50cd1253616d739e7b1543d70148f0bd86c2e81ab1f26678f8559",
+    "v13/manifest.json": "18b5f77a17ae5a5ecd2097607b81862bb9920848a81dd236b78017c7006ceeb0"
   }
 }

@@ -1,0 +1,18 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v23",
+  "files": {
+    "authority-storage.mjs": "37f57ae2f1ce099092c9b74eaf4543a87dcb560ed600d08ea61e491f921b2d96",
+    "contract.json": "8b54be6b9085abf53ec783b7d936373088da94f1668f7a874c9ed49f6a3cefbd",
+    "lan-authority.mjs": "2867cb6a2f1a7deff0b08770650739ed84db1a1e56fdce7c9ebf25817a317c8b",
+    "lan-broker.mjs": "11749cf0b724abc7bd7314383c3646df14a63a1a05e6c3dff12fdc5f4abdb915",
+    "lan-client.mjs": "8b00fc610b5e43fb104555f7c868ba2b39be42dfd3bc1e352985aa4d54d36b9c",
+    "lan-crypto.mjs": "6a9e15affeedaf132b7071b7747d5fc6bdca1d1b24b957c17016b768017c96dd",
+    "lan-discovery.mjs": "378407c696e76f2a69ad39661550b6d94175298bad98efba766adb27acbd56f8",
+    "README.md": "1cfe2865bd6f13779bc48890bac931f0aff01e8be00c8c46fe530d9ad427b239",
+    "verify-contract.mjs": "d95d332434cf749c497c022101ec9cbeee236a1463a2927d80ddb95d86122003"
+  },
+  "dependencies": {
+    "v18/manifest.json": "59788d9355e478b534fec491ea1188d690b3f712ead78c3652f696a57c6cc49d",
+    "v22/manifest.json": "ea28a267d42627da7d2e537a99b5d879f86419fdc99fcd729ffedc2949d5a05b"
+  }
+}

@@ -1,6 +1,6 @@
 export * from '../v18/authority-common.mjs';
 import { readJson as legacyRead, writePrivateJson as legacyWrite } from '../v18/authority-common.mjs';
-import { privateDirectory, assertPrivate } from '../v21/private-storage.mjs';
+import { privateDirectory, assertPrivate } from '../v22/private-storage.mjs';
 import { mkdir, writeFile, rename, rm, lstat, realpath } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
