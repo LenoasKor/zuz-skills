@@ -93,7 +93,11 @@ npm run build:decal-pack -- --source-revision <40자리-source-commit>
 
 ## 6. Skill Store 공개
 
-`https://skills.zuz.dev/admin`의 **공식 Decal Pack 릴리스**에 GitHub tag만 입력해 검증·서명 공개를 실행한다.
+`https://skills.zuz.dev/admin`에서 다음 순서로 공개한다. tag 입력만으로는 공개되지 않는다.
+
+1. **공식 Pack 후보 준비**에 GitHub tag를 입력하고 **검증 후 후보 준비**를 누른다. 비공개 후보가 만들어진다.
+2. 후보의 **세션 AI 검수 자료 준비**로 자료를 만들고, 세션 AI가 전체 원문을 검토해 여섯 항목 보고서를 등록한다. 관리자 페이지가 로그인된 브라우저가 필요하다.
+3. 사용자가 **최종 공개 승인**을 누른다. 반영까지 수십 초 걸릴 수 있다.
 
 - Store가 GitHub asset을 다시 읽고 source, license, manifest, package digest와 격리 검사를 모두 통과해야 한다.
 - 완료 메시지의 불변 Store release ID를 기록한다.
