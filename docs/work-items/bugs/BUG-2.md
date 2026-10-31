@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-2
 title: "LAN 연결이 첫 응답자를 믿고 POSIX 키 저장이 약한 문제"
-status: confirmed
+status: in_progress
 priority: P1
 taskRefs:
   - "1"
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-10-31T03:59:07.004Z"
-updatedAt: "2026-10-31T03:59:47.206Z"
+updatedAt: "2026-10-31T03:59:48.923Z"
 blocked: null
 completion: null
 closure: null
