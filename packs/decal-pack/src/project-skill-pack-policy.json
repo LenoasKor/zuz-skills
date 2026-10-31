@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.11.0",
+  "packVersion": "3.11.1",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -44,10 +44,10 @@
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.18.0",
-    "decal-work": "1.14.0",
-    "decal-bug": "1.14.0",
-    "decal-incident": "1.8.0",
+    "decal-task": "1.19.1",
+    "decal-work": "1.15.1",
+    "decal-bug": "1.15.1",
+    "decal-incident": "1.8.1",
     "zuz-its": "1.5.0",
     "decal-slice-maintenance": "0.8.3",
     "decaldev-rebuild-relaunch": "0.9.3",
@@ -137,11 +137,13 @@
       "guardCapability": "detect-authority"
     },
     "multiDeviceAuthority": {
-      "contract": "task-work-bug/v19",
+      "contract": "task-work-bug/v24",
       "manualContract": "task-work-bug/v18",
       "scope": "same-local-network",
       "discovery": "udp-directed-broadcast",
       "pairing": "commit-reveal-x25519-with-user-confirmed-check-code",
+      "localConfirmation": "approved-answer-stays-pending-until-pair-confirm",
+      "ambiguousAuthority": "stop-with-authority_ambiguous",
       "transport": "aes-256-gcm-per-device-key",
       "pairedProjectWithoutAuthority": "stop-never-register-locally",
       "nativeFallback": false,
@@ -150,8 +152,7 @@
   },
   "platformOverrides": {
     "win32": {
-      "ownedEditContract": "task-work-bug/v22",
-      "multiDeviceRegistrationContract": "task-work-bug/v23"
+      "ownedEditContract": "task-work-bug/v22"
     }
   }
 }

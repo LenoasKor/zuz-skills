@@ -222,7 +222,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.8" },
-    { id: "zuz-its", version: "1.8.0" },
+    { id: "zuz-its", version: "1.8.1" },
     { id: "design-motion", version: "1.0.1" },
     { id: "decal-maintainer", version: "1.1.4" },
   ]);
@@ -231,10 +231,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.19.0",
-    "decal-work": "1.15.0",
-    "decal-bug": "1.15.0",
-    "decal-incident": "1.8.0",
+    "decal-task": "1.19.1",
+    "decal-work": "1.15.1",
+    "decal-bug": "1.15.1",
+    "decal-incident": "1.8.1",
     "zuz-its": "1.5.0",
     "decal-slice": "0.4.13",
     "decal-slice-maintenance": "0.8.3",
@@ -301,9 +301,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.18.0",
-    "decal-work": "1.14.0",
-    "decal-bug": "1.14.0",
+    "decal-task": "1.19.1",
+    "decal-work": "1.15.1",
+    "decal-bug": "1.15.1",
     "zuz-its": "1.5.0",
     "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
@@ -317,7 +317,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.19\.0"/);
+      assert.match(content, /version: "1\.19\.1"/);
       assert.match(content, /v20\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
@@ -387,7 +387,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.11.0");
+  assert.equal(packageValue.packVersion, "3.11.1");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
@@ -537,7 +537,7 @@ test("actual package routes only Incident registration to v16 and retains v15 pl
   assert.equal(value.compatibility.portableIncidentRegistration, "task-work-bug/v16");
   const profile = {contract:"task-work-bug/v16",manifestValidator:"contracts/task-work-bug/v16/verify-contract.mjs",runner:"contracts/task-work-bug/v16/register-ticket.mjs",scope:"incident-only",nativeFallback:false,consumer:"zuz-its/v5"};
   assert.deepEqual(value.executionPolicies.incidentRegistration,profile);
-  const policy=JSON.parse(await readFile(join(repositoryRoot,"packs/decal-pack/src/project-skill-pack-policy.json"),"utf8"));assert.deepEqual(policy.executionPolicies.incidentRegistration,profile);assert.equal(policy.minimumCompatible["decal-incident"],"1.8.0");
+  const policy=JSON.parse(await readFile(join(repositoryRoot,"packs/decal-pack/src/project-skill-pack-policy.json"),"utf8"));assert.deepEqual(policy.executionPolicies.incidentRegistration,profile);assert.equal(policy.minimumCompatible["decal-incident"],"1.8.1");
   const files=value.files.filter(f=>f.sourcePath.startsWith("contracts/task-work-bug/v16/"));assert.equal(files.length,6);
   for(const f of files){assert.equal(f.moduleId,"zuz-its");assert.deepEqual(Buffer.from(f.contentBase64,"base64"),await readFile(join(repositoryRoot,"packs/decal-pack/src",f.sourcePath)));}
   const incident=value.files.find(f=>f.sourcePath==="skills/agents/decal-incident/SKILL.md");assert.deepEqual(incident.installTargets.map(t=>t.provider),["codex","claude","gemini","acp"]);const content=Buffer.from(incident.contentBase64,"base64").toString("utf8");assert.equal(content,await readFile(join(repositoryRoot,"packs/decal-pack/src",incident.sourcePath),"utf8"));assert.match(content,/v15 remains.*Task\/Work\/Bug only/u);assert.match(content,/neither v15 nor v10 Incident output is a direct fallback/u);assert.match(content,/actual v5 consumer before any write/u);assert.match(content,/applicable user authority or explicit repository automatic policy authorizes that exact scope/u);assert.match(content,/not evidence of a human click or a new permission grant/u);
@@ -613,9 +613,9 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
-  assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v19");
+  assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v24");
   assert.deepEqual(packageValue.compatibility.platformOverrides, {win32: {
-    portableOwnedTextEdit: "task-work-bug/v22", portableMultiDeviceRegistration: "task-work-bug/v23"
+    portableOwnedTextEdit: "task-work-bug/v22"
   }});
   assert.equal(packageValue.compatibility.portableMultiDeviceManualAuthority, "task-work-bug/v18");
   assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
@@ -628,6 +628,7 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
     "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",
     "contracts/task-work-bug/v22/private-storage.mjs", "contracts/task-work-bug/v22/manifest.json",
     "contracts/task-work-bug/v23/authority-storage.mjs", "contracts/task-work-bug/v23/manifest.json",
+    "contracts/task-work-bug/v24/authority-storage.mjs", "contracts/task-work-bug/v24/lan-client.mjs", "contracts/task-work-bug/v24/lan-discovery.mjs", "contracts/task-work-bug/v24/manifest.json",
     "contracts/task-work-bug/v19/lan-authority.mjs", "contracts/task-work-bug/v19/lan-client.mjs", "contracts/task-work-bug/v19/manifest.json",
   ]) assert.ok(packageValue.files.some((file) => file.sourcePath === sourcePath), sourcePath);
   // The registration guidance of the skills names capabilities and the stable entry, never a numbered contract.

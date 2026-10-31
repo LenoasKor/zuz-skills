@@ -15,18 +15,12 @@
       "entry": "register-ticket.mjs"
     },
     "register-via-authority": {
-      "contract": "v19",
-      "entry": "lan-client.mjs",
-      "platformContracts": {
-        "win32": "v23"
-      }
+      "contract": "v24",
+      "entry": "lan-client.mjs"
     },
     "detect-authority": {
-      "contract": "v19",
-      "entry": "lan-discovery.mjs",
-      "platformContracts": {
-        "win32": "v23"
-      }
+      "contract": "v24",
+      "entry": "lan-discovery.mjs"
     }
   }
 }

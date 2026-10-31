@@ -1,0 +1,96 @@
+{
+  "schema": "decal.task-work-bug.contract/v24",
+  "contractId": "decal.task-work-bug/v24",
+  "dependsOn": [
+    {
+      "contractId": "decal.task-work-bug/v18",
+      "manifest": "v18/manifest.json"
+    },
+    {
+      "contractId": "decal.task-work-bug/v19",
+      "manifest": "v19/manifest.json"
+    },
+    {
+      "contractId": "decal.task-work-bug/v22",
+      "manifest": "v22/manifest.json"
+    },
+    {
+      "contractId": "decal.task-work-bug/v23",
+      "manifest": "v23/manifest.json"
+    }
+  ],
+  "lanPairingTrust": {
+    "authority": "contracts/task-work-bug/v24/lan-authority.mjs",
+    "client": "contracts/task-work-bug/v24/lan-client.mjs",
+    "discovery": "contracts/task-work-bug/v24/lan-discovery.mjs",
+    "wireFormat": "decal-its-lan/v1, unchanged from v19; v24 and older clients and authorities interoperate",
+    "authoritySelection": {
+      "moreThanOneAnswer": "authority_ambiguous, with every answer listed",
+      "explicitChoice": "--authority HOST:PORT, which must be an address and port that answered",
+      "distinctBy": "address and port; labels are self-declared and do not merge answers"
+    },
+    "localConfirmation": {
+      "approvedAnswer": "saved as a pending private file; result awaiting_local_confirmation with the check code",
+      "activation": "lan-client.mjs pair-confirm --sas CODE, meaning the user saw this code on the main device's approval card",
+      "pendingFile": ".decal/its-lan-client.pending.json",
+      "expirySeconds": 600,
+      "expiryOverride": "DECAL_ITS_PAIR_CONFIRM_TTL_MS",
+      "maxWrongCodes": 5,
+      "pendingIsPaired": false,
+      "provesAgainstAnAgent": false
+    },
+    "gitExclusion": {
+      "file": "the repository's local info/exclude, resolved with git rev-parse --git-path",
+      "paths": [
+        ".decal/its-lan-client.json",
+        ".decal/its-lan-client.pending.json"
+      ],
+      "trackedKey": "client_key_tracked, pairing refused",
+      "reincluded": "client_key_not_excluded, pairing refused"
+    },
+    "knownLimit": "a paired authority is trusted: bundle merging has no path allow-list because its main legitimately carries other commits"
+  },
+  "posixPrivateStorage": {
+    "createdDirectory": "0700",
+    "toolOwnedDirectory": "the device home is tightened to 0700",
+    "otherExistingDirectory": "never changed; refused only when it is a symbolic link, has another owner, or is world-writable",
+    "file": "no-follow open; refused when it is a link, has another owner or other hard links, or has any group or other bit set",
+    "write": "exclusive no-follow temporary file with mode 0600, fsync, atomic rename"
+  },
+  "windowsPrivateStorage": {
+    "route": "the owner-only DACL route of v22 and v23",
+    "legacyAclMigration": {
+      "files": [
+        ".decal/its-lan-client.json",
+        "lan-authority.json in the device home"
+      ],
+      "notMigrated": [
+        "lan-admin.json, replaced by serve at start-up",
+        "outbox entries"
+      ],
+      "requires": [
+        "regular file",
+        "not a symbolic link",
+        "one hard link",
+        "realpath equals the expected path",
+        "owned by the current user",
+        "valid JSON with the expected schema"
+      ],
+      "otherwise": "unsafe_private_storage, file untouched",
+      "report": "migrated: true; the key is never printed",
+      "undoesEarlierExposure": false
+    }
+  },
+  "compatibility": {
+    "preserves": "published v1-v20, v22 and v23 bytes; an existing .decal/its-lan-client.json with mode 0600 keeps working without pairing again",
+    "doesNotAuthorize": [
+      "push",
+      "merge to a remote",
+      "deploy",
+      "lifecycle completion",
+      "version settlement",
+      "another repository",
+      "connections outside the local network"
+    ]
+  }
+}
