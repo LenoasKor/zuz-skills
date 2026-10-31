@@ -34,6 +34,7 @@
 
 - 스킬 문서를 바꾸면 해당 스킬 version과 `minimumCompatible`을 함께 갱신한다.
 - 계약을 추가하면 이전 공개 계약 bytes를 유지하고 새 `contracts/.../vN`을 만든다.
+- 새 계약의 `contract.json`은 자기 폴더 번호를 표기하고, README에 발행 전 상태 문구를 남기지 않는다. 스킬 문서의 상대 링크는 Pack 안의 파일만 가리킨다. 저장소 전용 문서는 링크 대신 경로로 적는다. `tests/pack-source-hygiene.test.mjs`가 이를 확인한다. 이미 발행된 `v22`·`v23`의 표기는 bytes를 바꾸지 않으려고 예외로 두며, 다음 새 계약 번호에서 바로잡는다.
 - `packVersion`, `compatibility`, `capabilities`, 실행 정책을 실제 변화와 맞춘다.
 - 각 모듈의 독립 `version`, `digest`, 파일 수가 manifest에 결속되는지 확인한다.
 - Codex·Claude·Gemini·ACP가 같은 사용자 의미를 갖는지 확인한다.

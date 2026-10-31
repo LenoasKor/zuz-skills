@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch
 label: 데칼 개발빌드 재시작
-version: 0.12.1
+version: 0.12.2
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -39,4 +39,4 @@ Tauri build hook과 Remote 정적 preview는 제품 SemVer를 바꾸지 않습�
 
 ## 릴리즈 앱 요청
 
-릴리즈 후보·정식 앱 빌드와 로컬 업데이트는 [데칼 릴리즈 빌드·업데이트](decal-release-build-update.md)를 사용한다. 이 스킬의 디버그 앱 재시작 절차로 대체하지 않는다.
+릴리즈 후보·정식 앱 빌드와 로컬 업데이트는 Decal 저장소 전용 스킬 `docs/skills/decal-release-build-update.md`를 사용한다. 이 스킬의 디버그 앱 재시작 절차로 대체하지 않는다.
