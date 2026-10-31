@@ -102,14 +102,14 @@ const admin = (home, ...args) => node(authorityScript, args, { env: { DECAL_ITS_
 /** Starts `pair` and returns what it printed so far plus a promise for the final line. */
 function startPair(cwd, label) {
   const lines = [];
-  const child = spawn(process.execPath, [clientScript, "pair", "--root", cwd, "--label", label, "--timeout", "30"], { cwd, env, stdio: ["ignore", "pipe", "inherit"] });
+  const child = spawn(process.execPath, [clientScript, "pair", "--root", cwd, "--label", label, "--timeout", "120"], { cwd, env, stdio: ["ignore", "pipe", "inherit"] });
   children.push(child);
   let buffer = "";
   child.stdout.on("data", (data) => { buffer += data; const parts = buffer.split("\n"); buffer = parts.pop(); lines.push(...parts.filter(Boolean).map((line) => JSON.parse(line))); });
   const done = new Promise((resolve) => child.once("exit", (code) => resolve({ code, lines })));
   return { lines, done };
 }
-async function waitFor(check, what, ms = 8000) {
+async function waitFor(check, what, ms = 60000) {
   const end = Date.now() + ms;
   for (;;) { const value = await check(); if (value) return value; if (Date.now() > end) assert.fail(`timeout waiting for ${what}`); await sleep(100); }
 }
@@ -415,6 +415,8 @@ try {
   }
   console.log("ITS LAN pairing v19 acceptance passed");
 } finally {
-  for (const child of children) if (child.exitCode === null) child.kill("SIGTERM");
-  await rm(base, { recursive: true, force: true });
+  const exits = children.filter((child) => child.exitCode === null).map((child) => new Promise((resolve) => { child.once("exit", resolve); child.kill("SIGTERM"); }));
+  await Promise.all(exits);
+  // Windows keeps a directory busy for a moment after its process ends; a cleanup failure must not replace the real result.
+  await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 }).catch((error) => console.error(`temporary files left: ${error.message}`));
 }

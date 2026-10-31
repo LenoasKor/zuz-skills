@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-const source = new URL("../packs/decal-pack/src/", import.meta.url).pathname;
+const source = fileURLToPath(new URL("../packs/decal-pack/src/", import.meta.url));
 
 // Published bytes never change, so these stay as released. New contract numbers must not join the list.
 const frozenContractLabels = new Set(["v23"]);

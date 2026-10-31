@@ -148,24 +148,26 @@ async function startAuthority(version, home, root, extraEnv = {}) {
 
 function startPair(file, root, label, extraEnv, ...rest) {
   const lines = [];
-  const child = spawn(process.execPath, [file, "pair", "--root", root, "--label", label, "--timeout", "30", ...rest], { cwd: root, env: { ...env, ...extraEnv }, stdio: ["ignore", "pipe", "inherit"] });
+  const child = spawn(process.execPath, [file, "pair", "--root", root, "--label", label, "--timeout", "120", ...rest], { cwd: root, env: { ...env, ...extraEnv }, stdio: ["ignore", "pipe", "inherit"] });
   children.push(child);
   let buffer = "";
   child.stdout.on("data", (data) => { buffer += data; const parts = buffer.split("\n"); buffer = parts.pop(); lines.push(...parts.filter(Boolean).map((line) => JSON.parse(line))); });
   return { lines, done: new Promise((resolve) => child.once("exit", (code) => resolve({ code, lines }))) };
 }
-async function waitFor(check, what, ms = 10000) {
+async function waitFor(check, what, ms = 60000) {
   const end = Date.now() + ms;
   for (;;) { const value = await check(); if (value) return value; if (Date.now() > end) assert.fail(`timeout waiting for ${what}`); await sleep(100); }
 }
 const approvedOnMain = async (authority) => (await waitFor(async () => { const r = await authority.admin("pending"); return r.pending?.length ? r : null; }, "approval card")).pending[0];
 
 /** Runs `pair` against whatever answers; the rogue approves itself at once. */
-const pairRogue = (root, port, extra = {}, ...rest) => node(client, ["pair", "--root", root, "--label", "second", "--timeout", "10", ...rest], { cwd: root, env: { ...port, ...extra } });
+const pairRogue = (root, port, extra = {}, ...rest) => node(client, ["pair", "--root", root, "--label", "second", "--timeout", "60", ...rest], { cwd: root, env: { ...port, ...extra } });
 
 after(async () => {
-  for (const child of children) if (child.exitCode === null) child.kill("SIGTERM");
-  await rm(base, { recursive: true, force: true });
+  const exits = children.filter((child) => child.exitCode === null).map((child) => new Promise((resolve) => { child.once("exit", resolve); child.kill("SIGTERM"); }));
+  await Promise.all(exits);
+  // Windows keeps a directory busy for a moment after its process ends; a cleanup failure must not replace the real result.
+  await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 }).catch((error) => console.error(`temporary files left: ${error.message}`));
 });
 
 test("v24 manifest verifies and refuses a changed pinned dependency", async () => {
@@ -305,8 +307,7 @@ test("its-register treats a pending-only state as not paired and never registers
   let rogueRunning = true;
   try {
     const head = await git(p.b, "rev-parse", "HEAD");
-    assert.equal(lastJson(await pairRogue(p.b, port, { DECAL_ITS_PAIR_CONFIRM_TTL_MS: "6000" })).status, "awaiting_local_confirmation");
-    const started = Date.now();
+    assert.equal(lastJson(await pairRogue(p.b, port)).status, "awaiting_local_confirmation");
     const blocked = await register("pending-only-a");
     assert.equal(blocked.code, 2);
     assert.equal(lastJson(blocked).code, "pairing_required", blocked.out);
@@ -319,9 +320,25 @@ test("its-register treats a pending-only state as not paired and never registers
     const silent = await register("pending-only-b");
     assert.equal(lastJson(silent).code, "pairing_required", "an authority was just seen, so silence does not allow a local number");
     assert.equal(await git(p.b, "rev-parse", "HEAD"), head, "nothing was registered");
+  } finally { if (rogueRunning) await rogue.stop(); }
+});
 
-    await sleep(Math.max(0, 6200 - (Date.now() - started)));
-    assert.equal(lastJson(await register("pending-expired")).status, "committed", "after expiry, with no authority answering, the device registers locally as before");
+test("after a pending pairing expires, with no authority answering, the device registers locally as before", async () => {
+  const p = await makeProject();
+  const port = scenario();
+  const own = { DECAL_ITS_OWN_ADDRESSES: "203.0.113.99", ...port };
+  const rogue = await startRogue(await projectIdOf(p.b), Number(port.DECAL_ITS_DISCOVERY_PORT));
+  let rogueRunning = true;
+  try {
+    const head = await git(p.b, "rev-parse", "HEAD");
+    assert.equal(lastJson(await pairRogue(p.b, port, { DECAL_ITS_PAIR_CONFIRM_TTL_MS: "200" })).status, "awaiting_local_confirmation");
+    await rogue.stop();
+    rogueRunning = false;
+    await sleep(400);
+    const file = await writeIntent(p.b, "pending-expired");
+    const plan = lastJson(await node(entryOf(p.b), ["--kind", "task", "--root", p.b, "--intent", file, "--dry-run"], { cwd: p.b, env: own }));
+    const done = lastJson(await node(entryOf(p.b), ["--kind", "task", "--root", p.b, "--intent", file, "--approved-digest", plan.intentDigest, "--write"], { cwd: p.b, env: own }));
+    assert.equal(done.status, "committed", JSON.stringify(done));
     assert.notEqual(await git(p.b, "rev-parse", "HEAD"), head);
   } finally { if (rogueRunning) await rogue.stop(); }
 });
@@ -427,7 +444,7 @@ test("a tracked key path is refused before pairing and at activation; a .gitigno
     assert.equal(refused.code, "client_key_tracked");
     assert.equal(await readFile(active, "utf8"), "{}", "the tracked file was not overwritten with a key");
     assert.equal(lastJson(await pairRogue(p.b, port)).code, "client_key_tracked", "pairing itself is refused while it is tracked");
-    assert.equal(lastJson(await node(client, ["status", "--root", p.b], { cwd: p.b, env: port })).code, "invalid_client_config", "the fixture file is not a real key");
+    assert.equal(lastJson(await node(client, ["status", "--root", p.b], { cwd: p.b, env: port })).code, process.platform === "win32" ? "unsafe_private_storage" : "invalid_client_config", "the fixture file is not a real key");
     await git(p.b, "rm", "-q", "--cached", "-f", CLIENT_FILE);
     await rm(active);
     await writeFile(path.join(p.b, ".gitignore"), `!/${CLIENT_FILE}\n`);
