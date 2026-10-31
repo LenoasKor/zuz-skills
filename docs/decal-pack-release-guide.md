@@ -34,6 +34,7 @@
 
 - 스킬 문서를 바꾸면 해당 스킬 version과 `minimumCompatible`을 함께 갱신한다.
 - 계약을 추가하면 이전 공개 계약 bytes를 유지하고 새 `contracts/.../vN`을 만든다.
+- 새 계약의 `contract.json`은 자기 폴더 번호를 표기하고, README에 발행 전 상태 문구를 남기지 않는다. 스킬 문서의 상대 링크는 Pack 안의 파일만 가리킨다. 저장소 전용 문서는 링크 대신 경로로 적는다. `tests/pack-source-hygiene.test.mjs`가 이를 확인한다. 이미 발행된 `v22`·`v23`의 표기는 bytes를 바꾸지 않으려고 예외로 두며, 다음 새 계약 번호에서 바로잡는다.
 - `packVersion`, `compatibility`, `capabilities`, 실행 정책을 실제 변화와 맞춘다.
 - 각 모듈의 독립 `version`, `digest`, 파일 수가 manifest에 결속되는지 확인한다.
 - Codex·Claude·Gemini·ACP가 같은 사용자 의미를 갖는지 확인한다.
@@ -92,7 +93,11 @@ npm run build:decal-pack -- --source-revision <40자리-source-commit>
 
 ## 6. Skill Store 공개
 
-`https://skills.zuz.dev/admin`의 **공식 Decal Pack 릴리스**에 GitHub tag만 입력해 검증·서명 공개를 실행한다.
+`https://skills.zuz.dev/admin`에서 다음 순서로 공개한다. tag 입력만으로는 공개되지 않는다.
+
+1. **공식 Pack 후보 준비**에 GitHub tag를 입력하고 **검증 후 후보 준비**를 누른다. 비공개 후보가 만들어진다.
+2. 후보의 **세션 AI 검수 자료 준비**로 자료를 만들고, 세션 AI가 전체 원문을 검토해 여섯 항목 보고서를 등록한다. 관리자 페이지가 로그인된 브라우저가 필요하다.
+3. 사용자가 **최종 공개 승인**을 누른다. 반영까지 수십 초 걸릴 수 있다.
 
 - Store가 GitHub asset을 다시 읽고 source, license, manifest, package digest와 격리 검사를 모두 통과해야 한다.
 - 완료 메시지의 불변 Store release ID를 기록한다.
