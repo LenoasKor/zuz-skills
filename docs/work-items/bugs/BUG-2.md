@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-2
 title: "LAN 연결이 첫 응답자를 믿고 POSIX 키 저장이 약한 문제"
-status: in_progress
+status: development_complete
 priority: P1
 taskRefs:
   - "1"
@@ -14,9 +14,16 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-10-31T03:59:07.004Z"
-updatedAt: "2026-10-31T03:59:48.923Z"
+updatedAt: "2026-10-31T04:13:58.397Z"
 blocked: null
-completion: null
+completion:
+  summary: "v24 pairing trust and POSIX storage on branch fix/pairing-trust-v24 (85a204b); not merged. Windows ACL paths not run."
+  evidence:
+    - "npm test on 85a204b, macOS: 290 tests, 286 pass, 0 fail, 4 Windows-only skipped"
+    - "node scripts/verify-decal-pack-source.mjs: 31 skills across 4 modules verified"
+    - "build at 85a204b twice: same package digest 3aed543b"
+    - "ad-hoc v24 client against Decal v21 authority from a scratch copy: pair, confirm, register passed"
+  completedAt: "2026-10-31T04:13:58.397Z"
 closure: null
 ---
 
