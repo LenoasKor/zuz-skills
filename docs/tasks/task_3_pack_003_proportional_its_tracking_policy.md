@@ -117,3 +117,15 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 동일
 - Evidence: read-only profile plan: Pack 3.9.1 source resolves correctly; no version mutation
 - Evidence: Store decal-project-pack-r23 package sha256:33cfaab77e863d3032e6feb02f4bdecab7787d0cd337719f4cd244dc17e99fb3; ES256 verified 2026-10-11T10:27:53Z
 - Evidence: Decal Task 791 completed commit 90c337786; Pack 3.9.1 app smoke, Desktop 0.474.6 Build 16
+
+
+## Store 3.11.0 공개 반영 · 2026-10-31
+
+- 사용자 승인으로 tag `decal-pack-v3.11.0`(source `3c5ba235cefc195a32692778061bf458b7a145b1`)을 후보로 준비하고, 사용자가 최종 공개 승인을 눌렀다. 3.10.2는 공개되지 않았고 그 변경은 3.11.0에 포함된다.
+- 현 세션 AI 검수 보고서 `ai-review-33f68897-a725-4795-b296-9426a4f9da68`를 등록했다. 파일 읽기는 Sonnet 하위 에이전트 6개가, 판정은 주 세션(Opus)이 맡았다. 24개 묶음·322개 증거 항목의 hash가 GitHub asset과 일치함을 대조했고, 내용은 같은 hash의 로컬 사본으로 검토했다. 거의 같은 일부 파일은 전문을 읽은 짝 파일과의 차이 비교로 검토했다. 코드는 실행하지 않았다.
+- Store https://skills.zuz.dev/ 공개 release `decal-project-pack-r26`, 3.11.0, publishedAt `2026-10-31T02:51:35.367Z`, 318개 파일. 정상 공개 다운로드의 package SHA-256 `2788595187b4df5fdcb9fe110346384e891b939f714bceaf8de4166cb62933fb`가 GitHub asset·manifest와 일치하고, 공개 JWK로 manifest ES256 서명을 검증했다.
+- 검수에서 확인한 약점(공개 카드 주의사항에 명시, 3.11.0이 새로 만든 것은 아니고 v18·v19부터 있던 동작이다):
+  - `lan-client.mjs` `pair()`는 첫 UDP 응답자에 붙고 클라이언트 쪽 확인 없이 승인 응답을 받아들인다. 같은 네트워크의 악성 기기가 프로젝트 ID를 알고 먼저 응답하면 스스로 승인하고, `applyBundle`로 임의 커밋을 main에 병합시킬 수 있다.
+  - POSIX 키 파일은 모드 600의 평문이고, 상위 폴더 권한·심볼릭 링크 방어는 Windows 경로만 강화됐다.
+- 발행된 bytes는 수정하지 않으므로 `v22`·`v23`의 표기 문제(`v23/contract.json`이 v19로 표기, README의 "Not published or installed")는 다음 새 계약 번호에서 바로잡는다. 위 약점 수정도 새 계약 번호가 필요하다.
+- 다른 소비 프로젝트 전파와 실제 다기기 실행은 이 기록으로 검증되지 않았다.
