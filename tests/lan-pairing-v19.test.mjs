@@ -114,6 +114,14 @@ async function waitFor(check, what, ms = 60000) {
   for (;;) { const value = await check(); if (value) return value; if (Date.now() > end) assert.fail(`timeout waiting for ${what}`); await sleep(100); }
 }
 
+// A slow authority answers "queued" by design: the outbox keeps the request and the same request is sent again.
+async function untilDelivered(submit) {
+  const deadline = Date.now() + 120_000;
+  let result = await submit();
+  while (["queued", "sync_pending"].includes(result.status) && Date.now() < deadline) result = await submit();
+  return result;
+}
+
 try {
   assert.equal(JSON.parse((await run(process.execPath, [v19("verify-contract.mjs")])).out).status, "accepted", "v19 manifest verifies");
   const p = await makeProject("lan");
@@ -254,7 +262,7 @@ try {
     for (const result of results) assert.equal(result.status, "registered", JSON.stringify(result));
     await assertSound(p.a, 2 + 8);
     const f = await writeIntent(p.b, "lan-last", "lan_last");
-    assert.equal(lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })).status, "registered");
+    assert.equal((await untilDelivered(async () => lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })))).status, "registered");
     assert.equal(await git(p.b, "rev-parse", "HEAD"), await git(p.a, "rev-parse", "HEAD"), "device B converges on A's HEAD");
     await assertSound(p.b, 2 + 9);
     console.log("ok 5  eight concurrent registrations over the sealed transport: unique numbers, B converges on A");
@@ -267,7 +275,7 @@ try {
     authority = await startAuthority(home, { DECAL_ITS_PAIR_MIN_INTERVAL_MS: "0" });
     assert.notEqual(authority.lanPort, oldPort, "the restart picked a new port");
     const f = await writeIntent(p.b, "lan-moved", "lan_moved");
-    assert.equal(lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })).status, "registered");
+    assert.equal((await untilDelivered(async () => lastJson(await node(clientScript, ["register", "--root", p.b, "--intent", f], { cwd: p.b })))).status, "registered");
     assert.equal(JSON.parse(await readFile(path.join(p.b, ".decal/its-lan-client.json"), "utf8")).port, authority.lanPort, "client updated its stored address");
     await assertSound(p.b, 2 + 10);
     console.log("ok 6  authority restarted on a new port: the client re-discovered it and registered");
@@ -302,7 +310,7 @@ try {
     const wrong = lastJson(await adapter(p.b, "task", taskFile, "--approved-digest", `sha256:${"0".repeat(64)}`, "--write"));
     assert.equal(wrong.code, "approval_digest_mismatch", "a digest the user did not see writes nothing");
     await assertSound(p.a, 2 + 11);
-    const written = lastJson(await adapter(p.b, "task", taskFile, "--approved-digest", preview.intentDigest, "--write"));
+    const written = await untilDelivered(async () => lastJson(await adapter(p.b, "task", taskFile, "--approved-digest", preview.intentDigest, "--write")));
     assert.equal(written.delegatedTo, "its-authority", JSON.stringify(written).slice(0, 700));
     assert.equal(written.status, "committed");
     assert.equal(written.assigned[0].taskId, 14);

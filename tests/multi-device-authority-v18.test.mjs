@@ -110,6 +110,14 @@ async function startAuthority(home, port) {
 const stop = (child) => new Promise((resolve) => { child.once("exit", resolve); child.kill("SIGTERM"); });
 
 const children = [];
+// A slow authority answers "queued" by design: the outbox keeps the request and the same request is sent again.
+async function untilDelivered(submit) {
+  const deadline = Date.now() + 120_000;
+  let result = await submit();
+  while (["queued", "sync_pending"].includes(result.status) && Date.now() < deadline) result = await submit();
+  return result;
+}
+
 try {
   assert.equal(JSON.parse((await run(process.execPath, [path.join(contracts, "task-work-bug/v18/verify-contract.mjs")])).out).status, "accepted", "v18 manifest verifies");
   // 1. The problem, reproduced: two devices issuing numbers on their own collide.
@@ -172,7 +180,7 @@ try {
   // 3. Device B ends up byte-identical to the authority.
   {
     const f = await writeIntent(p.b, "remote-last", "remote_last");
-    const result = json(await node(client, ["register", "--root", p.b, "--intent", f], { cwd: p.b, env: { DECAL_ITS_HOME: homeB } }));
+    const result = await untilDelivered(async () => json(await node(client, ["register", "--root", p.b, "--intent", f], { cwd: p.b, env: { DECAL_ITS_HOME: homeB } })));
     assert.equal(result.status, "registered");
     assert.equal(await git(p.b, "rev-parse", "HEAD"), await git(p.a, "rev-parse", "HEAD"), "client converges on the authority's HEAD");
     await assertSound(p.b, 1 + 9);
