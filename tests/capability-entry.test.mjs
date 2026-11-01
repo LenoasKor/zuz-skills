@@ -197,5 +197,5 @@ try {
   }
   console.log("capability entry acceptance passed");
 } finally {
-  await rm(base, { recursive: true, force: true });
+  await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
 }
