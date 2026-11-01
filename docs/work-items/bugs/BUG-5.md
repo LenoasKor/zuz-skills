@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-5
 title: "맥의 v15 잠금이 해제 순간을 위험한 잠금으로 오판해 등록을 거절하는 문제"
-status: new
+status: confirmed
 priority: P2
 taskRefs:
   - "1"
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T04:08:10.013Z"
-updatedAt: "2026-11-01T04:08:10.013Z"
+updatedAt: "2026-11-01T04:08:10.423Z"
 blocked: null
 completion: null
 closure: null
