@@ -186,13 +186,15 @@ try {
   assert.deepEqual(concurrentPreviews.map((previewResult) => previewResult.body.assigned[0].taskId), [4, 4]);
   // Published v6 calls a lock unsafe when the holder releases it or has not written it yet at the moment of reading.
   // v7 retries both, and v6 bytes are frozen. The refusal comes before any write, so trying again is safe.
+  // On Windows under load the same moment surfaces as ENOENT or EPERM (BUG-7).
+  const lockRace = new Set(["unsafe_repository_lock", "ENOENT", "EPERM"]);
   const writeThroughLockRace = async (target, index) => {
     for (let attempt = 0; ; attempt += 1) {
       const result = await runAsync(process.execPath, [
         writer, "--root", root, "--intent", target,
         "--approved-digest", concurrentPreviews[index].body.intentDigest, "--write",
       ], root);
-      if (result.body?.code !== "unsafe_repository_lock" || attempt === 20) return result;
+      if (!lockRace.has(result.body?.code) || attempt === 20) return result;
     }
   };
   const concurrentResults = await Promise.all(concurrentPaths.map(writeThroughLockRace));

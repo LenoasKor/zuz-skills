@@ -289,8 +289,12 @@ try {
     assert.equal(queued.code, 3);
     assert.equal(lastJson(queued).status, "queued");
     authority = await startAuthority(home, { DECAL_ITS_PAIR_MIN_INTERVAL_MS: "0" });
-    const flushed = lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b }));
-    assert.equal(flushed.status, "flushed");
+    // Under load the client's 20s limit can leave the item waiting; that is the designed answer, so flush again (BUG-7).
+    const stillWaiting = (value) => value.status === "incomplete" && value.results.every((item) => ["registered", "queued", "sync_pending"].includes(item.status));
+    const flushDeadline = Date.now() + 120_000;
+    let flushed = lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b }));
+    while (stillWaiting(flushed) && Date.now() < flushDeadline) flushed = lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b }));
+    assert.equal(flushed.status, "flushed", JSON.stringify(flushed));
     assert.equal(lastJson(await node(clientScript, ["flush", "--root", p.b], { cwd: p.b })).results.length, 0);
     await assertSound(p.b, 2 + 11);
     await assertSound(p.a, 2 + 11);

@@ -301,6 +301,50 @@ try {
     assert.equal((await readFile(calls, "utf8")).length, 2);
     console.log("ok 9  a write is repeated through the lock release race; a really unsafe lock stays refused");
   }
+
+  // 10. A write refused because the lock's owner seemed gone is repeated; a lock whose owner is really gone stays refused and untouched.
+  {
+    const root = await makeProject("owner-gone");
+    const file = await put(root, "owner.json", taskIntent("entry-owner"));
+    const plan = entry(root, "task", file, "--dry-run");
+    const lock = path.join(root, ".decal-slice-completion.lock");
+    const stale = JSON.stringify({ pid: spawnSync(process.execPath, ["-e", ""]).pid });
+    await writeFile(lock, stale);
+    const refused = entry(root, "task", file, "--approved-digest", plan.body.intentDigest, "--write");
+    assert.equal(refused.status, 2);
+    assert.equal(refused.body.code, "repository_lock_owner_terminated");
+    assert.equal(await readFile(lock, "utf8"), stale, "a lock whose owner is really gone is left as it was");
+    await rm(lock);
+
+    const fake = path.join(root, "contracts/task-work-bug/v96");
+    await mkdir(fake);
+    await writeFile(path.join(fake, "verify-contract.mjs"), 'console.log(\'{"status":"accepted"}\');\n');
+    const calls = path.join(root, "calls.txt");
+    const scripted = (refusals, answer) => `import { appendFileSync, readFileSync } from "node:fs";
+      appendFileSync(${JSON.stringify(calls)}, "x");
+      if (readFileSync(${JSON.stringify(calls)}, "utf8").length <= ${refusals}) { console.log('{"status":"rejected","code":"repository_lock_owner_terminated"}'); process.exit(2); }
+      console.log('${answer}');\n`;
+    await writeFile(path.join(fake, "register-task-batch.mjs"), scripted(1, '{"status":"committed"}'));
+    await writeFile(path.join(fake, "lan-client.mjs"), scripted(1, '{"status":"registered","receipt":{"status":"committed"},"sync":"synced"}'));
+    const tablePath = path.join(root, "contracts/task-work-bug/capabilities.json");
+    const table = JSON.parse(await readFile(tablePath, "utf8"));
+    table.capabilities["register-task-batch"] = { contract: "v96", entry: "register-task-batch.mjs" };
+    await writeFile(tablePath, JSON.stringify(table));
+    const repeated = entry(root, "task", file, "--approved-digest", plan.body.intentDigest, "--write");
+    assert.equal(repeated.status, 0, repeated.stdout);
+    assert.equal((await readFile(calls, "utf8")).length, 2);
+
+    await rm(calls);
+    table.capabilities["register-via-authority"] = { contract: "v96", entry: "lan-client.mjs" };
+    await writeFile(tablePath, JSON.stringify(table));
+    await mkdir(path.join(root, ".decal"), { recursive: true });
+    await writeFile(path.join(root, ".decal/its-lan-client.json"), "{}");
+    const delivered = entry(root, "task", file, "--approved-digest", `sha256:${"0".repeat(64)}`, "--write");
+    assert.equal(delivered.status, 0, delivered.stdout);
+    assert.equal(delivered.body.delegatedTo, "its-authority");
+    assert.equal((await readFile(calls, "utf8")).length, 2);
+    console.log("ok 10 a write is repeated when the lock's owner seemed gone, also through the authority; a stale lock stays refused");
+  }
   console.log("capability entry acceptance passed");
 } finally {
   await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
