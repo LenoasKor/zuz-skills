@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-5
 title: "맥의 v15 잠금이 해제 순간을 위험한 잠금으로 오판해 등록을 거절하는 문제"
-status: in_progress
+status: development_complete
 priority: P2
 taskRefs:
   - "1"
@@ -14,9 +14,14 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T04:08:10.013Z"
-updatedAt: "2026-11-01T04:08:12.654Z"
+updatedAt: "2026-11-01T04:35:08.075Z"
 blocked: null
-completion: null
+completion:
+  summary: "fix/flaky-test-locks 067e2ed. 입구가 v15 unsafe 거절을 정해진 횟수만 재시도. 진짜 위험한 잠금은 거절 유지. 브랜치 미병합."
+  evidence:
+    - "부하 전체 시험: 수정본(067e2ed) 8회 실패 0, 수정 전 a01a5a1 14회 중 4회 실패, cd2520c 6회 중 2회 실패. 횟수가 적어 통계적 증명은 아님."
+    - "capability-entry 시험 7~9 추가, 새 시험 7은 옛 입구에서 실패 확인, verify:source 통과"
+  completedAt: "2026-11-01T04:35:08.075Z"
 closure: null
 ---
 
