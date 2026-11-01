@@ -77,3 +77,9 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 외부
 2026-11-01 사용자 승인으로 Pack을 3.12.0(`zuz-its` 모듈 1.9.0)으로 확정하고 main과 tag `decal-pack-v3.12.0`(source `9415e5726a68d1882b34c49881b9ef84ef5d6ae9`)을 push했으며 GitHub Release를 발행했다. 내려받은 asset이 로컬 빌드와 같다. package SHA-256 `61f0410782d0168ec9d88b22bea3cbf839596002ad078c51b44023db58a50ad0`, manifest identity `12954ca1d17286625268d1aa6f42939673788f6a0b92387641237389b44b4b40`, 346개 파일. 같은 커밋 재빌드 결과가 같고, 발행 소스의 `npm test`는 308개 통과·실패 0·건너뜀 4였다.
 
 Store: 후보 `candidate-6b0a5d5b-c0b0-44a2-9ec9-df9aee9b1131`을 준비했고 AI 검수 자료(묶음 27개)의 해시를 전부 대조했으며 파일 346개 전문 읽기를 마쳤다. 그러나 보고서 제출이 `session-review-submission-invalid`로 거절되어 **Store에는 공개되지 않았다.** 데칼 동기화도 하지 않았다.
+
+2026-11-01 Store 공개 완료. 앞선 거절은 제출 형식을 3.11.0의 저장 기록으로 잘못 추정해 생긴 것으로, Store 코드(읽기 전용 승인)에서 확인해 형식만 고쳤다. 현 세션 AI 검수 보고서 `ai-review-a2a666eb-0931-45ce-9198-5a4205f17951`을 등록했고, 파일 읽기는 Sonnet 하위 에이전트 6개가, 판정은 주 세션(Opus)이 맡았다. 묶음 27개를 받아 파일 346개(증거 항목 350개)의 해시를 대조했고 Read 호출 기록으로 전수 읽기를 확인했다. 코드는 실행하지 않았다. 최종 공개 승인은 사용자가 눌렀다.
+
+- Store 공개 release `decal-project-pack-r27`, publishedAt `2026-11-01T04:04:53.553Z`, source `9415e5726a68d1882b34c49881b9ef84ef5d6ae9`, 346개 파일.
+- 공개 다운로드 package SHA-256 `61f0410782d0168ec9d88b22bea3cbf839596002ad078c51b44023db58a50ad0`이 GitHub 발행 빌드와 바이트까지 같고, 공개 JWK(`zuz-skills-production-2026-01`)로 manifest ES256 서명을 검증했다.
+- 남은 일: 데칼 동기화(별도 승인), 다른 소비 프로젝트 전파, BUG-3 Windows 시험 확인, 간헐 실패 수정(BUG-4, `claude/eager-kepler-edcdf4`)의 결과 확인. 3.12.0에는 그 수정이 없다.
