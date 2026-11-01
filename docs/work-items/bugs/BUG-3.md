@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-3
 title: "Windows 동시 등록이 잠금 파일 EPERM으로 실패하는 문제"
-status: in_progress
+status: development_complete
 priority: P1
 taskRefs:
   - "1"
@@ -15,9 +15,17 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T01:27:38.153Z"
-updatedAt: "2026-11-01T01:33:38.000Z"
+updatedAt: "2026-11-01T08:10:04.000Z"
 blocked: null
-completion: null
+completion:
+  summary: "Windows 잠금 거부(EPERM)를 v25·v26이 연속 5초까지 재시도해 동시 등록 EPERM이 사라졌다. 3.12.0으로 발행됨."
+  evidence:
+    - "Windows 92a27e0: capability-entry 3/3 통과. 조용한 상태에서 v25로 8건 동시 로컬 등록(ok 3b) 포함, EPERM·ENOENT 없음."
+    - "Windows registration-lock-v25 3회 모두 9/9, task-registration-v7 3/3, lan-pairing-v24 3/3, multi-device-authority-v18 단독 3/3."
+    - "Mac e577ee9: 수정 후 multi-device-authority-v18, lan-pairing-v19, capability-entry 통과."
+    - "남은 별도 건: lan-pairing-v19 단독 1/3(repository_lock_owner_terminated, queued/TimeoutError, 빌드와 겹침). 이 Bug의 EPERM 아님. 시험 수정 e577ee9의 Windows 재확인은 안 함."
+    - "남은 별도 건: 잠금 소유자 종료 판정이 다시 읽지 않고 실패하는 경합 추정, v19 lan-broker가 v15·v16 고정이라 Windows 번호 서버 경로는 v25를 타지 않음."
+  completedAt: "2026-11-01T08:10:04.000Z"
 closure: null
 ---
 
