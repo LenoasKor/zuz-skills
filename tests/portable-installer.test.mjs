@@ -240,7 +240,7 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     const repositoryRules = "# Repository rules\n\nKeep this line byte-for-byte.\n";
     await writeFile(path.join(root, "AGENTS.md"), repositoryRules);
     const { preview } = await installSelection(root, ["zuz-its"], ["codex"]);
-    assert.deepEqual(preview.value.plannedRuleFiles.map((file) => file.path), ["AGENTS.md", "CLAUDE.md"]);
+    assert.deepEqual(preview.value.plannedRuleFiles.map((file) => file.path), ["AGENTS.md", "CLAUDE.md", ".gitattributes"]);
     const agents = await readFile(path.join(root, "AGENTS.md"), "utf8");
     const claude = await readFile(path.join(root, "CLAUDE.md"), "utf8");
     for (const source of [agents, claude]) {
@@ -260,6 +260,59 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     const blocked = run(root, "--dry-run", null, { modules: ["zuz-its"], providers: ["codex"] });
     assert.equal(blocked.value.status, "blocked");
     assert.equal(blocked.value.conflictDetails.find((item) => item.path === "AGENTS.md")?.reason, "managed_rule_block_modified");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("ITS keeps contract line endings without touching existing attributes", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-eol-"));
+  try {
+    const existing = "*.png binary\n# keep this";
+    await writeFile(path.join(root, ".gitattributes"), existing);
+    await installSelection(root, ["zuz-its"], ["codex"]);
+    const installed = await readFile(path.join(root, ".gitattributes"), "utf8");
+    assert.ok(installed.startsWith(`${existing}\n\n`));
+    assert.equal(installed.match(/^contracts\/task-work-bug\/\*\* text eol=lf$/gmu)?.length, 1);
+    const again = run(root, "--dry-run", null, { providers: ["codex"] });
+    assert.equal(again.value.plannedRuleFiles.find((file) => file.path === ".gitattributes")?.state, "unchanged");
+    assert.equal(await readFile(path.join(root, ".gitattributes"), "utf8"), installed);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("a clone with automatic line ending conversion keeps the contract bytes", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-eol-clone-"));
+  const clone = `${root}-clone`;
+  try {
+    const git = (...gitArgs) => spawnSync("git", gitArgs, { cwd: root, encoding: "utf8" });
+    git("init", "-b", "main");
+    git("config", "user.name", "Fixture");
+    git("config", "user.email", "fixture@example.invalid");
+    git("commit", "--allow-empty", "-m", "fixture: baseline");
+    const options = { modules: ["zuz-its"], providers: ["codex"], commit: true };
+    const preview = run(root, "--dry-run", null, options);
+    const installed = run(root, "--write", preview.value.installationPlanDigest, options);
+    assert.equal(installed.value.gitOutcome, "committed", installed.stdout);
+    assert.equal(spawnSync("git", ["-c", "core.autocrlf=true", "clone", "-q", root, clone]).status, 0);
+    const entry = "contracts/task-work-bug/its-register.mjs";
+    assert.deepEqual(await readFile(path.join(clone, entry)), await readFile(path.join(root, entry)));
+    assert.ok(!(await readFile(path.join(clone, entry))).includes(0x0d));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+    await rm(clone, { recursive: true, force: true });
+  }
+});
+
+test("a project already holding the contract line ending rule is left unchanged", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "zuz-pack-eol-owned-"));
+  try {
+    const existing = "* text=auto\r\ncontracts/task-work-bug/** text eol=lf\r\n";
+    await writeFile(path.join(root, ".gitattributes"), existing);
+    const { preview } = await installSelection(root, ["zuz-its"], ["codex"]);
+    assert.equal(preview.value.plannedRuleFiles.find((file) => file.path === ".gitattributes")?.state, "unchanged");
+    assert.equal(await readFile(path.join(root, ".gitattributes"), "utf8"), existing);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -387,7 +440,7 @@ test("next approved Pack commit settles previously uncommitted pristine managed 
     const previousPreview = run(root, "--dry-run", null, previousOptions);
     const previousInstall = run(root, "--write", previousPreview.value.installationPlanDigest, previousOptions);
     assert.equal(previousInstall.status, 0, `${previousInstall.stderr}\n${previousInstall.stdout}`);
-    git(["add", "AGENTS.md", "CLAUDE.md", ".decal/decal-pack.lock.json"]);
+    git(["add", "AGENTS.md", "CLAUDE.md", ".gitattributes", ".decal/decal-pack.lock.json"]);
     git(["commit", "-m", "fixture: track prior Pack control files"]);
     await writeFile(path.join(root, "unrelated.txt"), "after\n");
 
