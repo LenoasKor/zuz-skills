@@ -13,9 +13,15 @@ try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v15/v
 try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v13/verify-contract.mjs")).verifyContract(); } catch(error) { failures.push(`scoped execution contract: ${error.code ?? error.message}`); }
 try { await verifyContract(); } catch (error) { failures.push(`portable settlement contract: ${error.code ?? error.message}`); }
 try { await verifyBookkeeping(); } catch(error) { failures.push(`portable bookkeeping contract: ${error.code ?? error.message}`); }
-for (const version of ["v22", "v23"]) {
+for (const version of ["v22", "v23", "v25", "v26"]) {
   try { await (await import(`../packs/decal-pack/src/contracts/task-work-bug/${version}/verify-contract.mjs`)).verifyContract(); }
   catch (error) { failures.push(`Windows ${version} contract: ${error.code ?? error.message}`); }
+}
+try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v24/verify-contract.mjs")).verifyContract(); }
+catch (error) { failures.push(`LAN pairing trust v24 contract: ${error.code ?? error.message}`); }
+const capabilityTable = JSON.parse(await readFile(new URL("../packs/decal-pack/src/contracts/task-work-bug/capabilities.json", import.meta.url), "utf8"));
+for (const name of ["register-via-authority", "detect-authority"]) {
+  if (capabilityTable.capabilities?.[name]?.contract !== "v24" || capabilityTable.capabilities?.[name]?.platformContracts) failures.push(`${name} must use task-work-bug/v24 on every platform`);
 }
 const semver = /^[0-9]+\.[0-9]+\.[0-9]+$/;
 const policy = JSON.parse(await readFile(new URL("../packs/decal-pack/src/project-skill-pack-policy.json", import.meta.url), "utf8"));

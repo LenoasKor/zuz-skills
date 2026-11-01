@@ -132,6 +132,18 @@ try {
     writer, "--root", root, "--intent", target,
     "--approved-digest", ticketRegistrationIntentDigest(concurrent[index]), "--write",
   ], root)));
+  // Pinned v7 fails on the Windows lock denial that v25 retries (BUG-3). The rejection must leave nothing
+  // behind, so the same approved intent has to succeed when it is sent again.
+  if (process.platform === "win32") {
+    for (const index of results.keys()) {
+      for (let attempt = 0; attempt < 5 && results[index].body?.code === "EPERM"; attempt += 1) {
+        results[index] = await runAsync([
+          writer, "--root", root, "--intent", paths[index],
+          "--approved-digest", ticketRegistrationIntentDigest(concurrent[index]), "--write",
+        ], root);
+      }
+    }
+  }
   assert.equal(results.every((result) => result.status === 0), true, JSON.stringify(results));
   assert.deepEqual(results.map((result) => result.body.assigned.id).sort(), Array.from({ length: 8 }, (_, index) => `BUG-00${index + 1}`));
 

@@ -7,6 +7,7 @@
 // unavailable the entry stops instead of registering locally, because a local number could collide with another device.
 // A project that is not paired but whose authority answers on the local network from another device is stopped too
 // (`pairing_required`): the device must pair first, otherwise it would silently issue a colliding number.
+// An approved pairing that waits for local confirmation is not a pairing: it is stopped the same way and is never used.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -102,7 +103,18 @@ if (existsSync(contextModule)) {
 const capability = kind === "task" ? "register-task-batch" : intent.kind === "incident" ? "register-incident" : "register-ticket";
 const table = loadTable();
 const broker = resolve(table, capability);
-const paired = existsSync(path.join(root, ".decal", "its-lan-client.json"));
+// lstat, not exists: a link to nothing still counts as paired here, so the client refuses it instead of a local number being issued.
+const paired = lstatSync(path.join(root, ".decal", "its-lan-client.json"), { throwIfNoEntry: false }) !== undefined;
+
+/** A pairing the authority approved but this device has not confirmed yet. It proves an authority was just seen, and nothing else. */
+function pendingPairing(projectRoot) {
+  try {
+    const file = path.join(projectRoot, ".decal", "its-lan-client.pending.json");
+    const value = JSON.parse(plainFile(file, 65536));
+    return Date.parse(value.expiresAt) > Date.now() ? value : null;
+  } catch { return null; }
+}
+const clientPath = Object.hasOwn(table, "register-via-authority") ? `contracts/task-work-bug/${table["register-via-authority"].contract}/lan-client.mjs` : "lan-client.mjs";
 
 if (write && paired) {
   const digest = args.get("--approved-digest");
@@ -114,7 +126,7 @@ if (write && paired) {
   let outcome = null;
   try { outcome = JSON.parse(line); } catch { /* reported below */ }
   if (outcome?.status === "registered" && outcome.receipt) {
-    process.stdout.write(`${JSON.stringify({ ...outcome.receipt, delegatedTo: "its-authority", sync: outcome.sync })}\n`);
+    process.stdout.write(`${JSON.stringify({ ...outcome.receipt, delegatedTo: "its-authority", sync: outcome.sync, ...(outcome.migrated ? { migrated: true, migrationNote: outcome.migrationNote } : {}) })}\n`);
   } else {
     process.stdout.write(`${line || JSON.stringify({ schema: RESULT_SCHEMA, status: "rejected", code: "authority_delegation_failed" })}\n`);
   }
@@ -139,12 +151,20 @@ async function authorityElsewhere(projectRoot) {
 }
 
 if (write && !paired) {
+  const waiting = pendingPairing(root);
+  if (waiting) {
+    stop("pairing_required", {
+      reason: "pairing_awaiting_local_confirmation",
+      authority: { label: waiting.authorityLabel, address: waiting.host },
+      next: `Ask the user whether the main device showed an approval card with the check code, then run ${clientPath} pair-confirm --sas CODE with the code the user reports, or pair-cancel if no card appeared or the code differs. Nothing was registered.`,
+    });
+  }
   const other = await authorityElsewhere(root);
   if (other) {
     stop("pairing_required", {
       reason: "an_authority_for_this_project_is_on_the_local_network",
       authority: { label: other.label, address: other.address },
-      next: "Pair this device first (contracts/task-work-bug/v19/lan-client.mjs pair) and approve it on the main device after comparing the check code. Nothing was registered.",
+      next: `Pair this device first (${clientPath} pair), approve it on the main device, then run pair-confirm --sas CODE with the code the user saw on the main device's approval card. Nothing was registered.`,
     });
   }
 }

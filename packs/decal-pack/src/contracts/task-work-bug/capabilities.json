@@ -4,29 +4,32 @@
   "capabilities": {
     "register-task-batch": {
       "contract": "v15",
-      "entry": "register-task-batch.mjs"
+      "entry": "register-task-batch.mjs",
+      "platformContracts": {
+        "win32": "v25"
+      }
     },
     "register-ticket": {
       "contract": "v15",
-      "entry": "register-ticket.mjs"
+      "entry": "register-ticket.mjs",
+      "platformContracts": {
+        "win32": "v25"
+      }
     },
     "register-incident": {
       "contract": "v16",
-      "entry": "register-ticket.mjs"
+      "entry": "register-ticket.mjs",
+      "platformContracts": {
+        "win32": "v26"
+      }
     },
     "register-via-authority": {
-      "contract": "v19",
-      "entry": "lan-client.mjs",
-      "platformContracts": {
-        "win32": "v23"
-      }
+      "contract": "v24",
+      "entry": "lan-client.mjs"
     },
     "detect-authority": {
-      "contract": "v19",
-      "entry": "lan-discovery.mjs",
-      "platformContracts": {
-        "win32": "v23"
-      }
+      "contract": "v24",
+      "entry": "lan-discovery.mjs"
     }
   }
 }

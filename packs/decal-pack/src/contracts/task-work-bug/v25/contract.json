@@ -1,0 +1,19 @@
+{
+  "schema": "zuz.its.registration-lock-windows-denial/v25",
+  "predecessor": "task-work-bug/v15",
+  "taskIntent": "v7",
+  "ticketIntent": "v9",
+  "maxWaitMs": 300000,
+  "ownerTerminated": "preserve-and-reject",
+  "retryMutation": false,
+  "lockRemoval": "matching-owned-lock-only",
+  "nativeFallback": false,
+  "windowsDenial": {
+    "errorCode": "EPERM",
+    "retryMs": 50,
+    "consecutiveLimitMs": 5000,
+    "selectedOn": [
+      "win32"
+    ]
+  }
+}
