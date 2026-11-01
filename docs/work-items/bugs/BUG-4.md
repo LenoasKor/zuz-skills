@@ -56,3 +56,11 @@ Task 4 전체 시험에서 tests/lan-pairing-v19.test.mjs가 동시 등록 중 s
 기존 기록 확인: BUG-3(Windows EPERM 잠금), BUG-2(LAN 연결 신뢰), BUG-1(설치기 영수증)과 원인·수정이 다릅니다. Task 4의 입구 변경은 이 경로를 지나지 않습니다.
 
 Remote parity: not-required — portable CLI 입구 내부 재시도이며 Decal Remote 화면·프로토콜 변경이 없습니다.
+
+## 작업 기록
+
+2026-11-01 `fix/flaky-test-locks`를 main에 fast-forward로 병합했다(source `a515e230d54a5f99f9faf23484ebcfe4fed35d57`). Pack 3.12.1(`zuz-its` 모듈 1.9.1)과 tag `decal-pack-v3.12.1`을 push하고 GitHub Release를 발행했다. 내려받은 asset이 로컬 빌드와 같다. manifest SHA-256 `dc80b663b97a1f64c7157da902bd2761ea31cfe2a865613ab4bbeb0b1a1f8165`, package SHA-256 `773d75cefaf2181b285c516cfec3e9793ca4889a0051246d9fc698c9e1482770`, manifest identity `34376c5763adc96aaa7c78b2147988ad8893951cac6adf2a999a88ca1a4ec6df`, 346개 파일. 같은 커밋 재빌드 결과가 같다.
+
+부하(CPU 부하 프로세스 30개, load 약 50~90) 전체 시험: source 커밋 8회 모두 308개 통과·실패 0·건너뜀 4. 앞선 수정본 067e2ed도 8회 실패 0. 수정 전 a01a5a1은 14회 중 4회, 변경 전 cd2520c는 6회 중 2회 실패했다. 변경 전 코드에서도 같은 실패가 나왔으므로 Task 4가 원인은 아니며, 새 시험 파일(전체 CPU의 약 2.6%, 단독 실행 기준 추정)이 빈도를 높였다는 근거는 없지만 횟수가 적어 완전히 배제하지는 못한다.
+
+남은 일: Store 공개, 데칼 동기화, 다른 소비 프로젝트 전파, Windows 시험. 번호 계약을 직접 부르는 경로와 구 설치본은 고쳐지지 않는다.
