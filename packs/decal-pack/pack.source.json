@@ -142,6 +142,7 @@
     "portableMultiDeviceManualAuthority": "task-work-bug/v18",
     "portableCapabilityEntry": "task-work-bug/its-register.mjs",
     "portableUnpairedDeviceGuard": "task-work-bug/its-register.mjs",
+    "portableTaskVersionPolicy": "task-work-bug/v27",
     "portableIsolatedSettlement": "task-work-bug/v20",
     "platformOverrides": {
       "win32": {
@@ -378,7 +379,8 @@
       "nativeFallback": false,
       "publicationState": "candidate",
       "unpairedDeviceGuard": "stop-with-pairing_required-when-another-device-is-the-authority",
-      "guardCapability": "detect-authority"
+      "guardCapability": "detect-authority",
+      "taskVersionPolicyCapability": "check-task-version-policy"
     },
     "multiDeviceAuthority": {
       "contract": "task-work-bug/v24",

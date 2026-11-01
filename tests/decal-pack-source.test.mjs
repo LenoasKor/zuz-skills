@@ -231,7 +231,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.19.1",
+    "decal-task": "1.20.0",
     "decal-work": "1.15.1",
     "decal-bug": "1.15.1",
     "decal-incident": "1.8.1",
@@ -301,7 +301,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.19.1",
+    "decal-task": "1.20.0",
     "decal-work": "1.15.1",
     "decal-bug": "1.15.1",
     "zuz-its": "1.5.0",
@@ -317,7 +317,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.19\.1"/);
+      assert.match(content, /version: "1\.20\.0"/);
       assert.match(content, /v20\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
@@ -625,6 +625,8 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   assert.equal(packageValue.executionPolicies.multiDeviceAuthority.pairedProjectWithoutAuthority, "stop-never-register-locally");
   assert.equal(packageValue.compatibility.portableUnpairedDeviceGuard, "task-work-bug/its-register.mjs");
   assert.equal(packageValue.executionPolicies.capabilityResolution.guardCapability, "detect-authority");
+  assert.equal(packageValue.compatibility.portableTaskVersionPolicy, "task-work-bug/v27");
+  assert.equal(packageValue.executionPolicies.capabilityResolution.taskVersionPolicyCapability, "check-task-version-policy");
   for (const sourcePath of [
     "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
     "contracts/task-work-bug/v18/authority-server.mjs", "contracts/task-work-bug/v18/manifest.json",
@@ -632,6 +634,7 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
     "contracts/task-work-bug/v23/authority-storage.mjs", "contracts/task-work-bug/v23/manifest.json",
     "contracts/task-work-bug/v24/authority-storage.mjs", "contracts/task-work-bug/v24/lan-client.mjs", "contracts/task-work-bug/v24/lan-discovery.mjs", "contracts/task-work-bug/v24/manifest.json",
     "contracts/task-work-bug/v19/lan-authority.mjs", "contracts/task-work-bug/v19/lan-client.mjs", "contracts/task-work-bug/v19/manifest.json",
+    "contracts/task-work-bug/v27/task-version-policy.mjs", "contracts/task-work-bug/v27/manifest.json",
   ]) assert.ok(packageValue.files.some((file) => file.sourcePath === sourcePath), sourcePath);
   // The registration guidance of the skills names capabilities and the stable entry, never a numbered contract.
   for (const skill of ["decal-task", "decal-work", "decal-bug", "decal-incident"]) {

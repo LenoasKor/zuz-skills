@@ -8,6 +8,7 @@
 // A project that is not paired but whose authority answers on the local network from another device is stopped too
 // (`pairing_required`): the device must pair first, otherwise it would silently issue a colliding number.
 // An approved pairing that waits for local confirmation is not a pairing: it is stopped the same way and is never used.
+// A project that declares which version impacts its build can read has a Task outside them refused (`unreadable_task_version_impact`).
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -103,6 +104,15 @@ if (existsSync(contextModule)) {
 const capability = kind === "task" ? "register-task-batch" : intent.kind === "incident" ? "register-incident" : "register-ticket";
 const table = loadTable();
 const broker = resolve(table, capability);
+// Before any route is chosen, so a paired project's Task is checked too. Only Tasks carry these values, and an older table does not know the check.
+if (kind === "task" && Object.hasOwn(table, "check-task-version-policy")) {
+  const { checkTaskVersionPolicy } = await import(pathToFileURL(resolve(table, "check-task-version-policy")).href);
+  const outcome = await checkTaskVersionPolicy(root, intent);
+  if (outcome.status !== "accepted") {
+    const { status: _status, code, ...detail } = outcome;
+    stop(code, detail);
+  }
+}
 // lstat, not exists: a link to nothing still counts as paired here, so the client refuses it instead of a local number being issued.
 const paired = lstatSync(path.join(root, ".decal", "its-lan-client.json"), { throwIfNoEntry: false }) !== undefined;
 
