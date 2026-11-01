@@ -1,6 +1,6 @@
 // The stable entry runs only contracts listed in capabilities.json, only after they verify, and never falls back.
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile, appendFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -33,6 +33,17 @@ async function makeProject(name) {
   return root;
 }
 const entry = (root, kind, file, ...rest) => run(process.execPath, [path.join(root, "contracts/task-work-bug/its-register.mjs"), "--kind", kind, "--root", root, "--intent", file, ...rest], root);
+const runAsync = (file, args, cwd) => new Promise((resolve, reject) => {
+  const child = spawn(file, args, { cwd, env, stdio: ["ignore", "pipe", "pipe"] });
+  let stdout = "";
+  child.stdout.on("data", (chunk) => { stdout += chunk; });
+  child.once("error", reject);
+  child.once("exit", (status) => {
+    let body = null;
+    try { body = JSON.parse(stdout.trim().split("\n").at(-1)); } catch { /* not json */ }
+    resolve({ status, stdout, body });
+  });
+});
 const taskCount = async (root) => (await readdir(path.join(root, "docs/tasks"))).filter((n) => /^task_\d+_/u.test(n)).length;
 
 const context = "## 사용자 요약\n\n```zuz-its-context\n" + JSON.stringify({ schemaVersion: 1, reason: "시험", goal: "시험", completion: "시험", nextAction: "시험" }) + "\n```\n";
@@ -86,17 +97,38 @@ try {
   {
     const root = await makeProject("tamper");
     const head = git(root, "rev-parse", "HEAD");
-    await appendFile(path.join(root, "contracts/task-work-bug/v15/registration.mjs"), "\n// tampered\n");
+    const table = JSON.parse(await readFile(path.join(root, "contracts/task-work-bug/capabilities.json"), "utf8"));
+    const capability = table.capabilities["register-task-batch"];
+    const selected = capability.platformContracts?.[process.platform] ?? capability.contract;
+    await appendFile(path.join(root, `contracts/task-work-bug/${selected}/registration.mjs`), "\n// tampered\n");
     const file = await put(root, "t.json", taskIntent("entry-tamper"));
     const result = entry(root, "task", file, "--dry-run");
     assert.equal(result.status, 2);
     assert.equal(result.body.code, "authoring_update_required");
-    assert.equal(result.body.contract, "v15");
+    assert.equal(result.body.contract, selected);
     const write = entry(root, "task", file, "--approved-digest", `sha256:${"0".repeat(64)}`, "--write");
     assert.equal(write.body.code, "authoring_update_required");
     assert.equal(git(root, "rev-parse", "HEAD"), head, "nothing was committed");
     assert.equal(await taskCount(root), 1, "no older contract was used instead");
     console.log("ok 3  a tampered contract stops the entry: no write and no fallback to an older version");
+  }
+
+  // 3b. The Windows contract survives real parallel registrations, not only parallel lock use.
+  {
+    const root = await makeProject("parallel-v25");
+    const writer = path.join(root, "contracts/task-work-bug/v25/register-ticket.mjs");
+    const jobs = [];
+    for (let index = 0; index < 8; index += 1) {
+      const file = await put(root, `parallel-${index}.json`, ticketIntent("bug", `parallel-${index}`));
+      const plan = run(process.execPath, [writer, "--root", root, "--intent", file, "--dry-run"], root);
+      assert.equal(plan.body?.status, "planned", plan.stdout);
+      jobs.push(runAsync(process.execPath, [writer, "--root", root, "--intent", file, "--approved-digest", plan.body.intentDigest, "--write"], root));
+    }
+    const results = await Promise.all(jobs);
+    assert.equal(results.every((result) => result.status === 0 && result.body?.status === "committed"), true, JSON.stringify(results.map((result) => result.body ?? result.stdout)));
+    assert.equal(new Set(results.map((result) => result.body.assigned.id)).size, 8);
+    await assert.rejects(readFile(path.join(root, ".decal-slice-completion.lock")), "the lock is gone afterwards");
+    console.log("ok 3b eight parallel registrations through v25 get eight numbers");
   }
 
   // 4. A capability that is not advertised, and a table that tries to escape, are refused.
