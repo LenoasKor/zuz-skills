@@ -63,6 +63,13 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 외부
 - 선언 파일: `config/its-version-policy.json`(`decal.its-version-policy/v1`), canonical main 작업본에서 읽습니다.
 - 거절 코드: `unreadable_task_version_impact`, 선언 파일이 망가졌으면 `invalid_version_policy`.
 - 검증: `npm test` 312개 중 308개 통과, 실패 0, 건너뜀 4. `npm run verify:source` 통과. 임시 프로젝트에서 실제 입구로 `desktop-patch` 거절과 선언 없을 때 통과를 확인했습니다.
-- 검증 중 관찰: 첫 전체 실행에서 `tests/task-registration-v6.test.mjs`가 발행된 v6 잠금의 `unsafe_repository_lock`으로 한 번 실패했습니다. 단독 5회와 전체 재실행은 통과했고 이번 변경과 무관한 경합입니다.
+- 검증 중 관찰: 전체 시험에서 간헐 실패 2종이 나왔습니다. 아래 병합 기록의 근거를 봅니다.
 - 막지 못하는 경로: 번호 계약을 직접 호출하는 경우, v27을 모르는 구 설치본.
-- 남은 일: `fix/pairing-trust-v24`와 이 브랜치 병합, Pack 버전 확정(후보 3.11.1은 새 계약 전에 정해진 값이고, `zuz-its` 모듈 버전 1.8.1도 그대로임)·tag·게시, 데칼 동기화. 모두 별도 승인입니다.
+- 남은 일: Pack 버전 확정(후보 3.11.1은 새 계약 전에 정해진 값이고, `zuz-its` 모듈 버전 1.8.1도 그대로임)·push·tag·게시, 데칼 동기화. 모두 별도 승인입니다.
+
+2026-11-01 사용자 승인으로 `fix/pairing-trust-v24`(0f7ed11)와 `feat/task-version-policy`(3bf4467)를 main에 병합했습니다. push는 하지 않았습니다. BUG-3의 Windows 시험 결과는 이 세션에서 확인하지 못했습니다. 데칼 origin/main e4f68912a 기준으로 v27이 비어 있음을 다시 확인했습니다.
+
+전체 시험 결과: 변경 전 cd2520c는 4회 모두 실패 0. 변경 후 7회(브랜치 2, 병합 main 5) 중 4회 실패 0, 3회 간헐 실패. 시험 당시 다른 세션의 작업으로 맥 부하가 15코어에 load 24였습니다.
+
+- `tests/task-registration-v6.test.mjs` 2회: 발행된 v6 잠금의 `unsafe_repository_lock`. 변경 전 cd2520c에 CPU 부하만 걸어 8회 중 1회 같은 실패를 재현했으므로 이번 변경이 원인이 아닙니다. 다만 새 시험 파일이 전체 실행의 부하를 늘려 빈도를 높였을 가능성은 배제하지 못했습니다.
+- `tests/lan-pairing-v19.test.mjs` 1회: 번호 서버 동시 등록 중 `staged_changes_present`. 실패 지점은 `lan-client.mjs`를 직접 호출해 변경한 입구를 지나지 않고, v19·v24 계약과 이 시험 파일도 병합으로 바뀌지 않았습니다. 변경 전 코드에 부하를 걸어 4회 돌렸을 때는 재현되지 않아 원인은 미확인입니다. 등록이 거절될 뿐 잘못 기록되지는 않았습니다.
