@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-7
 title: "등록 잠금이 소유자가 끝나는 순간을 죽은 소유자로 오판해 등록을 거절하는 문제"
-status: new
+status: confirmed
 priority: P2
 taskRefs:
   - "1"
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T11:31:35.851Z"
-updatedAt: "2026-11-01T11:31:35.851Z"
+updatedAt: "2026-11-01T11:41:47.991Z"
 blocked: null
 completion: null
 closure: null
