@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-3
 title: "Windows 동시 등록이 잠금 파일 EPERM으로 실패하는 문제"
-status: confirmed
+status: in_progress
 priority: P1
 taskRefs:
   - "1"
@@ -15,7 +15,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T01:27:38.153Z"
-updatedAt: "2026-11-01T01:33:35.000Z"
+updatedAt: "2026-11-01T01:33:38.000Z"
 blocked: null
 completion: null
 closure: null
