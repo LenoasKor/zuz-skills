@@ -73,3 +73,7 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 외부
 
 - `tests/task-registration-v6.test.mjs` 2회: 발행된 v6 잠금의 `unsafe_repository_lock`. 변경 전 cd2520c에 CPU 부하만 걸어 8회 중 1회 같은 실패를 재현했으므로 이번 변경이 원인이 아닙니다. 다만 새 시험 파일이 전체 실행의 부하를 늘려 빈도를 높였을 가능성은 배제하지 못했습니다.
 - `tests/lan-pairing-v19.test.mjs` 1회: 번호 서버 동시 등록 중 `staged_changes_present`. 실패 지점은 `lan-client.mjs`를 직접 호출해 변경한 입구를 지나지 않고, v19·v24 계약과 이 시험 파일도 병합으로 바뀌지 않았습니다. 변경 전 코드에 부하를 걸어 4회 돌렸을 때는 재현되지 않아 원인은 미확인입니다. 등록이 거절될 뿐 잘못 기록되지는 않았습니다.
+
+2026-11-01 사용자 승인으로 Pack을 3.12.0(`zuz-its` 모듈 1.9.0)으로 확정하고 main과 tag `decal-pack-v3.12.0`(source `9415e5726a68d1882b34c49881b9ef84ef5d6ae9`)을 push했으며 GitHub Release를 발행했다. 내려받은 asset이 로컬 빌드와 같다. package SHA-256 `61f0410782d0168ec9d88b22bea3cbf839596002ad078c51b44023db58a50ad0`, manifest identity `12954ca1d17286625268d1aa6f42939673788f6a0b92387641237389b44b4b40`, 346개 파일. 같은 커밋 재빌드 결과가 같고, 발행 소스의 `npm test`는 308개 통과·실패 0·건너뜀 4였다.
+
+Store: 후보 `candidate-6b0a5d5b-c0b0-44a2-9ec9-df9aee9b1131`을 준비했고 AI 검수 자료(묶음 27개)의 해시를 전부 대조했으며 파일 346개 전문 읽기를 마쳤다. 그러나 보고서 제출이 `session-review-submission-invalid`로 거절되어 **Store에는 공개되지 않았다.** 데칼 동기화도 하지 않았다.
