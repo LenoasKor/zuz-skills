@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-8
 title: "Pack 설치본에서 settlement-profile이 없으면 일반 상태 변경까지 ENOENT로 거절된다"
-status: in_progress
+status: development_complete
 priority: P2
 taskRefs: []
 nextAction: "담당 AI가 새 계약에 일반 상태 변경 경로를 만들고 설치본으로 재현 시험을 돌립니다."
@@ -14,9 +14,15 @@ releaseTaskRef: null
 versionApplied: pending
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T16:09:37.548Z"
-updatedAt: "2026-11-01T16:09:54.000Z"
+updatedAt: "2026-11-01T16:14:32.000Z"
 blocked: null
-completion: null
+completion:
+  summary: "설치본에서 프로파일이 없어도 Work·Bug 일반 상태 변경이 기록 파일 하나만 커밋하도록 v28을 더했습니다. 버전 정산은 계속 프로파일이 필요합니다."
+  evidence:
+    - "전체 npm test 323개 통과, 건너뜀 4개, 실패 0개"
+    - "설치본 재현: v11 ENOENT, v28 confirmed 전이 커밋"
+    - "프로파일이 있을 때 v11과 같은 승인 지문"
+  completedAt: "2026-11-01T16:14:32.000Z"
 closure: null
 ---
 
