@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-7
 title: "등록 잠금이 소유자가 끝나는 순간을 죽은 소유자로 오판해 등록을 거절하는 문제"
-status: in_progress
+status: development_complete
 priority: P2
 taskRefs:
   - "1"
@@ -14,9 +14,15 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T11:31:35.851Z"
-updatedAt: "2026-11-01T11:41:49.208Z"
+updatedAt: "2026-11-01T14:39:41.302Z"
 blocked: null
-completion: null
+completion:
+  summary: "입구가 repository_lock_owner_terminated 거절을 정해진 횟수만 재시도한다. 소유자가 정말 죽어 남은 잠금은 거절을 유지한다. fix/lock-owner-release-race, main 미병합."
+  evidence:
+    - "수정 전 Mac v25 잠금 직접 호출 960회 중 2회 재현, 모두 정상 해제하는 프로세스였다."
+    - "Windows e82db7f: 5개 파일 각 3회 15회 통과, npm test 전체에서 3b와 새 시험 10 통과, 이 코드 0회. 빌드와 겹친 조건이다."
+    - "새 시험 10은 수정을 빼면 실패한다. 번호 계약 직접 호출과 설치된 프로젝트에는 닿지 않으며 잠금 자체는 다음 계약에서 고친다."
+  completedAt: "2026-11-01T14:39:41.302Z"
 closure: null
 ---
 
