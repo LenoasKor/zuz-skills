@@ -54,6 +54,10 @@ clone 설정과 상관없이 계약 파일이 LF를 유지한다. 내용이 바�
 
 ITS 설치 때 프로젝트 `.gitattributes`에 `contracts/task-work-bug/** text eol=lf`를 더한다. 같은 줄이 있으면 그대로 두고, 기존 내용은 바꾸지 않는다. 계약 파일과 검증 방식은 바꾸지 않는다. Decal의 Rust 설치기도 같은 내용을 쓰도록 Decal BUG-421에서 맞춘다.
 
+## Windows 확인
+
+2026-11-01 Windows에서 데칼 origin/main bc1a8ea78의 계약 폴더만 담은 임시 저장소로 등록 dry-run을 돌렸다. 줄이 있는 저장소를 `core.autocrlf=true`로 clone하면 `accepted`다. 줄 없이 받은 사본은 `contract_digest_mismatch`로 거절되고, 복구 명령 뒤에 `accepted`다. 실제 Windows 설치가 줄을 더하는 동작은 보지 못했고 Mac 시험으로만 확인했다.
+
 ## 재사용 판단
 
 BUG-3, BUG-4, BUG-5는 잠금과 시험 경합을 다루며 원인이 다르다. 이 경로의 줄바꿈을 다루는 기록은 찾지 못했다.
