@@ -11,6 +11,7 @@
 // A project that declares which version impacts its build can read has a Task outside them refused (`unreadable_task_version_impact`).
 // `staged_changes_present` from a contract's unlocked preview can be another registration between its add and commit, so it is confirmed before it is reported.
 // `unsafe_repository_lock` from v15 can be a holder releasing the lock between two looks at it. It comes before any write, so the attempt is repeated a few times first.
+// `repository_lock_owner_terminated` can be a holder that released the lock and exited between reading it and checking its process. It also comes before any write and is repeated the same way; a lock whose owner is really gone stays in place and is still refused.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -23,6 +24,7 @@ const TABLE_SCHEMA = "decal.task-work-bug.capabilities/v1";
 const here = realpathSync(path.dirname(fileURLToPath(import.meta.url)));
 const STAGED = "staged_changes_present";
 const UNSAFE_LOCK = "unsafe_repository_lock";
+const OWNER_GONE = "repository_lock_owner_terminated";
 const RETRY_MS = [250, 500, 1000, 2000];
 const PREVIEW_LOCK_WAIT_MS = 30000;
 const lastLine = (text) => String(text ?? "").trim().split("\n").pop();
@@ -154,7 +156,7 @@ if (write && paired) {
   // This device cannot take the authority's lock, so a short wait decides. A change that stays staged is still refused.
   const delegated = await retryWhileRefused(
     () => spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" }),
-    STAGED, UNSAFE_LOCK,
+    STAGED, UNSAFE_LOCK, OWNER_GONE,
   );
   const line = lastLine(delegated.stdout);
   let outcome = null;
@@ -228,7 +230,7 @@ if (dryRun) {
   shown = runBroker();
   if (refusedWith(shown.stdout, STAGED)) shown = await underRegistrationLock(runBroker) ?? shown;
 } else {
-  shown = await retryWhileRefused(runBroker, UNSAFE_LOCK);
+  shown = await retryWhileRefused(runBroker, UNSAFE_LOCK, OWNER_GONE);
 }
 process.stderr.write(shown.stderr ?? "");
 process.stdout.write(shown.stdout ?? "");
