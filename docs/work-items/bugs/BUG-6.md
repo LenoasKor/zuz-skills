@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-6
 title: "Pack 설치가 줄바꿈 설정을 넣지 않아 autocrlf clone에서 등록이 거절된다"
-status: new
+status: confirmed
 priority: P2
 taskRefs: []
 nextAction: "담당 AI가 설치기를 고치고 autocrlf clone 시험을 추가합니다."
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: pending
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T08:42:24.236Z"
-updatedAt: "2026-11-01T08:42:24.236Z"
+updatedAt: "2026-11-01T08:50:34.000Z"
 blocked: null
 completion: null
 closure: null
