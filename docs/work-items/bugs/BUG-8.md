@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-8
 title: "Pack 설치본에서 settlement-profile이 없으면 일반 상태 변경까지 ENOENT로 거절된다"
-status: new
+status: confirmed
 priority: P2
 taskRefs: []
 nextAction: "담당 AI가 새 계약에 일반 상태 변경 경로를 만들고 설치본으로 재현 시험을 돌립니다."
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: pending
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T16:09:37.548Z"
-updatedAt: "2026-11-01T16:09:37.548Z"
+updatedAt: "2026-11-01T16:09:53.000Z"
 blocked: null
 completion: null
 closure: null
