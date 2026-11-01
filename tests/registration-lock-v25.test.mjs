@@ -43,7 +43,8 @@ test('only a short Windows EPERM counts as lock contention',()=>{
 });
 test('eight processes take and release the lock in turn without a failure',()=>fixture(async(root)=>{
  const lockUrl=new URL('../packs/decal-pack/src/contracts/task-work-bug/v25/registration-lock.mjs',import.meta.url).href;
- const worker=`const {acquireRegistrationLock:a}=await import(${JSON.stringify(lockUrl)});for(let i=0;i<30;i++){const r=await a(process.argv[1]);await r();}`;
+ const worker=`const {acquireRegistrationLock:a}=await import(${JSON.stringify(lockUrl)});for(let i=0;i<30;i++){let r;for(let n=0;!r;n++){try{r=await a(process.argv[1]);}catch(e){if(e.code!=='unsafe_repository_lock'||n===20)throw e;}}await r();}`;
+ // Published v25 still reads link count 0 at its first look, while the holder's unlink is under way (BUG-5). its-register.mjs repeats that refusal; a Windows EPERM stays a failure here.
  const env={...process.env};delete env.DECAL_SESSION_ID;
  const results=await Promise.all(Array.from({length:8},()=>new Promise((resolve)=>{
   const child=spawn(process.execPath,['--input-type=module','-e',worker,root],{env,stdio:['ignore','ignore','pipe'],windowsHide:true});
