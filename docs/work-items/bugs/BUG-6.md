@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-6
 title: "Pack 설치가 줄바꿈 설정을 넣지 않아 autocrlf clone에서 등록이 거절된다"
-status: in_progress
+status: development_complete
 priority: P2
 taskRefs: []
 nextAction: "담당 AI가 설치기를 고치고 autocrlf clone 시험을 추가합니다."
@@ -14,9 +14,15 @@ releaseTaskRef: null
 versionApplied: pending
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T08:42:24.236Z"
-updatedAt: "2026-11-01T08:50:36.000Z"
+updatedAt: "2026-11-01T08:50:37.000Z"
 blocked: null
-completion: null
+completion:
+  summary: "ITS 설치가 프로젝트 .gitattributes에 계약 경로의 eol=lf를 더해, core.autocrlf clone에서도 계약 파일이 LF를 유지합니다. 기존 내용은 바꾸지 않습니다."
+  evidence:
+    - "전체 npm test 311개 통과, 건너뜀 4개, 실패 0개"
+    - "새 시험은 수정을 빼면 실패함을 확인"
+    - "core.autocrlf=true clone의 its-register.mjs가 원본과 바이트 동일"
+  completedAt: "2026-11-01T08:50:37.000Z"
 closure: null
 ---
 
