@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.15.1"
+  version: "1.16.0"
   portable: true
 ---
 
@@ -93,14 +93,14 @@ node contracts/task-work-bug/its-register.mjs --kind ticket \
 ```
 
 Lifecycle steps use the same revision binding. Bug starts at `new → confirmed → in_progress → development_complete`.
-When `contracts/task-work-bug/v11/` is installed, use its v2 lifecycle request and bind the currently observed
+When `contracts/task-work-bug/v28/` is installed, use `v28/work-item-lifecycle.mjs`. It takes the v11 request and needs no `.decal/settlement-profile.json` for a status transition; with a profile it runs v11 unchanged. Version settlement still needs the project-approved profile and reports `ENOENT` without one. Otherwise, when `contracts/task-work-bug/v11/` is installed, use its v2 lifecycle request and bind the currently observed
 project release stage to the preview digest. Explicit stored `live` follows `development_complete → release_ready
 → closed`. Explicit stored `pre_live`, or a missing/null/legacy `unset` stage marked `defaulted`, closes normally
 from `development_complete` after the required verification and Smoke; do not create `release_ready`. Never infer
 `live`. This branch does not authorize settlement, deployment, cost, secrets, or external-service effects.
 
 If the project explicitly adopts the packaged v11 runner, read `contracts/task-work-bug/v11/README.md`
-and validate its manifest. Use `v11/work-item-lifecycle.mjs` for release-stage-aware normal transitions and
+and validate its manifest. Use `v28/work-item-lifecycle.mjs` (or `v11/work-item-lifecycle.mjs` where v28 is not installed) for release-stage-aware normal transitions and
 `v20/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
 the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
 Task, not separately. When the committed `config/its-settlement.json` sets `mode: release`, closing does

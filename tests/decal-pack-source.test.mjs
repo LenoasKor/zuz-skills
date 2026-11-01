@@ -232,8 +232,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
     "decal-task": "1.20.0",
-    "decal-work": "1.15.1",
-    "decal-bug": "1.15.1",
+    "decal-work": "1.16.0",
+    "decal-bug": "1.16.0",
     "decal-incident": "1.8.1",
     "zuz-its": "1.5.0",
     "decal-slice": "0.4.13",
@@ -302,8 +302,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
     "decal-task": "1.20.0",
-    "decal-work": "1.15.1",
-    "decal-bug": "1.15.1",
+    "decal-work": "1.16.0",
+    "decal-bug": "1.16.0",
     "zuz-its": "1.5.0",
     "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
@@ -626,6 +626,7 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   assert.equal(packageValue.compatibility.portableUnpairedDeviceGuard, "task-work-bug/its-register.mjs");
   assert.equal(packageValue.executionPolicies.capabilityResolution.guardCapability, "detect-authority");
   assert.equal(packageValue.compatibility.portableTaskVersionPolicy, "task-work-bug/v27");
+  assert.equal(packageValue.compatibility.portableWorkItemLifecycle, "task-work-bug/v28");
   assert.equal(packageValue.executionPolicies.capabilityResolution.taskVersionPolicyCapability, "check-task-version-policy");
   for (const sourcePath of [
     "contracts/task-work-bug/its-register.mjs", "contracts/task-work-bug/capabilities.json",
