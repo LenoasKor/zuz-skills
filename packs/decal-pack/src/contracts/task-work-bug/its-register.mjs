@@ -9,6 +9,7 @@
 // (`pairing_required`): the device must pair first, otherwise it would silently issue a colliding number.
 // An approved pairing that waits for local confirmation is not a pairing: it is stopped the same way and is never used.
 // A project that declares which version impacts its build can read has a Task outside them refused (`unreadable_task_version_impact`).
+// `staged_changes_present` from a contract's unlocked preview can be another registration between its add and commit, so it is confirmed before it is reported.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -19,6 +20,13 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const RESULT_SCHEMA = "decal.task-work-bug.its-register/v1";
 const TABLE_SCHEMA = "decal.task-work-bug.capabilities/v1";
 const here = realpathSync(path.dirname(fileURLToPath(import.meta.url)));
+const STAGED = "staged_changes_present";
+const AUTHORITY_RETRY_MS = [250, 500, 1000, 2000];
+const PREVIEW_LOCK_WAIT_MS = 30000;
+const lastLine = (text) => String(text ?? "").trim().split("\n").pop();
+function refusedAsStaged(text) {
+  try { return JSON.parse(lastLine(text)).code === STAGED; } catch { return false; }
+}
 
 function stop(code, extra = {}) {
   process.stdout.write(`${JSON.stringify({ schema: RESULT_SCHEMA, status: "rejected", code, ...extra })}\n`);
@@ -131,8 +139,15 @@ if (write && paired) {
   if (typeof digest !== "string") stop("usage_error", { reason: "approved_digest_required" });
   // resolve() ends the process on failure, so a client that is missing or fails verification never falls back to a local number.
   const client = resolve(table, "register-via-authority", "authority_client_unavailable");
-  const delegated = spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" });
-  const line = String(delegated.stdout ?? "").trim().split("\n").pop();
+  const submit = () => spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" });
+  let delegated = submit();
+  // The authority previews without the lock and this device cannot take the authority's lock, so a short wait decides. A change that stays staged is still refused.
+  for (const pause of AUTHORITY_RETRY_MS) {
+    if (!refusedAsStaged(delegated.stdout)) break;
+    await new Promise((settle) => setTimeout(settle, pause));
+    delegated = submit();
+  }
+  const line = lastLine(delegated.stdout);
   let outcome = null;
   try { outcome = JSON.parse(line); } catch { /* reported below */ }
   if (outcome?.status === "registered" && outcome.receipt) {
@@ -185,5 +200,27 @@ for (const [key, value] of args) {
   forwarded.push(key);
   if (value !== true) forwarded.push(String(value));
 }
-const result = spawnSync(process.execPath, [broker, ...forwarded], { stdio: "inherit" });
-process.exit(result.status ?? 1);
+
+/** Runs the task holding the registration lock, so what it sees staged belongs to nobody registering. Null when the lock cannot be had; an older table does not know it. */
+async function underRegistrationLock(task) {
+  if (!Object.hasOwn(table, "acquire-registration-lock") || !Object.hasOwn(table, "resolve-main-authority")) return null;
+  const { acquireRegistrationLock } = await import(pathToFileURL(resolve(table, "acquire-registration-lock")).href);
+  const { resolveMainAuthorityRoot } = await import(pathToFileURL(resolve(table, "resolve-main-authority")).href);
+  let release;
+  try {
+    release = await acquireRegistrationLock((await resolveMainAuthorityRoot(root)).authorityRoot, { timeoutMs: PREVIEW_LOCK_WAIT_MS });
+  } catch { return null; }
+  try { return task(); } finally { await release(); }
+}
+
+if (dryRun) {
+  const preview = () => spawnSync(process.execPath, [broker, ...forwarded], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  let shown = preview();
+  if (refusedAsStaged(shown.stdout)) shown = await underRegistrationLock(preview) ?? shown;
+  process.stderr.write(shown.stderr ?? "");
+  process.stdout.write(shown.stdout ?? "");
+  process.exitCode = shown.status ?? 1;
+} else {
+  const result = spawnSync(process.execPath, [broker, ...forwarded], { stdio: "inherit" });
+  process.exit(result.status ?? 1);
+}

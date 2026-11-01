@@ -1,10 +1,10 @@
 // The stable entry runs only contracts listed in capabilities.json, only after they verify, and never falls back.
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile, appendFile } from "node:fs/promises";
+import { spawn, spawnSync } from "node:child_process";
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile, appendFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repositoryRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const selectedLan = "v24";
@@ -162,6 +162,80 @@ try {
     const done = await register(older, "task", taskIntent("entry-guard-older"));
     assert.equal(done.body.status, "committed", done.stdout);
     console.log("ok 6  a tampered guard stops the write; an older table without the guard keeps working");
+  }
+
+  // 7. A preview waits out another registration's staged moment and still refuses a change that is really staged.
+  {
+    const root = await makeProject("preview-staged");
+    const file = await put(root, "preview.json", taskIntent("entry-preview"));
+    const lockModule = path.join(root, "contracts/task-work-bug", process.platform === "win32" ? "v25" : "v15", "registration-lock.mjs");
+    // The real lock, then a real staged file, like a writer between its add and commit.
+    const holder = spawn(process.execPath, ["--input-type=module", "-e", `
+      import { execFileSync } from "node:child_process";
+      import { writeFileSync } from "node:fs";
+      const { acquireRegistrationLock } = await import(${JSON.stringify(pathToFileURL(lockModule).href)});
+      const release = await acquireRegistrationLock(process.cwd());
+      writeFileSync("held.txt", "x");
+      execFileSync("git", ["add", "held.txt"]);
+      console.log("holding");
+      await new Promise((settle) => setTimeout(settle, 1500));
+      execFileSync("git", ["rm", "-q", "--cached", "held.txt"]);
+      await release();
+    `], { cwd: root, env, stdio: ["ignore", "pipe", "inherit"] });
+    const finished = new Promise((settle) => holder.once("exit", settle));
+    await new Promise((settle, reject) => { holder.stdout.once("data", settle); holder.once("exit", () => reject(new Error("holder exited early"))); });
+    const during = entry(root, "task", file, "--dry-run");
+    assert.equal(await finished, 0);
+    assert.equal(during.status, 0, during.stdout);
+    assert.equal(during.body.status, "planned", during.stdout);
+
+    await writeFile(path.join(root, "mine.txt"), "x");
+    git(root, "add", "mine.txt");
+    const refused = entry(root, "task", file, "--dry-run");
+    assert.equal(refused.status, 2);
+    assert.equal(refused.body.code, "staged_changes_present");
+    await assert.rejects(stat(path.join(root, ".decal-slice-completion.lock")), "the preview released the lock it took");
+
+    const tablePath = path.join(root, "contracts/task-work-bug/capabilities.json");
+    const table = JSON.parse(await readFile(tablePath, "utf8"));
+    delete table.capabilities["acquire-registration-lock"];
+    await writeFile(tablePath, JSON.stringify(table));
+    assert.equal(entry(root, "task", file, "--dry-run").body.code, "staged_changes_present", "an older table refuses as before");
+    console.log("ok 7  a preview waits for a registration in progress; a change that is really staged is still refused");
+  }
+
+  // 8. A paired device resubmits while the authority answers staged_changes_present, and gives up with that answer.
+  {
+    const root = await makeProject("authority-staged");
+    const fake = path.join(root, "contracts/task-work-bug/v98");
+    await mkdir(fake);
+    await writeFile(path.join(fake, "verify-contract.mjs"), 'console.log(\'{"status":"accepted"}\');\n');
+    const calls = path.join(root, "calls.txt");
+    const scripted = (refusals) => `import { appendFileSync, readFileSync } from "node:fs";
+      appendFileSync(${JSON.stringify(calls)}, "x");
+      if (readFileSync(${JSON.stringify(calls)}, "utf8").length <= ${refusals}) { console.log('{"status":"rejected","code":"staged_changes_present"}'); process.exit(2); }
+      console.log('{"status":"registered","receipt":{"status":"committed"},"sync":"synced"}');\n`;
+    await writeFile(path.join(fake, "lan-client.mjs"), scripted(2));
+    const tablePath = path.join(root, "contracts/task-work-bug/capabilities.json");
+    const table = JSON.parse(await readFile(tablePath, "utf8"));
+    table.capabilities["register-via-authority"] = { contract: "v98", entry: "lan-client.mjs" };
+    await writeFile(tablePath, JSON.stringify(table));
+    await mkdir(path.join(root, ".decal"), { recursive: true });
+    await writeFile(path.join(root, ".decal/its-lan-client.json"), "{}");
+    const file = await put(root, "paired.json", taskIntent("entry-paired"));
+    const digest = `sha256:${"0".repeat(64)}`;
+    const delivered = entry(root, "task", file, "--approved-digest", digest, "--write");
+    assert.equal(delivered.status, 0, delivered.stdout);
+    assert.equal(delivered.body.delegatedTo, "its-authority");
+    assert.equal((await readFile(calls, "utf8")).length, 3);
+
+    await rm(calls);
+    await writeFile(path.join(fake, "lan-client.mjs"), scripted(1000));
+    const refused = entry(root, "task", file, "--approved-digest", digest, "--write");
+    assert.equal(refused.status, 2);
+    assert.equal(refused.body.code, "staged_changes_present");
+    assert.equal((await readFile(calls, "utf8")).length, 5, "the retries are bounded");
+    console.log("ok 8  a paired device resubmits through the authority's staged moment, within a limit");
   }
   console.log("capability entry acceptance passed");
 } finally {

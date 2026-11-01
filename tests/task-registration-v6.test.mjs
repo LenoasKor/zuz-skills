@@ -184,10 +184,18 @@ try {
     concurrentPreviews.push(run(process.execPath, [writer, "--root", root, "--intent", target, "--dry-run"], root));
   }
   assert.deepEqual(concurrentPreviews.map((previewResult) => previewResult.body.assigned[0].taskId), [4, 4]);
-  const concurrentResults = await Promise.all(concurrentPaths.map((target, index) => runAsync(process.execPath, [
-    writer, "--root", root, "--intent", target,
-    "--approved-digest", concurrentPreviews[index].body.intentDigest, "--write",
-  ], root)));
+  // Published v6 calls a lock unsafe when the holder releases it or has not written it yet at the moment of reading.
+  // v7 retries both, and v6 bytes are frozen. The refusal comes before any write, so trying again is safe.
+  const writeThroughLockRace = async (target, index) => {
+    for (let attempt = 0; ; attempt += 1) {
+      const result = await runAsync(process.execPath, [
+        writer, "--root", root, "--intent", target,
+        "--approved-digest", concurrentPreviews[index].body.intentDigest, "--write",
+      ], root);
+      if (result.body?.code !== "unsafe_repository_lock" || attempt === 20) return result;
+    }
+  };
+  const concurrentResults = await Promise.all(concurrentPaths.map(writeThroughLockRace));
   assert.equal(concurrentResults.every((result) => result.status === 0), true, JSON.stringify(concurrentResults));
   assert.deepEqual(
     concurrentResults.map((result) => result.body.assigned[0].taskId).sort((left, right) => left - right),
