@@ -1,6 +1,6 @@
 # Task 4 · Pack · 004 — 프로젝트 빌드가 읽지 못하는 Task 버전 영향 값을 등록 입구에서 거절
 
-상태: planned
+상태: in_progress
 
 Task Category: pack
 
