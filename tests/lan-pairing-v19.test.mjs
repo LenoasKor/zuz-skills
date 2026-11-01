@@ -244,9 +244,9 @@ try {
     const deadline = Date.now() + 120_000;
     for (const attempt of attempts) {
       let result = lastJson(attempt.output);
-      // Published v15 previews without the lock, so a registration between its add and commit reads as staged (BUG-4). its-register.mjs confirms this; the client called directly here does not.
-      const staged = (value) => value.status === "rejected" && (value.code ?? value.result?.code) === "staged_changes_present";
-      while ((["queued", "sync_pending"].includes(result.status) || staged(result)) && Date.now() < deadline) {
+      // Published v15 can refuse over another registration's staged moment (BUG-4) or lock release (BUG-5). its-register.mjs handles both; the client called directly here does not.
+      const raced = (value) => value.status === "rejected" && ["staged_changes_present", "unsafe_repository_lock"].includes(value.code ?? value.result?.code);
+      while ((["queued", "sync_pending"].includes(result.status) || raced(result)) && Date.now() < deadline) {
         result = lastJson(await attempt.submit());
       }
       results.push(result);

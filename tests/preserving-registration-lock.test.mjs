@@ -28,7 +28,9 @@ test('normal release is idempotent and cannot unlink a replacement inode',()=>fi
  await rm(file);const second=await acquireRegistrationLock(root);await second();await assert.rejects(lstat(file),{code:'ENOENT'});
 }));
 test('owner normal release allows waiter to acquire without replay',()=>fixture(async(root,file)=>{
- const first=await acquireRegistrationLock(root);let resolved=false;const pending=acquireRegistrationLock(root,{timeoutMs:1000}).then(x=>{resolved=true;return x});await first();const release=await pending;assert.equal(resolved,true);assert.equal(JSON.parse(await readFile(file,'utf8')).pid,process.pid);await release();
+ // Published v15 can call a lock unsafe at the moment its holder releases it (BUG-5, v25 fixes it, v15 bytes are frozen). Nothing was written, so the waiter tries again.
+ const waitThroughRelease=async()=>{for(let attempt=0;;attempt+=1){try{return await acquireRegistrationLock(root,{timeoutMs:1000});}catch(error){if(error.code!=='unsafe_repository_lock'||attempt===20)throw error;}}};
+ const first=await acquireRegistrationLock(root);let resolved=false;const pending=waitThroughRelease().then(x=>{resolved=true;return x});await first();const release=await pending;assert.equal(resolved,true);assert.equal(JSON.parse(await readFile(file,'utf8')).pid,process.pid);await release();
 }));
 test('invalid wait bounds and pre-cancellation do not create a lock',()=>fixture(async(root,file)=>{
  for(const timeoutMs of [-1,300001,NaN]) await assert.rejects(acquireRegistrationLock(root,{timeoutMs}),{code:'invalid_wait_limit'});

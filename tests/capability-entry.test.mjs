@@ -1,7 +1,7 @@
 // The stable entry runs only contracts listed in capabilities.json, only after they verify, and never falls back.
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile, appendFile } from "node:fs/promises";
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, rm, stat, symlink, writeFile, appendFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -236,6 +236,38 @@ try {
     assert.equal(refused.body.code, "staged_changes_present");
     assert.equal((await readFile(calls, "utf8")).length, 5, "the retries are bounded");
     console.log("ok 8  a paired device resubmits through the authority's staged moment, within a limit");
+  }
+
+  // 9. A write refused over v15's lock release race is repeated; a lock that is really unsafe stays refused and untouched.
+  {
+    const root = await makeProject("unsafe-lock");
+    const file = await put(root, "unsafe.json", taskIntent("entry-unsafe"));
+    const plan = entry(root, "task", file, "--dry-run");
+    const lock = path.join(root, ".decal-slice-completion.lock");
+    await symlink(path.join(root, "elsewhere"), lock);
+    const refused = entry(root, "task", file, "--approved-digest", plan.body.intentDigest, "--write");
+    assert.equal(refused.status, 2);
+    assert.equal(refused.body.code, "unsafe_repository_lock");
+    assert.equal((await lstat(lock)).isSymbolicLink(), true, "the unsafe lock is left as it was");
+    await rm(lock);
+
+    const fake = path.join(root, "contracts/task-work-bug/v97");
+    await mkdir(fake);
+    await writeFile(path.join(fake, "verify-contract.mjs"), 'console.log(\'{"status":"accepted"}\');\n');
+    const calls = path.join(root, "calls.txt");
+    await writeFile(path.join(fake, "register-task-batch.mjs"), `import { appendFileSync, readFileSync } from "node:fs";
+      appendFileSync(${JSON.stringify(calls)}, "x");
+      if (readFileSync(${JSON.stringify(calls)}, "utf8").length === 1) { console.log('{"status":"rejected","code":"unsafe_repository_lock"}'); process.exit(2); }
+      console.log('{"status":"committed"}');\n`);
+    const tablePath = path.join(root, "contracts/task-work-bug/capabilities.json");
+    const table = JSON.parse(await readFile(tablePath, "utf8"));
+    table.capabilities["register-task-batch"] = { contract: "v97", entry: "register-task-batch.mjs" };
+    await writeFile(tablePath, JSON.stringify(table));
+    const repeated = entry(root, "task", file, "--approved-digest", plan.body.intentDigest, "--write");
+    assert.equal(repeated.status, 0, repeated.stdout);
+    assert.equal(repeated.body.status, "committed");
+    assert.equal((await readFile(calls, "utf8")).length, 2);
+    console.log("ok 9  a write is repeated through the lock release race; a really unsafe lock stays refused");
   }
   console.log("capability entry acceptance passed");
 } finally {

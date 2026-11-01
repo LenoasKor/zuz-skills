@@ -10,6 +10,7 @@
 // An approved pairing that waits for local confirmation is not a pairing: it is stopped the same way and is never used.
 // A project that declares which version impacts its build can read has a Task outside them refused (`unreadable_task_version_impact`).
 // `staged_changes_present` from a contract's unlocked preview can be another registration between its add and commit, so it is confirmed before it is reported.
+// `unsafe_repository_lock` from v15 can be a holder releasing the lock between two looks at it. It comes before any write, so the attempt is repeated a few times first.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -21,11 +22,22 @@ const RESULT_SCHEMA = "decal.task-work-bug.its-register/v1";
 const TABLE_SCHEMA = "decal.task-work-bug.capabilities/v1";
 const here = realpathSync(path.dirname(fileURLToPath(import.meta.url)));
 const STAGED = "staged_changes_present";
-const AUTHORITY_RETRY_MS = [250, 500, 1000, 2000];
+const UNSAFE_LOCK = "unsafe_repository_lock";
+const RETRY_MS = [250, 500, 1000, 2000];
 const PREVIEW_LOCK_WAIT_MS = 30000;
 const lastLine = (text) => String(text ?? "").trim().split("\n").pop();
-function refusedAsStaged(text) {
-  try { return JSON.parse(lastLine(text)).code === STAGED; } catch { return false; }
+function refusedWith(text, ...codes) {
+  try { return codes.includes(JSON.parse(lastLine(text)).code); } catch { return false; }
+}
+/** Runs the attempt again while it is refused with one of the codes, then returns the last answer. */
+async function retryWhileRefused(attempt, ...codes) {
+  let answer = attempt();
+  for (const pause of RETRY_MS) {
+    if (!refusedWith(answer.stdout, ...codes)) break;
+    await new Promise((settle) => setTimeout(settle, pause));
+    answer = attempt();
+  }
+  return answer;
 }
 
 function stop(code, extra = {}) {
@@ -139,14 +151,11 @@ if (write && paired) {
   if (typeof digest !== "string") stop("usage_error", { reason: "approved_digest_required" });
   // resolve() ends the process on failure, so a client that is missing or fails verification never falls back to a local number.
   const client = resolve(table, "register-via-authority", "authority_client_unavailable");
-  const submit = () => spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" });
-  let delegated = submit();
-  // The authority previews without the lock and this device cannot take the authority's lock, so a short wait decides. A change that stays staged is still refused.
-  for (const pause of AUTHORITY_RETRY_MS) {
-    if (!refusedAsStaged(delegated.stdout)) break;
-    await new Promise((settle) => setTimeout(settle, pause));
-    delegated = submit();
-  }
+  // This device cannot take the authority's lock, so a short wait decides. A change that stays staged is still refused.
+  const delegated = await retryWhileRefused(
+    () => spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" }),
+    STAGED, UNSAFE_LOCK,
+  );
   const line = lastLine(delegated.stdout);
   let outcome = null;
   try { outcome = JSON.parse(line); } catch { /* reported below */ }
@@ -213,14 +222,14 @@ async function underRegistrationLock(task) {
   try { return task(); } finally { await release(); }
 }
 
+const runBroker = () => spawnSync(process.execPath, [broker, ...forwarded], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+let shown;
 if (dryRun) {
-  const preview = () => spawnSync(process.execPath, [broker, ...forwarded], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-  let shown = preview();
-  if (refusedAsStaged(shown.stdout)) shown = await underRegistrationLock(preview) ?? shown;
-  process.stderr.write(shown.stderr ?? "");
-  process.stdout.write(shown.stdout ?? "");
-  process.exitCode = shown.status ?? 1;
+  shown = runBroker();
+  if (refusedWith(shown.stdout, STAGED)) shown = await underRegistrationLock(runBroker) ?? shown;
 } else {
-  const result = spawnSync(process.execPath, [broker, ...forwarded], { stdio: "inherit" });
-  process.exit(result.status ?? 1);
+  shown = await retryWhileRefused(runBroker, UNSAFE_LOCK);
 }
+process.stderr.write(shown.stderr ?? "");
+process.stdout.write(shown.stdout ?? "");
+process.exitCode = shown.status ?? 1;
