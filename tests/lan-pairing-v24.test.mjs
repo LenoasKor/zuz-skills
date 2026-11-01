@@ -164,7 +164,7 @@ const approvedOnMain = async (authority) => (await waitFor(async () => { const r
 const pairRogue = (root, port, extra = {}, ...rest) => node(client, ["pair", "--root", root, "--label", "second", "--timeout", "60", ...rest], { cwd: root, env: { ...port, ...extra } });
 
 after(async () => {
-  const exits = children.filter((child) => child.exitCode === null).map((child) => new Promise((resolve) => { child.once("exit", resolve); child.kill("SIGTERM"); }));
+  const exits = children.filter((child) => child.exitCode === null && child.signalCode === null).map((child) => new Promise((resolve) => { child.once("exit", resolve); child.kill("SIGTERM"); }));
   await Promise.all(exits);
   // Windows keeps a directory busy for a moment after its process ends; a cleanup failure must not replace the real result.
   await rm(base, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 }).catch((error) => console.error(`temporary files left: ${error.message}`));
