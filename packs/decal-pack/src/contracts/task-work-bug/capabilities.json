@@ -30,6 +30,10 @@
     "detect-authority": {
       "contract": "v24",
       "entry": "lan-discovery.mjs"
+    },
+    "check-task-version-policy": {
+      "contract": "v27",
+      "entry": "task-version-policy.mjs"
     }
   }
 }

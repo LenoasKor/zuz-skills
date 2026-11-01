@@ -1,0 +1,12 @@
+{
+  "schema": "decal.task-work-bug.fixture-manifest/v27",
+  "files": {
+    "README.md": "d217412170ff20d99f0d484b353a03ccd3b529bd865326c418d568548d2117a8",
+    "contract.json": "a8a561160c169ad3bf0e0337ff536376d176552b22833f9e939b4cbcdff840ff",
+    "task-version-policy.mjs": "81bf38da5c4453727f2d855ffc4c51c79584493805ba57204cd3bb5851756581",
+    "verify-contract.mjs": "e0b8c32c689f5b199777b2202f9ac8c5c7949184230cc398b8ca17e55f8b81ab"
+  },
+  "dependencies": {
+    "v10/manifest.json": "c3ae1dc001a39853f1d992f3a2341e11b20767c84a1c3c82a6d922d6cb2d7fab"
+  }
+}
