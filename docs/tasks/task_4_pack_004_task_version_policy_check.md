@@ -55,3 +55,14 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 외부
 ## 후속
 
 데칼 동기화 때 데칼의 `config/its-version-policy.json`과 `scripts/slice_version_policy.mjs` 값이 어긋나지 않는지 검사하는 시험을 데칼 쪽에 둡니다.
+
+## 작업 기록
+
+2026-11-01 구현을 브랜치 `feat/task-version-policy`(커밋 7fa8bf9, worktree `~/JeremyWork/worktrees/zuz-skills-task-version-policy`)에 올렸습니다. 기준은 아직 main에 병합되지 않은 `fix/pairing-trust-v24`(cd2520c)이므로 그 브랜치가 먼저 병합되어야 합니다. 새 번호 v27은 Pack과 데칼의 모든 브랜치에서 비어 있음을 확인했습니다.
+
+- 선언 파일: `config/its-version-policy.json`(`decal.its-version-policy/v1`), canonical main 작업본에서 읽습니다.
+- 거절 코드: `unreadable_task_version_impact`, 선언 파일이 망가졌으면 `invalid_version_policy`.
+- 검증: `npm test` 312개 중 308개 통과, 실패 0, 건너뜀 4. `npm run verify:source` 통과. 임시 프로젝트에서 실제 입구로 `desktop-patch` 거절과 선언 없을 때 통과를 확인했습니다.
+- 검증 중 관찰: 첫 전체 실행에서 `tests/task-registration-v6.test.mjs`가 발행된 v6 잠금의 `unsafe_repository_lock`으로 한 번 실패했습니다. 단독 5회와 전체 재실행은 통과했고 이번 변경과 무관한 경합입니다.
+- 막지 못하는 경로: 번호 계약을 직접 호출하는 경우, v27을 모르는 구 설치본.
+- 남은 일: `fix/pairing-trust-v24`와 이 브랜치 병합, Pack 버전 확정(후보 3.11.1은 새 계약 전에 정해진 값이고, `zuz-its` 모듈 버전 1.8.1도 그대로임)·tag·게시, 데칼 동기화. 모두 별도 승인입니다.
