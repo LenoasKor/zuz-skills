@@ -615,7 +615,9 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
   assert.equal(packageValue.compatibility.portableCapabilityEntry, "task-work-bug/its-register.mjs");
   assert.equal(packageValue.compatibility.portableMultiDeviceRegistration, "task-work-bug/v24");
   assert.deepEqual(packageValue.compatibility.platformOverrides, {win32: {
-    portableOwnedTextEdit: "task-work-bug/v22"
+    portableOwnedTextEdit: "task-work-bug/v22",
+    portablePreservingRegistration: "task-work-bug/v25",
+    portableIncidentRegistration: "task-work-bug/v26"
   }});
   assert.equal(packageValue.compatibility.portableMultiDeviceManualAuthority, "task-work-bug/v18");
   assert.equal(packageValue.executionPolicies.capabilityResolution.fallback, "none");
