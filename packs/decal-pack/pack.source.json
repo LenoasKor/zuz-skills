@@ -143,6 +143,7 @@
     "portableCapabilityEntry": "task-work-bug/its-register.mjs",
     "portableUnpairedDeviceGuard": "task-work-bug/its-register.mjs",
     "portableTaskVersionPolicy": "task-work-bug/v27",
+    "portableWorkItemLifecycle": "task-work-bug/v28",
     "portableIsolatedSettlement": "task-work-bug/v20",
     "platformOverrides": {
       "win32": {
@@ -262,7 +263,7 @@
       "repositoryEngine": "preserve-and-delegate",
       "manifestValidator": "contracts/task-work-bug/v11/verify-contract.mjs",
       "taskLifecycle": "contracts/task-work-bug/v20/task-lifecycle.mjs",
-      "workItemLifecycle": "contracts/task-work-bug/v11/work-item-lifecycle.mjs",
+      "workItemLifecycle": "contracts/task-work-bug/v28/work-item-lifecycle.mjs",
       "standaloneSettlement": "contracts/task-work-bug/v20/settle-work-item.mjs",
       "releaseSettlement": "contracts/task-work-bug/v20/release-settle.mjs",
       "releaseManifestValidator": "contracts/task-work-bug/v20/verify-contract.mjs",

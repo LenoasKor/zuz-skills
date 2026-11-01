@@ -1,0 +1,11 @@
+{
+  "schema": "zuz.its.work-item-lifecycle/v28",
+  "predecessor": "task-work-bug/v11",
+  "scope": "work-bug-status-transition",
+  "profilePresent": "delegate-to-v11",
+  "profileMissing": "commit-the-exact-record",
+  "profileInvalid": "reject",
+  "versionSettlement": "profile-required",
+  "commitFailure": "restore-the-record",
+  "nativeFallback": false
+}
