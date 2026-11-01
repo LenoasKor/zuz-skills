@@ -113,22 +113,22 @@ try {
     console.log("ok 3  a tampered contract stops the entry: no write and no fallback to an older version");
   }
 
-  // 3b. The Windows contract survives real parallel registrations, not only parallel lock use.
+  // 3b. The selected contract (v25 on Windows) survives real parallel registrations through the entry.
   {
-    const root = await makeProject("parallel-v25");
-    const writer = path.join(root, "contracts/task-work-bug/v25/register-ticket.mjs");
+    const root = await makeProject("parallel-entry");
+    const writer = path.join(root, "contracts/task-work-bug/its-register.mjs");
     const jobs = [];
     for (let index = 0; index < 8; index += 1) {
       const file = await put(root, `parallel-${index}.json`, ticketIntent("bug", `parallel-${index}`));
-      const plan = run(process.execPath, [writer, "--root", root, "--intent", file, "--dry-run"], root);
+      const plan = entry(root, "ticket", file, "--dry-run");
       assert.equal(plan.body?.status, "planned", plan.stdout);
-      jobs.push(runAsync(process.execPath, [writer, "--root", root, "--intent", file, "--approved-digest", plan.body.intentDigest, "--write"], root));
+      jobs.push(runAsync(process.execPath, [writer, "--kind", "ticket", "--root", root, "--intent", file, "--approved-digest", plan.body.intentDigest, "--write"], root));
     }
     const results = await Promise.all(jobs);
     assert.equal(results.every((result) => result.status === 0 && result.body?.status === "committed"), true, JSON.stringify(results.map((result) => result.body ?? result.stdout)));
     assert.equal(new Set(results.map((result) => result.body.assigned.id)).size, 8);
     await assert.rejects(readFile(path.join(root, ".decal-slice-completion.lock")), "the lock is gone afterwards");
-    console.log("ok 3b eight parallel registrations through v25 get eight numbers");
+    console.log("ok 3b eight parallel registrations through the entry get eight numbers");
   }
 
   // 4. A capability that is not advertised, and a table that tries to escape, are refused.
