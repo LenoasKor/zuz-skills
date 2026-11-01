@@ -32,6 +32,10 @@ const KNOWN_PROVIDERS = new Set(["codex", "claude", "gemini", "acp"]);
 const PACK_RULE_FILES = ["AGENTS.md", "CLAUDE.md"];
 const PACK_RULES_BLOCK_START = "<!-- decal-pack-rules:start -->";
 const PACK_RULES_BLOCK_END = "<!-- decal-pack-rules:end -->";
+const GIT_ATTRIBUTES_FILE = ".gitattributes";
+const CONTRACT_EOL_RULE = "contracts/task-work-bug/** text eol=lf";
+// Decal's Rust installer writes the same bytes, so either installer recognizes the other's output.
+const CONTRACT_EOL_BLOCK = `# Decal Pack: contracts are checked byte for byte, so every device must keep their line endings.\n${CONTRACT_EOL_RULE}\n`;
 const LEGACY_RELEASE_STAGE_RULES = [
   "## Decal 프로젝트 출시 단계와 빌드 선택",
   "",
@@ -412,6 +416,28 @@ function retirePristineLegacyReleaseStageRules(source) {
   return source;
 }
 
+function withContractEolRule(source) {
+  if (source.split(/\r?\n/u).includes(CONTRACT_EOL_RULE)) return source;
+  const separator = source === "" ? "" : source.endsWith("\n") ? "\n" : "\n\n";
+  return `${source}${separator}${CONTRACT_EOL_BLOCK}`;
+}
+
+async function plannedContractEolFile(root) {
+  const current = await currentFile(root, GIT_ATTRIBUTES_FILE);
+  const source = current.exists ? current.bytes.toString("utf8") : "";
+  if (current.exists && !Buffer.from(source).equals(current.bytes)) fail("managed_rule_file_not_utf8", GIT_ATTRIBUTES_FILE);
+  const bytes = Buffer.from(withContractEolRule(source));
+  return {
+    path: GIT_ATTRIBUTES_FILE,
+    target: current.target,
+    state: bytes.equals(current.bytes ?? Buffer.alloc(0)) ? "unchanged" : current.exists ? "update" : "create",
+    currentSha256: current.sha256,
+    sha256: sha256(bytes),
+    bytes,
+    blockSha256: null,
+  };
+}
+
 async function plannedPackRuleFiles(root, hasIts, lock, packageValue) {
   const desiredBlock = hasIts ? decalPackRulesBlock(packageValue) : legacyDecalPackRulesBlock();
   const desiredBlockSha256 = sha256(Buffer.from(desiredBlock));
@@ -470,6 +496,8 @@ async function plannedPackRuleFiles(root, hasIts, lock, packageValue) {
       blockSha256: hasIts ? desiredBlockSha256 : null,
     });
   }
+  // Removing ITS keeps this line: it is harmless and may protect records the project still holds.
+  if (hasIts) entries.push(await plannedContractEolFile(root));
   return { entries, conflicts };
 }
 
