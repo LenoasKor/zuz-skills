@@ -163,7 +163,9 @@ try {
     const deadline = Date.now() + 120_000;
     for (const attempt of attempts) {
       let result = json(attempt.output);
-      while (["queued", "sync_pending"].includes(result.status) && Date.now() < deadline) {
+      // Published v15 can refuse over another registration's staged moment (BUG-4) or lock release (BUG-5). its-register.mjs handles both; the client called directly here does not.
+      const raced = (value) => value.status === "rejected" && ["staged_changes_present", "unsafe_repository_lock"].includes(value.code ?? value.result?.code);
+      while ((["queued", "sync_pending"].includes(result.status) || raced(result)) && Date.now() < deadline) {
         result = json(await attempt.submit());
       }
       results.push(result);

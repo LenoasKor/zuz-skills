@@ -30,6 +30,21 @@
     "detect-authority": {
       "contract": "v24",
       "entry": "lan-discovery.mjs"
+    },
+    "check-task-version-policy": {
+      "contract": "v27",
+      "entry": "task-version-policy.mjs"
+    },
+    "acquire-registration-lock": {
+      "contract": "v15",
+      "entry": "registration-lock.mjs",
+      "platformContracts": {
+        "win32": "v25"
+      }
+    },
+    "resolve-main-authority": {
+      "contract": "v10",
+      "entry": "main-authority.mjs"
     }
   }
 }

@@ -8,6 +8,9 @@
 // A project that is not paired but whose authority answers on the local network from another device is stopped too
 // (`pairing_required`): the device must pair first, otherwise it would silently issue a colliding number.
 // An approved pairing that waits for local confirmation is not a pairing: it is stopped the same way and is never used.
+// A project that declares which version impacts its build can read has a Task outside them refused (`unreadable_task_version_impact`).
+// `staged_changes_present` from a contract's unlocked preview can be another registration between its add and commit, so it is confirmed before it is reported.
+// `unsafe_repository_lock` from v15 can be a holder releasing the lock between two looks at it. It comes before any write, so the attempt is repeated a few times first.
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import os from "node:os";
@@ -18,6 +21,24 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const RESULT_SCHEMA = "decal.task-work-bug.its-register/v1";
 const TABLE_SCHEMA = "decal.task-work-bug.capabilities/v1";
 const here = realpathSync(path.dirname(fileURLToPath(import.meta.url)));
+const STAGED = "staged_changes_present";
+const UNSAFE_LOCK = "unsafe_repository_lock";
+const RETRY_MS = [250, 500, 1000, 2000];
+const PREVIEW_LOCK_WAIT_MS = 30000;
+const lastLine = (text) => String(text ?? "").trim().split("\n").pop();
+function refusedWith(text, ...codes) {
+  try { return codes.includes(JSON.parse(lastLine(text)).code); } catch { return false; }
+}
+/** Runs the attempt again while it is refused with one of the codes, then returns the last answer. */
+async function retryWhileRefused(attempt, ...codes) {
+  let answer = attempt();
+  for (const pause of RETRY_MS) {
+    if (!refusedWith(answer.stdout, ...codes)) break;
+    await new Promise((settle) => setTimeout(settle, pause));
+    answer = attempt();
+  }
+  return answer;
+}
 
 function stop(code, extra = {}) {
   process.stdout.write(`${JSON.stringify({ schema: RESULT_SCHEMA, status: "rejected", code, ...extra })}\n`);
@@ -103,6 +124,15 @@ if (existsSync(contextModule)) {
 const capability = kind === "task" ? "register-task-batch" : intent.kind === "incident" ? "register-incident" : "register-ticket";
 const table = loadTable();
 const broker = resolve(table, capability);
+// Before any route is chosen, so a paired project's Task is checked too. Only Tasks carry these values, and an older table does not know the check.
+if (kind === "task" && Object.hasOwn(table, "check-task-version-policy")) {
+  const { checkTaskVersionPolicy } = await import(pathToFileURL(resolve(table, "check-task-version-policy")).href);
+  const outcome = await checkTaskVersionPolicy(root, intent);
+  if (outcome.status !== "accepted") {
+    const { status: _status, code, ...detail } = outcome;
+    stop(code, detail);
+  }
+}
 // lstat, not exists: a link to nothing still counts as paired here, so the client refuses it instead of a local number being issued.
 const paired = lstatSync(path.join(root, ".decal", "its-lan-client.json"), { throwIfNoEntry: false }) !== undefined;
 
@@ -121,8 +151,12 @@ if (write && paired) {
   if (typeof digest !== "string") stop("usage_error", { reason: "approved_digest_required" });
   // resolve() ends the process on failure, so a client that is missing or fails verification never falls back to a local number.
   const client = resolve(table, "register-via-authority", "authority_client_unavailable");
-  const delegated = spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" });
-  const line = String(delegated.stdout ?? "").trim().split("\n").pop();
+  // This device cannot take the authority's lock, so a short wait decides. A change that stays staged is still refused.
+  const delegated = await retryWhileRefused(
+    () => spawnSync(process.execPath, [client, "register", "--root", root, "--intent", path.resolve(intentFile), "--approved-digest", digest], { encoding: "utf8" }),
+    STAGED, UNSAFE_LOCK,
+  );
+  const line = lastLine(delegated.stdout);
   let outcome = null;
   try { outcome = JSON.parse(line); } catch { /* reported below */ }
   if (outcome?.status === "registered" && outcome.receipt) {
@@ -175,5 +209,27 @@ for (const [key, value] of args) {
   forwarded.push(key);
   if (value !== true) forwarded.push(String(value));
 }
-const result = spawnSync(process.execPath, [broker, ...forwarded], { stdio: "inherit" });
-process.exit(result.status ?? 1);
+
+/** Runs the task holding the registration lock, so what it sees staged belongs to nobody registering. Null when the lock cannot be had; an older table does not know it. */
+async function underRegistrationLock(task) {
+  if (!Object.hasOwn(table, "acquire-registration-lock") || !Object.hasOwn(table, "resolve-main-authority")) return null;
+  const { acquireRegistrationLock } = await import(pathToFileURL(resolve(table, "acquire-registration-lock")).href);
+  const { resolveMainAuthorityRoot } = await import(pathToFileURL(resolve(table, "resolve-main-authority")).href);
+  let release;
+  try {
+    release = await acquireRegistrationLock((await resolveMainAuthorityRoot(root)).authorityRoot, { timeoutMs: PREVIEW_LOCK_WAIT_MS });
+  } catch { return null; }
+  try { return task(); } finally { await release(); }
+}
+
+const runBroker = () => spawnSync(process.execPath, [broker, ...forwarded], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+let shown;
+if (dryRun) {
+  shown = runBroker();
+  if (refusedWith(shown.stdout, STAGED)) shown = await underRegistrationLock(runBroker) ?? shown;
+} else {
+  shown = await retryWhileRefused(runBroker, UNSAFE_LOCK);
+}
+process.stderr.write(shown.stderr ?? "");
+process.stdout.write(shown.stdout ?? "");
+process.exitCode = shown.status ?? 1;

@@ -1,0 +1,12 @@
+{
+  "schema": "zuz.its.task-version-policy/v27",
+  "predecessor": "task-work-bug/v10",
+  "scope": "task-only",
+  "policyFile": "config/its-version-policy.json",
+  "policySchema": "decal.its-version-policy/v1",
+  "undeclaredProject": "unchanged",
+  "invalidDeclaration": "reject-with-invalid_version_policy",
+  "violation": "reject-with-unreadable_task_version_impact",
+  "policySource": "canonical-main-worktree",
+  "nativeFallback": false
+}
