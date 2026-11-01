@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-4
 title: "동시 등록 중 미리보기가 다른 등록의 스테이징을 사용자 변경으로 오인해 거절하는 문제"
-status: in_progress
+status: development_complete
 priority: P2
 taskRefs:
   - "1"
@@ -14,9 +14,14 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T03:40:20.155Z"
-updatedAt: "2026-11-01T03:40:49.761Z"
+updatedAt: "2026-11-01T04:35:06.500Z"
 blocked: null
-completion: null
+completion:
+  summary: "fix/flaky-test-locks 05d0e9c. 입구가 staged 거절을 잠금 아래서 재확인, 번호 서버 경유는 재전송. 미리보기 186회 거절 0(수정 전 138회 중 10회). 브랜치 미병합."
+  evidence:
+    - "부하 전체 시험: 수정본(067e2ed) 8회 실패 0, 수정 전 a01a5a1 14회 중 4회 실패, cd2520c 6회 중 2회 실패. 횟수가 적어 통계적 증명은 아님."
+    - "capability-entry 시험 7~9 추가, 새 시험 7은 옛 입구에서 실패 확인, verify:source 통과"
+  completedAt: "2026-11-01T04:35:06.500Z"
 closure: null
 ---
 
