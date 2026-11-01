@@ -3,7 +3,7 @@ schema: decal.task-work-bug.bug-card
 schemaVersion: 1
 id: BUG-4
 title: "동시 등록 중 미리보기가 다른 등록의 스테이징을 사용자 변경으로 오인해 거절하는 문제"
-status: new
+status: confirmed
 priority: P2
 taskRefs:
   - "1"
@@ -14,7 +14,7 @@ releaseTaskRef: null
 versionApplied: not-required
 remoteVersionApplied: not-required
 createdAt: "2026-11-01T03:40:20.155Z"
-updatedAt: "2026-11-01T03:40:20.155Z"
+updatedAt: "2026-11-01T03:40:47.993Z"
 blocked: null
 completion: null
 closure: null
