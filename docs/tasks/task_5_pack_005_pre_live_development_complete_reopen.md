@@ -54,11 +54,15 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 포터
 
 ## 완료 기준
 
-- [ ] 출시 전·버전 미적용 개발완료 Work·Bug 재개가 시험으로 확인됩니다.
-- [ ] live, 버전 적용됨, release_ready, 정산된 task-batch, 출시 단계 누락 요청은 거절됩니다.
-- [ ] v1 요청과 closed 재개는 v12와 같은 결과를 냅니다.
-- [ ] verify:source와 전체 npm test가 통과합니다.
+- [x] 출시 전·버전 미적용 개발완료 Work·Bug 재개가 시험으로 확인됩니다.
+- [x] live, 버전 적용됨, release_ready, 정산된 task-batch, 출시 단계 누락 요청은 거절됩니다.
+- [x] v1 요청과 closed 재개는 v12와 같은 결과를 냅니다.
+- [x] verify:source와 전체 npm test가 통과합니다.
 
 ## 작업 기록
 
 - 등록: 데칼 Task 839 세션에서 Tool_LauncherHub BUG-046 우회 사례를 근거로 분리했습니다.
+- 구현(2026-11-05, 브랜치 `feat/task-5-pre-live-reopen`, e9667d0): v28은 BUG-8이 이미 써서 새 계약을 v29로 정했습니다. `v29/work-item-bookkeeping.mjs`는 v1 요청을 v12에 그대로 맡기고, v2 요청(`releaseStage`·`releaseStageSource`, v11 정규화)에서만 `pre_live`·버전 미적용 `development_complete` 재개를 허용합니다. 출시 단계는 승인 지문의 operation 이름(`<kind>-reopen-<stored|defaulted>-pre-live`)으로 결속합니다. Pack의 `portableBookkeeping`·실행 정책을 v29로 옮기고, decal-work·decal-bug·decal-task·zuz-its 스킬 안내를 고쳤습니다(decal-task 1.21.0, zuz-its 1.6.0; work·bug는 미출시 1.16.0 유지).
+- 검증: `tests/work-item-bookkeeping-v29.test.mjs` 12개 통과(허용: stored/defaulted/unset pre_live, 재재개 이력 누적, 정확한 단일 커밋; 거절: live, 데스크톱·Remote 버전 적용, 정산된 task-batch, release_ready(pre_live·live), v1 요청, reuse, 잘못된 출시 단계, stale revision, 빈 사유; v1·closed 재개는 v12와 바이트·승인 지문 동일). `npm run verify:source` 통과, 전체 `npm test` 339개 중 335 통과·4 건너뜀·0 실패.
+- 남음: Pack 버전 확정·tag·Store 공개, 데칼 스냅샷 동기화(설치기 계약 파일 목록·`tests/verify-zuz-skills-pack.mjs` 고정값), 설치 프로젝트 갱신은 각각 사용자 승인 필요. main 병합도 승인 대기.
+- 후속 후보: 완료 근거에 미검증 범위를 구조화(`completion.unverified` 등)해 개발완료 진입을 막는 계약, 스킬에 "요구 플랫폼 미검증이면 개발완료로 넘기지 않음" 규칙.
