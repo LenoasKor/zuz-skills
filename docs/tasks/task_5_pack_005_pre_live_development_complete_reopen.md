@@ -1,6 +1,6 @@
 # Task 5 · Pack · 005 — 출시 전 개발완료 Work·Bug를 정식 경로로 다시 열기
 
-상태: in_progress
+상태: development_complete
 
 Task Category: pack
 
