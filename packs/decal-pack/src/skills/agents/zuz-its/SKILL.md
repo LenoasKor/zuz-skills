@@ -2,7 +2,7 @@
 name: zuz-its
 description: Understand and use zuz ITS Task, Work, Bug, Incident tickets and chat references in Decal or portable AI sessions.
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   portable: true
 ---
 
@@ -75,4 +75,4 @@ Never guess a missing ticket. Search the canonical repository records first. Out
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine and v12 is installed, read `contracts/task-work-bug/v12/README.md` and use its revision-bound `work-item-bookkeeping.mjs`. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
+Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine, use the revision-bound `work-item-bookkeeping.mjs` of `contracts/task-work-bug/v29/` when installed, else `v12/`, after reading its README. With v29 send the `zuz.its.work-item-bookkeeping-request/v2` request with the project release stage bound as in the v11 lifecycle; never infer `live`. An unreleased `pre_live` `development_complete` Work/Bug (no applied `x.y.z` version) that fails its acceptance, for example on a platform its completion evidence left unverified, is reopened with this operation (or Native `reopen`) instead of first being closed as completed/fixed. `live`, applied-version, `release_ready` and settled task-batch records stay separate release units. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.

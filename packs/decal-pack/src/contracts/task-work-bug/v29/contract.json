@@ -1,0 +1,17 @@
+{
+  "schema": "zuz.its.work-item-bookkeeping/v29",
+  "predecessor": "task-work-bug/v12",
+  "scope": "work-bug-reuse-and-reopen",
+  "legacyRequest": "zuz.its.work-item-bookkeeping-request/v1",
+  "legacyBehavior": "delegate-to-v12",
+  "releaseStageRequest": "zuz.its.work-item-bookkeeping-request/v2",
+  "releaseStageNormalization": "task-work-bug/v11",
+  "developmentCompleteReopen": {
+    "effectiveStage": "pre_live",
+    "appliedVersions": "none",
+    "target": { "work": "planned", "bug": "confirmed" },
+    "history": "append-only-reopenHistory"
+  },
+  "distinctReleaseUnit": ["live", "applied-version", "release_ready", "settled-task-batch"],
+  "nativeFallback": false
+}
