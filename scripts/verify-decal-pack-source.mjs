@@ -23,6 +23,8 @@ try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v27/v
 catch (error) { failures.push(`Task version policy v27 contract: ${error.code ?? error.message}`); }
 try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v28/verify-contract.mjs")).verifyContract(); }
 catch (error) { failures.push(`Work item lifecycle v28 contract: ${error.code ?? error.message}`); }
+try { await (await import("../packs/decal-pack/src/contracts/task-work-bug/v29/verify-contract.mjs")).verifyContract(); }
+catch (error) { failures.push(`Work item bookkeeping v29 contract: ${error.code ?? error.message}`); }
 const capabilityTable = JSON.parse(await readFile(new URL("../packs/decal-pack/src/contracts/task-work-bug/capabilities.json", import.meta.url), "utf8"));
 for (const name of ["register-via-authority", "detect-authority"]) {
   if (capabilityTable.capabilities?.[name]?.contract !== "v24" || capabilityTable.capabilities?.[name]?.platformContracts) failures.push(`${name} must use task-work-bug/v24 on every platform`);

@@ -125,7 +125,7 @@
   "compatibility": {
     "portableContract": "task-work-bug/v10",
     "portableSettlement": "task-work-bug/v11",
-    "portableBookkeeping": "task-work-bug/v12",
+    "portableBookkeeping": "task-work-bug/v29",
     "zuzItsContract": "zuz.its/v3",
     "minimumHosts": {
       "decal": "0.406.0",
@@ -251,8 +251,8 @@
   ],
   "executionPolicies": {
     "portableBookkeeping": {
-      "manifestValidator": "contracts/task-work-bug/v12/verify-contract.mjs",
-      "runner": "contracts/task-work-bug/v12/work-item-bookkeeping.mjs",
+      "manifestValidator": "contracts/task-work-bug/v29/verify-contract.mjs",
+      "runner": "contracts/task-work-bug/v29/work-item-bookkeeping.mjs",
       "automaticAuthority": "user-or-repository-policy",
       "resultReporting": "required"
     },

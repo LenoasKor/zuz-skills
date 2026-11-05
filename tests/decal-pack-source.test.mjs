@@ -186,7 +186,8 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
   assert.equal(packageValue.compatibility.portableContract, "task-work-bug/v10");
   assert.equal(packageValue.compatibility.portableSettlement, "task-work-bug/v11");
-  assert.equal(packageValue.compatibility.portableBookkeeping, "task-work-bug/v12");
+  assert.equal(packageValue.compatibility.portableBookkeeping, "task-work-bug/v29");
+  assert.equal(packageValue.executionPolicies.portableBookkeeping.runner, "contracts/task-work-bug/v29/work-item-bookkeeping.mjs");
   assert.ok(packageValue.files.some(file => file.sourcePath === packageValue.executionPolicies.portableBookkeeping.runner));
   assert.equal(packageValue.executionPolicies.portableBookkeeping.resultReporting, "required");
   const settlement = packageValue.executionPolicies.portableSettlement;
@@ -231,11 +232,11 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(decalAcceptance.requiredCases.includes("decal-native-canonical-branch-parity-requires-0.406.0"), true);
   assert.equal(decalAcceptance.requiredCases.includes("remote-preview-failure-reports-unapplied-and-preserves-macos-local-relaunch"), true);
   const expectedSkillVersions = {
-    "decal-task": "1.20.0",
+    "decal-task": "1.21.0",
     "decal-work": "1.16.0",
     "decal-bug": "1.16.0",
     "decal-incident": "1.8.1",
-    "zuz-its": "1.5.0",
+    "zuz-its": "1.6.0",
     "decal-slice": "0.4.13",
     "decal-slice-maintenance": "0.8.3",
     "decal-slice-smoke": "0.5.4",
@@ -301,10 +302,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     "decal-build": "0.3.3",
     "decal-deploy": "0.3.2",
     "decal-debug": "0.3.0",
-    "decal-task": "1.20.0",
+    "decal-task": "1.21.0",
     "decal-work": "1.16.0",
     "decal-bug": "1.16.0",
-    "zuz-its": "1.5.0",
+    "zuz-its": "1.6.0",
     "decaldev-rebuild-relaunch": "0.9.3",
     "decaldev-rebuild-relaunch-worktree": "0.3.3",
   })) assert.equal(packPolicy.minimumCompatible[id], version, id);
@@ -317,7 +318,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /explicit current-user approval/);
     assert.match(content, /exact settlement write-set/);
     if (id === "decal-task") {
-      assert.match(content, /version: "1\.20\.0"/);
+      assert.match(content, /version: "1\.21\.0"/);
       assert.match(content, /v20\/release-settle\.mjs/);
       assert.match(content, /task-work-bug\/its-register\.mjs --kind task/);
       assert.doesNotMatch(content, /task-work-bug\/v10\/register-task-batch\.mjs/);
