@@ -66,3 +66,14 @@ Remote disposition: not-applicable — 화면·프로토콜 변경 없이 포터
 - 검증: `tests/work-item-bookkeeping-v29.test.mjs` 12개 통과(허용: stored/defaulted/unset pre_live, 재재개 이력 누적, 정확한 단일 커밋; 거절: live, 데스크톱·Remote 버전 적용, 정산된 task-batch, release_ready(pre_live·live), v1 요청, reuse, 잘못된 출시 단계, stale revision, 빈 사유; v1·closed 재개는 v12와 바이트·승인 지문 동일). `npm run verify:source` 통과, 전체 `npm test` 339개 중 335 통과·4 건너뜀·0 실패.
 - 남음: Pack 버전 확정·tag·Store 공개, 데칼 스냅샷 동기화(설치기 계약 파일 목록·`tests/verify-zuz-skills-pack.mjs` 고정값), 설치 프로젝트 갱신은 각각 사용자 승인 필요. main 병합도 승인 대기.
 - 후속 후보: 완료 근거에 미검증 범위를 구조화(`completion.unverified` 등)해 개발완료 진입을 막는 계약, 스킬에 "요구 플랫폼 미검증이면 개발완료로 넘기지 않음" 규칙.
+
+## Pack 3.13.0 출시 · 2026-11-07
+
+사용자 지시("갱신 공개 푸시 등 필요한 작업을 다 진행")로 Pack을 3.13.0(`zuz-its` 모듈 1.10.0, v28 BUG-8 포함)으로 확정했다.
+
+- source `73252981014b8a6c89c30f0b148273da0c7cffb0`, main·tag `decal-pack-v3.13.0` push, GitHub Release 발행. 같은 커밋 두 번 빌드 digest 일치, 내려받은 asset 해시가 로컬과 같다. package SHA-256 `9dfd56a8584fc929ab770b21399b7df24e8026ca4d02f72cd5924aff02e52b4b`, manifest identity `bca1ef01ba8b62bb96e8775605f59886ca1185ee833189b7dc3ea3b6a80bd679`, 356개 파일. 발행 소스 `npm test` 339개 중 335 통과·4 건너뜀·0 실패.
+- Store: 후보 `candidate-83ca3a37-13f4-406e-a1b6-bd348013cfe6`, 세션 AI 검수 `ai-review-dbbedc29-86f6-4c73-acf1-d1082c4e542b`(passed). 묶음 27개를 받아 파일 증거 360개의 해시를 대조했고, 경로·해시 전체 묶음 값이 로컬 Release 패키지와 같았다(`0364a5bf…`). 그 패키지 356개 파일을 Sonnet 하위 에이전트 7개가 전수 읽었고, 읽기 기록 대조로 빠진 43개를 찾아 다시 읽었다. 판정은 주 세션(Opus 5.5). 코드는 실행하지 않았다. 제출 형식은 사용자 읽기 전용 승인으로 Store 원본 `worker/sessionAiReview.ts`에서 확인했다.
+- Store 공개 release `decal-project-pack-r29`, publishedAt `2026-11-06T15:47:50.541Z`(UTC). 공개 다운로드 package가 GitHub 발행본과 바이트까지 같다(2,264,504바이트). 서명 검증은 하지 않았다.
+- 데칼: 스냅샷 동기화 main `0f0b01b52`, 데칼 Task 839 development_complete. 데칼 main은 push 전.
+- 남음: Primer·Jig·Showcase·Mobile·Hub·살림비서·STANZA 등 소비 프로젝트 갱신(저장소별 승인), Windows 시험, Task 완료 정산.
+
