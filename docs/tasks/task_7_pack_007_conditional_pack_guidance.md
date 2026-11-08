@@ -1,6 +1,6 @@
 # Task 7 · Pack · 007 — 설치 규약의 짧은 입구와 작업별 스킬 안내
 
-상태: in_progress
+상태: development_complete
 
 Task Category: pack
 
