@@ -5,8 +5,8 @@
 | 상태 | 개수 | 비고 |
 | --- | ---: | --- |
 | `backlog` | 0 | 없음 |
-| `planned` | 2 | Task 6, Task 7 |
-| `in_progress` | 3 | Task 1, Task 2, Task 4 |
+| `planned` | 1 | Task 6 |
+| `in_progress` | 4 | Task 1, Task 2, Task 4, Task 7 |
 | `blocked` | 0 | 없음 |
 | `postponed` | 0 | 없음 |
 | `development_complete` | 1 | Task 5 |
@@ -26,4 +26,4 @@
 | [4 Pack 004 — 프로젝트 빌드가 읽지 못하는 Task 버전 영향 값을 등록 입구에서 거절](task_4_pack_004_task_version_policy_check.md) | `in_progress` | `P1 planned-next` | Decal Pack, capability entry, Task registration | 프로젝트가 선언한 Task 버전 영향 값 밖의 등록을 its-register.mjs에서 거절하고, 선언 없는 프로젝트는 그대로 둔다. |
 | [5 Pack 005 — 출시 전 개발완료 Work·Bug를 정식 경로로 다시 열기](task_5_pack_005_pre_live_development_complete_reopen.md) | `development_complete` | `P1 planned-next` | Decal Pack, Work Bug bookkeeping, reopen | 출시 전이고 버전이 적용되지 않은 개발완료 Work·Bug를 새 번호 계약으로 이력을 보존한 채 다시 연다. |
 | [6 Pack 006 — Showcase 연결 프로젝트에만 설치되는 작업본 테스트 빌드 가이드 모듈과 audience 판정](task_6_pack_006_showcase_guide_module_audience_check.md) | `planned` | `P1 planned-next` | Decal Pack, portable installer, Showcase, module audience | Showcase 연결 파일이 있는 프로젝트에만 작업본 테스트 빌드 가이드를 설치하고, 외부 설치기가 모듈 audience를 판정해 조건이 맞지 않는 모듈을 설치하지 않게 한다. |
-| [7 Pack 007 — 설치 규약의 짧은 입구와 작업별 스킬 안내](task_7_pack_007_conditional_pack_guidance.md) | `planned` | `P0 active` | Decal Pack, ITS skills, installer | 쉬운 설명과 권한 보호를 유지하면서 기본 지침은 짧게, 상세는 필요한 기능별로 읽게 합니다. |
+| [7 Pack 007 — 설치 규약의 짧은 입구와 작업별 스킬 안내](task_7_pack_007_conditional_pack_guidance.md) | `in_progress` | `P0 active` | Decal Pack, ITS skills, installer | 쉬운 설명과 권한 보호를 유지하면서 기본 지침은 짧게, 상세는 필요한 기능별로 읽게 합니다. |
