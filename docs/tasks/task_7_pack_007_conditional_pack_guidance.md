@@ -46,7 +46,10 @@ Registration Intent: zuz-pack-context-lightening-20261108:context_lightening
 
 ## 완료 기준
 
-짧은 정책 입구와 상세 원본 분리, Task/Work/Bug/Incident 스킬의 선택 읽기, 이전 설치와 수정본 보호, source 검증·전체 테스트·정확한 커밋·결정적 Pack 빌드.
+- [x] 짧은 정책 입구와 상세 원본 분리.
+- [x] Task/Work/Bug/Incident 스킬의 선택 읽기.
+- [x] 이전 설치와 수정본 보호, 네 공급자 동일 bytes 검증.
+- [x] source 검증·전체 테스트·정확한 커밋·결정적 Pack 빌드.
 
 ## Remote parity
 
@@ -65,3 +68,7 @@ not-applicable: UI 없는 Pack 원본이며 소비자 동일 의미를 보존한
 - 전체 테스트에서 새 문서 위치를 따라가지 않던 검사 한 건을 수정했고 해당 검사는 재통과했다. 최종 전체 재검증 후 source commit과 결정적 빌드를 수행한다. 실제 공개 배포와 타 소비자 설치는 이 작업에 포함하지 않는다.
 
 최종 source 검증: `npm run verify:source` 통과, `npm test` 342개 중 338 통과·4 조건부 skip·0 실패. 분리된 원문 보존 3개 검사 및 diff whitespace 검사 통과.
+
+## 로컬 Pack 빌드 영수증
+
+Source commit `19820cdf922a408e38cb6f46afe64a5b6e402030`, Pack 3.14.0, 31 skills / 373 files. 동일 소스 재빌드 해시 일치: manifest identity `d65790601d6e6b4e53c2aa0be3563617e3ccc3beda8f51c0f63d7449f471ef80`, manifest file `470c80f00f77f8f5266bb45fddb99acda0fdb30bbdecfa004733bd2b098d68b9`, package `ed683f5f1fcdf8b11819d489a8f4978a1fad60cfb69f0005856e14b2a68b3825`. Decal Task 849에서 이 archive를 내장 동기화했다. 공개 배포·다른 소비 프로젝트 설치는 하지 않았다.
