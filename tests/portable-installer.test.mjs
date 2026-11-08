@@ -246,9 +246,10 @@ test("ITS installation owns only its dedicated rule block and preserves reposito
     for (const source of [agents, claude]) {
       assert.equal(source.match(/<!-- decal-pack-rules:start -->/gu)?.length, 1);
       assert.match(source, /등록 불필요 → 기존 기록 재사용 → 새 기록 필요/u);
-      assert.match(source, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
-      assert.match(source, /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
-      assert.match(source, /배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않/u);
+      assert.match(await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8"), /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+      assert.match(await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8"), /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
+      assert.match(source, /등록 면제는 권한 면제가 아닙니다/u);
+      assert.match(await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8"), /배포·정산·비용·비밀값·외부 서비스 변경 권한을 열지 않/u);
     }
     assert.ok(agents.startsWith(repositoryRules));
 
@@ -369,8 +370,8 @@ test("ITS update retires only the pristine legacy unset-stop section", async () 
     assert.ok(agents.startsWith(repositoryPrefix));
     assert.ok(agents.includes(repositorySuffix.trim()));
     assert.doesNotMatch(agents, /실행용 앱 빌드를 멈추고/u);
-    assert.match(agents, /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
-    assert.match(agents, /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
+    assert.match(await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8"), /누락·null·`unset`이면 질문하거나 빌드를 멈추지 않고 `pre_live`/u);
+    assert.match(await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8"), /`pre_live`는 `development_complete`에서 정상 종결하고 `release_ready`를 만들지 않습니다/u);
 
     const customized = legacySection.replace("실행용 앱 빌드를 멈추고", "사용자 정의 검토를 수행하고");
     const customRoot = await mkdtemp(path.join(tmpdir(), "zuz-pack-custom-release-stage-"));
@@ -824,7 +825,7 @@ test("tracking policy comes from the verified package and upgrades locked legacy
   const root = await mkdtemp(path.join(tmpdir(), "zuz-tracking-policy-"));
   try {
     const legacy = structuredClone(packageValue);
-    legacy.files = legacy.files.filter(file => file.sourcePath !== "contracts/its-tracking-policy.md");
+    legacy.files = legacy.files.filter(file => !["contracts/its-tracking-policy.md", "contracts/its-entry-guidance.md"].includes(file.sourcePath));
     const legacyPath = path.join(fixtureRoot, "legacy-tracking-policy.json");
     await writeFile(legacyPath, stableJson(sealPackage(legacy)));
     const preview = run(root, "--dry-run", null, { packagePath: legacyPath });
@@ -834,7 +835,7 @@ test("tracking policy comes from the verified package and upgrades locked legacy
 
     // A different release must install its own bytes, even when the installer checkout differs.
     const next = structuredClone(packageValue);
-    const policy = next.files.find(file => file.sourcePath === "contracts/its-tracking-policy.md");
+    const policy = next.files.find(file => file.sourcePath === "contracts/its-entry-guidance.md");
     const body = Buffer.from(`${Buffer.from(policy.contentBase64, "base64")}\n- Package-owned policy fixture.\n`);
     Object.assign(policy, { contentBase64: body.toString("base64"), size: body.length, sha256: sha256(body) });
     const nextPath = path.join(fixtureRoot, "next-tracking-policy.json");
@@ -842,7 +843,7 @@ test("tracking policy comes from the verified package and upgrades locked legacy
     const update = run(root, "--dry-run", null, { packagePath: nextPath });
     assert.equal(update.status, 0, update.stderr);
     assert.equal(run(root, "--write", update.value.installationPlanDigest, { packagePath: nextPath }).status, 0);
-    const installed = await readFile(path.join(root, "contracts/its-tracking-policy.md"), "utf8");
+    const installed = await readFile(path.join(root, "contracts/its-entry-guidance.md"), "utf8");
     for (const entry of ["AGENTS.md", "CLAUDE.md"]) {
       const contents = await readFile(path.join(root, entry), "utf8");
       assert.ok(contents.includes(installed.trimEnd()));

@@ -1,0 +1,3 @@
+## Interrupted portable settlement
+
+For a project adopting v20, follow `contracts/task-work-bug/v20/README.md`. `--draft` saves an approved plan without changing canonical records or versions; ordinary `--write` includes the exact commit and finalization. A failed commit retains an isolated draft after safe compensation. Resume through the normal planner with a fresh preview, verification and authorized digest; never copy saved output over a newer registry or replay an old version increment. Use `drafts.mjs --action list` to inspect, and the digest-bound `--action park` only for an explicitly authorized legacy recovery. Mixed changes and live/unknown locks stay protected. A draft is not completion; a different Task can proceed when no unsafe application state remains.

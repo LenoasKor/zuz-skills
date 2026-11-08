@@ -64,7 +64,10 @@ function legacyDecalPackRulesBlock() {
 // The installed release, not this checkout, owns the policy bytes. Old releases
 // without the shared policy keep their historical rule block during upgrades.
 function decalPackRulesBlock(packageValue) {
-  const file = packageValue.files.find((file) => file.sourcePath === "contracts/its-tracking-policy.md");
+  const policy = packageValue.files.find((file) => file.sourcePath === "contracts/its-tracking-policy.md");
+  const entry = packageValue.files.find((file) => file.sourcePath === "contracts/its-entry-guidance.md");
+  if (entry && !policy) fail("missing_tracking_policy");
+  const file = entry ?? policy;
   if (!file) return legacyDecalPackRulesBlock();
   if (file.moduleId !== "zuz-its" || !file.installTargets.some((target) => target.provider === "shared" && target.path === file.sourcePath)) {
     fail("invalid_tracking_policy_target");

@@ -30,7 +30,7 @@
 
 정본은 `packs/decal-pack/src/`와 `packs/decal-pack/pack.source.json`이다.
 
-작업 기록 판단은 `src/contracts/its-tracking-policy.md` 한 곳에서 관리한다. portable 설치기는 검증된 package의 해당 bytes로 AGENTS·CLAUDE 관리 구획을 만들고, Decal Native 설치기도 같은 고정 파일을 포함한다. 새 정책과 과거 구획 인식용 호환 문자열을 혼동하지 않는다.
+작업 기록 판단은 `src/contracts/its-tracking-policy.md` 한 곳에서 관리한다. Pack 3.14부터 portable·Native 설치기는 검증된 `src/contracts/its-entry-guidance.md`의 짧은 진입 안내로 AGENTS·CLAUDE 관리 구획을 만들고, 판단 시 읽을 전체 정책도 함께 설치한다. 작업별 상세는 `contracts/its-guides/`로 배포하며 스킬의 명시 경로로 읽는다. 구 Pack의 전체 정책 구획은 pristine 확인 후에만 갱신한다. 새 정책과 과거 구획 인식용 호환 문자열을 혼동하지 않는다.
 
 - 스킬 문서를 바꾸면 해당 스킬 version과 `minimumCompatible`을 함께 갱신한다.
 - 계약을 추가하면 이전 공개 계약 bytes를 유지하고 새 `contracts/.../vN`을 만든다.

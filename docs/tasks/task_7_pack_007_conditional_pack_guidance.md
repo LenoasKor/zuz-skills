@@ -55,3 +55,13 @@ not-applicable: UI 없는 Pack 원본이며 소비자 동일 의미를 보존한
 ## App.tsx 영향 계획
 
 해당 없음.
+
+## 구현 기록 · 2026-11-08
+
+- Pack 3.14.0 / zuz-its module 1.11.0: 짧은 정책 입구와 작업별 상세 문서를 추가했다. Task/Work/Bug/Incident entry의 patch version과 minimumCompatible을 함께 올렸다. 기존 versioned 계약 bytes와 전체 tracking policy는 보존했다.
+- 분리한 각 상세 본문은 변경 전 스킬의 원문과 일치함을 확인했고 hash fixture로 회귀를 검사한다. 네 공급자 설치 대상과 파일 해시 동일성을 유지한다.
+- Native/portable 권한, 외부 root 승인, 정산 복구·재개·등록의 절차는 해당 동작 전에 명시 문서를 읽는 계약으로 옮겼다. 없어지거나 읽지 못하면 그 동작만 보류한다.
+- 설치기는 package-owned 짧은 안내를 사용하되 기존 Pack은 기존 정책을 유지한다. lock에 결속한 이전 구획만 교체하고 수정본은 거절한다.
+- 전체 테스트에서 새 문서 위치를 따라가지 않던 검사 한 건을 수정했고 해당 검사는 재통과했다. 최종 전체 재검증 후 source commit과 결정적 빌드를 수행한다. 실제 공개 배포와 타 소비자 설치는 이 작업에 포함하지 않는다.
+
+최종 source 검증: `npm run verify:source` 통과, `npm test` 342개 중 338 통과·4 조건부 skip·0 실패. 분리된 원문 보존 3개 검사 및 diff whitespace 검사 통과.

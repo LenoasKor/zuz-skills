@@ -1,0 +1,18 @@
+{
+  "contracts/its-guides/decal-bug/portable.md": "3192de3fe6ed7beac6f798066c8fe6c06d2e984226236285b18df2c3c9231579",
+  "contracts/its-guides/decal-bug/recovery.md": "c2ccea218f7282af3512746936fe22ee00fa785eb57bf4a634a219ae858c0996",
+  "contracts/its-guides/decal-bug/registration.md": "b62e5a9ad4ee7015a57ddf76819333837f78de273660acb5d39008c36666da9d",
+  "contracts/its-guides/decal-bug/bookkeeping.md": "226a69d1d3d8d63821de5c72b2bfe90398b048a0be9c55619e8409785f4ca0c0",
+  "contracts/its-guides/decal-work/portable.md": "7e7608e7013a75d9445b1958256d682f5e10e3dd05d8ae703fe75b2b067d7d68",
+  "contracts/its-guides/decal-work/recovery.md": "c2ccea218f7282af3512746936fe22ee00fa785eb57bf4a634a219ae858c0996",
+  "contracts/its-guides/decal-work/registration.md": "b62e5a9ad4ee7015a57ddf76819333837f78de273660acb5d39008c36666da9d",
+  "contracts/its-guides/decal-work/bookkeeping.md": "226a69d1d3d8d63821de5c72b2bfe90398b048a0be9c55619e8409785f4ca0c0",
+  "contracts/its-guides/decal-task/portable.md": "8b1dc8dfdeae729891cdbdd482d743bf6b6eff87d16917a06cfe71b7eab6ec34",
+  "contracts/its-guides/decal-task/recovery.md": "c2ccea218f7282af3512746936fe22ee00fa785eb57bf4a634a219ae858c0996",
+  "contracts/its-guides/decal-task/completion.md": "ca107f9a053949e6c668eac76a6b62ef7063710f5fe5fa3398aecf10173a3911",
+  "contracts/its-guides/decal-task/registration.md": "37df1da34b6ba7ed0c76f86dd8d18bd9e0dbc234481fbcd3a5f8e9eacd653046",
+  "contracts/its-guides/decal-task/bookkeeping.md": "226a69d1d3d8d63821de5c72b2bfe90398b048a0be9c55619e8409785f4ca0c0",
+  "contracts/its-guides/decal-incident/portable.md": "c499ca81ed06068c0f5b7b67da9ca17d482ac63b13d93ad8e970572c776859e8",
+  "contracts/its-guides/decal-incident/registration.md": "b62e5a9ad4ee7015a57ddf76819333837f78de273660acb5d39008c36666da9d",
+  "contracts/its-guides/decal-incident/incident-profile.md": "5fc869091279607a5de58a7ea103c21a3dcfd5fd5be21f049a73dd4a5c7e296a"
+}

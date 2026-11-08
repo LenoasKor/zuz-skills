@@ -2,7 +2,7 @@
 name: decal-bug
 description: Register, diagnose, fix, verify, and settle Decal/Jig Bug records for observed behavior that differs from an existing contract. Use when the user reports a reproducible defect or asks to manage a Bug.
 metadata:
-  version: "1.16.0"
+  version: "1.16.1"
   portable: true
 ---
 
@@ -77,52 +77,11 @@ directory is missing, the repository needs a Project Pack update rather than a h
 
 ## Portable writer
 
-When the repository ships `contracts/task-work-bug/its-register.mjs`, use it instead of hand-writing a record (see Capability-resolved registration; never name a contract version yourself). The
-dry-run returns no final ID. From a linked feature or detached worktree, the broker locates the one
-existing canonical `main`/`master` worktree and runs the unchanged ticket writer there. It never switches,
-detaches, creates, or removes a worktree. Missing, ambiguous, or changing main authority fails closed.
-The receipt reports both the requesting worktree and the authority worktree.
-
-```sh
-node contracts/task-work-bug/its-register.mjs --kind ticket \
-  --root . --intent /path/to/approved-intent.json --dry-run
-
-node contracts/task-work-bug/its-register.mjs --kind ticket \
-  --root . --intent /path/to/approved-intent.json \
-  --approved-digest sha256:<dry-run digest> --write
-```
-
-Lifecycle steps use the same revision binding. Bug starts at `new → confirmed → in_progress → development_complete`.
-When `contracts/task-work-bug/v28/` is installed, use `v28/work-item-lifecycle.mjs`. It takes the v11 request and needs no `.decal/settlement-profile.json` for a status transition; with a profile it runs v11 unchanged. Version settlement still needs the project-approved profile and reports `ENOENT` without one. Otherwise, when `contracts/task-work-bug/v11/` is installed, use its v2 lifecycle request and bind the currently observed
-project release stage to the preview digest. Explicit stored `live` follows `development_complete → release_ready
-→ closed`. Explicit stored `pre_live`, or a missing/null/legacy `unset` stage marked `defaulted`, closes normally
-from `development_complete` after the required verification and Smoke; do not create `release_ready`. Never infer
-`live`. This branch does not authorize settlement, deployment, cost, secrets, or external-service effects.
-
-If the project explicitly adopts the packaged v11 runner, read `contracts/task-work-bug/v11/README.md`
-and validate its manifest. Use `v28/work-item-lifecycle.mjs` (or `v11/work-item-lifecycle.mjs` where v28 is not installed) for release-stage-aware normal transitions and
-`v20/settle-work-item.mjs --kind bug` for closed standalone settlement. Preview, approve, and apply
-the same exact plan digest; commit/finalize are included. Task-batch items settle with their release
-Task, not separately. When the committed `config/its-settlement.json` sets `mode: release`, closing does
-not settle: the record keeps `pending`, the settlement runner returns `deferred_to_release`, and the
-version is applied once at release with `v20/release-settle.mjs` (separately approved). A missing file
-keeps per-ticket settlement. The approved project profile must name its version sources. Preserve existing
-repository engines, user modifications and unrelated dirty files. Do not fall back to the unlocked v5
-writer after a v11 rejection. A project that only has the published v9 runner retains its legacy
-`development_complete → release_ready → closed` flow until its Pack is updated. The following v5 path is only for an older, explicitly pinned installation:
-
-```sh
-node contracts/task-work-bug/v5/transition-work-item.mjs \
-  --root . --kind bug --id BUG-### --status <status> \
-  --expected-source-revision sha256:<current revision>
-```
-
-`development_complete` additionally requires `--summary` and at least one `--evidence`. `closed` requires
-`--reason`. A repository that ships its own lifecycle scripts takes precedence over this package.
+Before any external registration, lifecycle or settlement operation, read `contracts/its-guides/decal-bug/portable.md` from the verified project root. Read only for that operation; reuse unchanged guidance already in the active context. Missing guidance blocks that operation, not independent work. This pointer grants no authority and never permits a Native bypass.
 
 ## Interrupted portable settlement
 
-For a project adopting v20, follow `contracts/task-work-bug/v20/README.md`. `--draft` saves an approved plan without changing canonical records or versions; ordinary `--write` includes the exact commit and finalization. A failed commit retains an isolated draft after safe compensation. Resume through the normal planner with a fresh preview, verification and authorized digest; never copy saved output over a newer registry or replay an old version increment. Use `drafts.mjs --action list` to inspect, and the digest-bound `--action park` only for an explicitly authorized legacy recovery. Mixed changes and live/unknown locks stay protected. A draft is not completion; a different Task can proceed when no unsafe application state remains.
+Before recovering interrupted portable settlement, read `contracts/its-guides/decal-bug/recovery.md` from the verified project root. Read only for that operation; reuse unchanged guidance already in the active context. Missing guidance blocks that operation, not independent work. This pointer grants no authority and never permits a Native bypass.
 
 ## Safety and completion
 
@@ -138,13 +97,8 @@ For a project adopting v20, follow `contracts/task-work-bug/v20/README.md`. `--d
 
 ## Same-issue reuse and reopen
 
-Before a new Work/Bug, inspect the current record and same-parent open/closed records. Use Native `issueReview` with checked IDs/revisions, decision (`distinct`, `reuse`, `reopen`) and scope rationale. Identical Work goal/acceptance/release unit or Bug cause/fix/verification scope uses the existing ID. Date or symptom similarity alone is insufficient. Evidence-only additions and repeated execution retain closed status and earlier completion/version history; actual resumed development uses the formal reopen operation; duplicate/cancelled/unfixed records and independently settled task-batch release units are separated. When the project adopts the portable engine, use the revision-bound `work-item-bookkeeping.mjs` of `contracts/task-work-bug/v29/` when installed, else `v12/`, after reading its README. With v29 send the `zuz.its.work-item-bookkeeping-request/v2` request with the project release stage bound as in the v11 lifecycle; never infer `live`. An unreleased `pre_live` `development_complete` Work/Bug (no applied `x.y.z` version) that fails its acceptance, for example on a platform its completion evidence left unverified, is reopened with this operation (or Native `reopen`) instead of first being closed as completed/fixed. `live`, applied-version, `release_ready` and settled task-batch records stay separate release units. Repository lifecycle engines stay canonical. Never hand-edit a closed record into a developing status or overwrite historical evidence.
-
+Before proposing a related Work/Bug or reopening a record, read `contracts/its-guides/decal-bug/bookkeeping.md` from the verified project root. Read only for that operation; reuse unchanged guidance already in the active context. Missing guidance blocks that operation, not independent work. This pointer grants no authority and never permits a Native bypass.
 
 ## Capability-resolved registration
 
-Register through the stable entry `contracts/task-work-bug/its-register.mjs`; do not choose or name a contract version. The entry reads `contracts/task-work-bug/capabilities.json`, which maps each capability (`register-task-batch`, `register-ticket`, `register-incident`, `register-via-authority`) to exactly one contract. It runs a contract only when that contract is listed and its own manifest and dependency verification pass. It never runs an unlisted folder, never looks for "the latest" version, and never falls back to an older contract: if a capability is not advertised or its contract fails verification, the entry stops with `authoring_update_required` and the request is preserved until the Pack is updated.
-
-A project paired with a number authority on the local network (`.decal/its-lan-client.json`) always registers through that authority, with the same approved digest, so two devices never issue the same number. If the authority client is unavailable or fails verification the entry stops with `authority_client_unavailable`; never register locally in that state. A device that is not paired but whose project has a number authority on the local network is stopped the same way with `pairing_required`: nothing is registered, the entry names the authority and the next step. The agent runs the pairing step (`lan-client.mjs pair`) and shows the user the check code. If it answers `authority_ambiguous`, it asks the user which listed address is the main device and pairs again with `--authority HOST:PORT`; it never picks one itself. An approval alone does not pair: the result is `awaiting_local_confirmation`, because any device on the network can send an approved answer. The agent then asks the user whether the main device showed an approval card with that same code, and runs `lan-client.mjs pair-confirm --sas "<code>"` only with the code the user reports from that card; if no card appeared or the code differs, it runs `pair-cancel` and tells the user. Passing the printed code without asking the user defeats the check; no code can prevent that, so this step is the guard. `pairing_required` with reason `pairing_awaiting_local_confirmation` means this confirmation is still open. Pairing and approval are separate user-confirmed steps described by the multi-device authority contract; an agent never approves a pairing request without showing the user both check codes.
-
-This selection changes no Native fallback, cross-project, publication, lifecycle or settlement authority.
+Before external registration or multi-device pairing, read `contracts/its-guides/decal-bug/registration.md` from the verified project root. Read only for that operation; reuse unchanged guidance already in the active context. Missing guidance blocks that operation, not independent work. Use `contracts/task-work-bug/its-register.mjs`; it never falls back to an older contract. This pointer grants no authority and never permits a Native bypass.
