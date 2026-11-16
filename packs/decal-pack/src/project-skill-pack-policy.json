@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "packId": "decal-project-pack",
-  "packVersion": "3.14.1",
+  "packVersion": "3.14.2",
   "zuzItsContract": "zuz.its/v3",
   "packInstallation": {
     "schemaVersion": 3,
@@ -67,7 +67,7 @@
     "decal-animate": "1.0.2",
     "decal-improve-animations": "1.0.2",
     "decal-review-animations": "1.0.1",
-    "decal-slice-hygiene": "0.2.5"
+    "decal-slice-hygiene": "0.2.6"
   },
   "revokedVersions": {
     "decal-slice-maintenance": [

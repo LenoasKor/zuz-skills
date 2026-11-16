@@ -228,7 +228,7 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
     { id: "development-core", version: "1.3.9" },
-    { id: "zuz-its", version: "1.11.1" },
+    { id: "zuz-its", version: "1.11.2" },
     { id: "design-motion", version: "1.0.2" },
     { id: "decal-maintainer", version: "1.1.4" },
   ]);
@@ -393,7 +393,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.14.1");
+  assert.equal(packageValue.packVersion, "3.14.2");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
@@ -649,5 +649,18 @@ test("Pack 3.9.0 ships the capability entry, the multi-device authority contract
     const text = await readFile(join(artifactRoot, `packs/decal-pack/src/skills/agents/${skill}/SKILL.md`), "utf8");
     assert.doesNotMatch(text, /contracts\/task-work-bug\/v\d+\/register-/u, `${skill} still names a numbered registration contract`);
     assert.match(text, /contracts\/task-work-bug\/its-register\.mjs/u, `${skill} must point at the stable entry`);
+  }
+});
+
+
+test("generated hygiene has no global numeric legacy exemption", async () => {
+  execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", "f".repeat(40)], { stdio: "pipe" });
+  const pack = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
+  for (const sourcePath of ["skills/prompts/decal-slice-hygiene.md", "generated/skills/decal-slice-hygiene/SKILL.md"]) {
+    const file = pack.files.find(file => file.sourcePath === sourcePath);
+    const text = Buffer.from(file.contentBase64, "base64").toString("utf8");
+    assert.doesNotMatch(text, /Slice\s*(340|341)/);
+    assert.match(text, /현재 형식의 Task 1도 현행 Category·Category Index 규약을 검사/);
+    assert.match(text, /이전 형식 여부가 불명확하면.*확인 필요/);
   }
 });

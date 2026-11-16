@@ -22,3 +22,9 @@ Version 3.14.1 is a compatible prompt-quality patch. No existing immutable contr
 `core-skill-lightening.test.mjs` and `motion-slice-lightening.test.mjs` specify static behavioral contracts, not measured LLM execution. Build projection checks preserve prompt text and repository authority for Codex, Claude, Gemini and ACP. Existing contract fixtures remain pinned.
 
 A first sandboxed full run exposed an outdated quote-preservation fixture (updated to current evidence contract) and blocked LAN discovery. The untouched main baseline failed the same discovery check. The identical LAN test works outside the network sandbox; full-suite results are recorded with the final release receipt, never silently skipped.
+
+## 3.14.2 correction (Decal BUG-515)
+
+The Store's full-package review found a leftover body paragraph exempting every Slice number up to 340. The 3.14.1 template was generalized, but its generated portable body still carried that Decal-specific assumption. Version 3.14.1 and its published artifacts are preserved unchanged.
+
+Version 3.14.2 removes the numeric exemption from the full source and generated entry. Legacy status now requires the project's rules, an explicit schema or migration history; low numbers and age do not suffice. Current-format Task 1 is explicitly inspected, and unknown legacy status is reported as needing verification. Regression checks cover the entire source and generated artifact, not only the template. Source verification and all 350 executable tests pass; four Windows-only cases remain skipped on macOS. The corrective draft began under WORK-280 before classification/registration as BUG-515; the later registration is not presented as prior registration.

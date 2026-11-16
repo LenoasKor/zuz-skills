@@ -54,3 +54,13 @@ test('adapted resources retain immutable upstream provenance instead of claiming
     assert.ok(adapted.adaptations.length > 0);
   }
 });
+
+
+test('hygiene legacy exemption requires project evidence across the entire source', () => {
+  const source = read('decal-slice-hygiene.md');
+  assert.doesNotMatch(source, /Slice\s*(340|341)|Task\s*(340|341)/);
+  assert.match(source, /번호가 작다는 이유만으로 면제하지/);
+  assert.match(source, /프로젝트 규약, 명시적 schema 또는 마이그레이션 이력/);
+  assert.match(source, /현재 형식의 Task 1도 현행 Category·Category Index 규약을 검사/);
+  assert.match(source, /이전 형식 여부가 불명확하면.*확인 필요/);
+});
