@@ -1,7 +1,7 @@
 ---
 id: decal-animate
 label: 데칼 애니메이션 구현 · animate
-version: 1.0.1
+version: 1.0.2
 risk: project_write
 group: Motion
 target: active-cli
@@ -23,8 +23,6 @@ A construction skill. It does ONE thing: turn a request for motion into an imple
 - When a request matches a common component, load the allowlisted `RECIPES.md` companion with `decal_ui.read_canonical_skill({ skillId: "decal-animate", resourcePath: "RECIPES.md" })`. If that read-only tool is unavailable, continue from this document and the project's own conventions without inventing a resource path.
 
 ## Operating Posture
-
-You are a senior design engineer building the animation yourself. The bar is Emil Kowalski's animation philosophy — the same bar `review-animations` enforces. Write it so it passes that review the first time.
 
 Two failure modes, and the first is worse:
 
@@ -133,10 +131,10 @@ Need a curve that isn't here? Take it from [easing.dev](https://easing.dev/) or 
 | Button press feedback | 100–160ms |
 | Tooltips, small popovers | 125–200ms |
 | Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
+| Modals, drawers | 200–250ms by default; 300–500ms only for a justified, occasional large transition |
 | Marketing / explanatory | Can be longer |
 
-**UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one.
+**Default UI animations stay under 300ms.** A longer occasional modal/drawer or gesture-settling spring needs a documented purpose and responsiveness check; it is not the default for every modal. A 180ms dropdown feels more responsive than a 400ms one.
 
 **Reach for a spring instead** when the motion is drag with momentum, an element that should feel alive, a gesture the user can interrupt or reverse, or decorative mouse-tracking:
 
@@ -160,7 +158,7 @@ Ships with the animation, every time.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .element { animation: fade 0.2s ease; } /* keep opacity/color, drop transform-based motion */
+  .element { animation: none; transition: none; } /* also retain the component's visible final state, not an entrance opacity: 0 */
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -173,7 +171,7 @@ const reduce = useReducedMotion();
 const closedX = reduce ? 0 : '-100%';
 ```
 
-Reduced motion means **fewer and gentler** animations, not zero — keep transitions that aid comprehension, remove movement and position changes.
+Reduced motion may be static or use a short opacity/color transition when it helps comprehension. Remove nonessential movement; do not require animation to preserve feedback. Static state, focus, text, and color can provide feedback.
 
 ## Recipes
 
@@ -196,7 +194,7 @@ Self-check before you finish. Each of these is an automatic block in `review-ani
 | Animating `width`/`height`/`margin`/`padding`/`top`/`left` | `transform` / `opacity` |
 | Motion `x`/`y`/`scale` props under load | Full `transform` string |
 | Ungated `:hover` motion | `@media (hover: hover) and (pointer: fine)` |
-| Missing `prefers-reduced-motion` | Gentler variant, not zero |
+| Missing `prefers-reduced-motion` | Static feedback or a justified gentle variant |
 | Everything entering at once | 30–80ms stagger |
 
 ## Output

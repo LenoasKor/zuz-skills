@@ -175,7 +175,7 @@ test("prompt scalar quotes preserve the complete risk review in every provider p
       assert.ok(content.includes(`\n\n${fixture.expected}\n\n`), `case ${index}: entire original template survives`);
       assert.ok(content.includes("# 데칼 위험 중심 리뷰\n"), `case ${index}: whole-quoted label remains compatible`);
       if (index === 0) {
-        for (const requirement of ["1) 버그 유발 가능성.", "2) 기존 기능 회귀 위험.", "3) 보안 취약점.", "4) 성능 저하.", '문제가 없으면 "이상 없음"으로 끝내세요.']) {
+        for (const requirement of ["버그·회귀·보안·성능", "파일/위치·발생 조건·영향·근거", "실행하지 못한 검사", "미검증 위험까지 없다고 단정하지 마세요."]) {
           assert.ok(content.includes(requirement), requirement);
         }
       }
@@ -227,9 +227,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.8" },
-    { id: "zuz-its", version: "1.11.0" },
-    { id: "design-motion", version: "1.0.1" },
+    { id: "development-core", version: "1.3.9" },
+    { id: "zuz-its", version: "1.11.1" },
+    { id: "design-motion", version: "1.0.2" },
     { id: "decal-maintainer", version: "1.1.4" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
@@ -393,7 +393,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.14.0");
+  assert.equal(packageValue.packVersion, "3.14.1");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {

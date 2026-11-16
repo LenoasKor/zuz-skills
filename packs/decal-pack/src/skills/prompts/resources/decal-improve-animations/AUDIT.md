@@ -33,14 +33,14 @@ Decision order for easing:
 --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS-like drawer curve */
 ```
 
-Duration budgets — **UI animations stay under 300ms**:
+Duration budgets — **default UI animations stay under 300ms**. Longer occasional modal/drawer transitions or gesture-settling springs need a documented purpose and responsiveness check:
 
 | Element | Duration |
 | --- | --- |
 | Button press feedback | 100–160ms |
 | Tooltips, small popovers | 125–200ms |
 | Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
+| Modals, drawers | 200–250ms by default; 300–500ms only for a justified, occasional large transition |
 | Marketing / explanatory | Can be longer |
 
 Hunt for: `ease-in` anywhere, bare `ease`/`linear` on entrances, durations > 300ms on UI elements, tooltip delay + animation on every tooltip in a toolbar (after the first, they should be instant).
@@ -55,7 +55,7 @@ Hunt for: `ease-in` anywhere, bare `ease`/`linear` on entrances, durations > 300
   **Modals are exempt** — they appear centered; `transform-origin: center` is correct there. Do not report it.
 - **Press feedback**: `transform: scale(0.97)` on `:active` with `transition: transform 160ms ease-out`. Keep it subtle (0.95–0.98).
 
-Hunt for: `scale(0)`, pure-fade entrances with no initial transform, `transform-origin: center` (or none) on trigger-anchored elements, pressable elements with no press feedback.
+Hunt for: `scale(0)`, pure-fade entrances that break a necessary spatial cue (not valid reduced-motion fades/static states), `transform-origin: center` (or none) on trigger-anchored elements, pressable elements with no press feedback.
 
 ## 4. Interruptibility
 
@@ -83,16 +83,16 @@ Hunt for: `transition: all`, animated layout properties, Framer Motion shorthand
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .element { animation: fade 0.2s ease; } /* keep opacity/color, drop movement */
+  .element { animation: none; transition: none; } /* also retain the component's visible final state, not an entrance opacity: 0 */
 }
 @media (hover: hover) and (pointer: fine) {
   .element:hover { transform: scale(1.05); } /* touch fires false hovers on tap */
 }
 ```
 
-Reduced motion means fewer and gentler animations, **not zero** — keep transitions that aid comprehension, remove position changes. In JS: `useReducedMotion()` and branch transform values.
+Reduced motion may be static or use a short opacity/color transition when it helps comprehension. Remove nonessential movement; do not require animation to preserve feedback. Static state, focus, text, and color can provide feedback. In JS: `useReducedMotion()` and branch transform values.
 
-Hunt for: movement with no `prefers-reduced-motion` handling, ungated `:hover` motion, reduced-motion implementations that nuke all feedback.
+Hunt for: movement with no `prefers-reduced-motion` handling, ungated `:hover` motion, reduced-motion implementations that remove meaningful state feedback (a static state is valid feedback).
 
 ## 7. Cohesion & tokens
 

@@ -1,7 +1,7 @@
 ---
 id: decal-review-animations
 label: 데칼 애니메이션 리뷰 · review-animations
-version: 1.0.0
+version: 1.0.1
 risk: read_only
 group: Motion
 target: active-cli
@@ -22,14 +22,6 @@ A specialized review skill. It does ONE thing: review animation and motion code 
 - Load the allowlisted `STANDARDS.md` companion only when an exact curve, duration, spring, gesture, performance, or accessibility value is needed: `decal_ui.read_canonical_skill({ skillId: "decal-review-animations", resourcePath: "STANDARDS.md" })`.
 - If the resource tool is unavailable, use the standards present in this document and mark any exact value you could not verify instead of guessing.
 
-## Operating Posture
-
-You are a senior design engineer with a brutal eye for craft. Your bias is toward **motion that feels right**, not motion that merely runs. A transition that "works" but feels sluggish, lands from the wrong origin, fires too often, or drops frames is a regression, not a pass. Default to flagging. Approval is earned, not assumed.
-
-The substantive bar comes from Emil Kowalski's animation philosophy (animations.dev). The review *method* — non-negotiable standards, escalation triggers, a remedial hierarchy, tiered output, and explicit approval criteria — is adapted from aggressive code-quality review.
-
-For the full rule catalog (easing curves, duration tables, spring config, gestures, clip-path, performance, a11y), see [STANDARDS.md](STANDARDS.md). Load it whenever a finding needs a precise value or citation.
-
 ## The Ten Non-Negotiable Standards
 
 Every animation in the diff is measured against these. A violation is a finding.
@@ -48,7 +40,7 @@ Every animation in the diff is measured against these. A violation is a finding.
 
 7. **GPU-only properties.** Animate `transform` and `opacity` only. Animating `width`/`height`/`margin`/`padding`/`top`/`left` (or Framer Motion `x`/`y`/`scale` shorthands under load) is a performance finding.
 
-8. **Accessibility.** `prefers-reduced-motion` is honored (gentler, not zero — keep opacity/color, drop movement). Hover animations are gated behind `@media (hover: hover) and (pointer: fine)`.
+8. **Accessibility.** `prefers-reduced-motion` is honored: static feedback or short opacity/color changes are valid; remove nonessential movement. Hover animations are gated behind `@media (hover: hover) and (pointer: fine)`.
 
 9. **Asymmetric enter/exit.** Deliberate actions (a press, a hold, a destructive confirm) animate slower; system responses snap. Symmetric timing on a press-and-release or hold interaction is a finding.
 
@@ -59,7 +51,7 @@ Every animation in the diff is measured against these. A violation is a finding.
 Flag these on sight, hard:
 
 - `transition: all` (unbounded property animation)
-- `scale(0)` or pure-fade entrances with no initial transform
+- `scale(0)`; flag a pure-fade entrance only when it breaks the intended spatial cue, not merely because it lacks a transform. Pure fades and static states are valid reduced-motion variants.
 - `ease-in` on any UI interaction; weak built-in easing on a deliberate animation
 - Animation on a keyboard shortcut, command-palette toggle, or 100+/day action
 - UI duration > 300ms with no stated reason
@@ -93,7 +85,7 @@ Two parts, in this order.
 
 ### Part 1 — Findings table (REQUIRED)
 
-A single markdown table. One row per issue. Never a "Before:/After:" list.
+A single markdown table when there are findings. One row per confirmed issue. If none, omit the empty table and state the reviewed scope and unverified limits; do not invent issues. Never a "Before:/After:" list.
 
 | Before | After | Why |
 | --- | --- | --- |

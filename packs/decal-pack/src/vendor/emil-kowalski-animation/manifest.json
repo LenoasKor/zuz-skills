@@ -10,20 +10,43 @@
     {
       "upstream": "skills/animate/SKILL.md",
       "decal": "assets/skills/decal-animate.md",
-      "resources": ["RECIPES.md"],
-      "adaptations": ["Decal frontmatter", "zuz ITS gate", "high-frequency product posture", "provider-neutral resource lookup"]
+      "resources": [
+        "RECIPES.md"
+      ],
+      "adaptations": [
+        "Decal frontmatter",
+        "zuz ITS gate",
+        "high-frequency product posture",
+        "provider-neutral resource lookup"
+      ]
     },
     {
       "upstream": "skills/review-animations/SKILL.md",
       "decal": "assets/skills/decal-review-animations.md",
-      "resources": ["STANDARDS.md"],
-      "adaptations": ["Decal frontmatter", "read-only boundary", "high-frequency product posture", "provider-neutral resource lookup"]
+      "resources": [
+        "STANDARDS.md"
+      ],
+      "adaptations": [
+        "Decal frontmatter",
+        "read-only boundary",
+        "high-frequency product posture",
+        "provider-neutral resource lookup"
+      ]
     },
     {
       "upstream": "skills/improve-animations/SKILL.md",
       "decal": "assets/skills/decal-improve-animations.md",
-      "resources": ["AUDIT.md", "PLAN-TEMPLATE.md"],
-      "adaptations": ["Decal frontmatter", "read-only response output", "zuz ITS handoff", "removed plans lifecycle", "delegation authorization gate"]
+      "resources": [
+        "AUDIT.md",
+        "PLAN-TEMPLATE.md"
+      ],
+      "adaptations": [
+        "Decal frontmatter",
+        "read-only response output",
+        "zuz ITS handoff",
+        "removed plans lifecycle",
+        "delegation authorization gate"
+      ]
     }
   ],
   "verbatimResources": [
@@ -31,22 +54,32 @@
       "upstream": "skills/animate/RECIPES.md",
       "decal": "assets/skills/resources/decal-animate/RECIPES.md",
       "sha256": "21ff63d84391db8d96ecdf9170095f55a42c836ccc36fd3269c4772bab031ba2"
-    },
-    {
-      "upstream": "skills/review-animations/STANDARDS.md",
-      "decal": "assets/skills/resources/decal-review-animations/STANDARDS.md",
-      "sha256": "e7d3605034acda54ca13e43aec9e64d65b53de20f75b11b8d694e373012fbe07"
-    },
-    {
-      "upstream": "skills/improve-animations/AUDIT.md",
-      "decal": "assets/skills/resources/decal-improve-animations/AUDIT.md",
-      "sha256": "551c8473e20e5f4774680bc24d45e1c68e50992582720905c6b077756b7b5a55"
     }
   ],
   "adaptedResources": [
     {
       "upstream": "skills/improve-animations/PLAN-TEMPLATE.md",
       "decal": "assets/skills/resources/decal-improve-animations/PLAN-TEMPLATE.md"
+    },
+    {
+      "upstream": "skills/review-animations/STANDARDS.md",
+      "decal": "assets/skills/resources/decal-review-animations/STANDARDS.md",
+      "upstreamSha256": "e7d3605034acda54ca13e43aec9e64d65b53de20f75b11b8d694e373012fbe07",
+      "adaptations": [
+        "Documented occasional motion duration exception",
+        "Reduced-motion static/fade allowance",
+        "No quota-driven findings or follow-up work"
+      ]
+    },
+    {
+      "upstream": "skills/improve-animations/AUDIT.md",
+      "decal": "assets/skills/resources/decal-improve-animations/AUDIT.md",
+      "upstreamSha256": "551c8473e20e5f4774680bc24d45e1c68e50992582720905c6b077756b7b5a55",
+      "adaptations": [
+        "Documented occasional motion duration exception",
+        "Reduced-motion static/fade allowance",
+        "No quota-driven findings or follow-up work"
+      ]
     }
   ]
 }

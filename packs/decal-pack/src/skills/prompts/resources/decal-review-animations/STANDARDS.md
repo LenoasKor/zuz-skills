@@ -43,10 +43,10 @@ Find curves at [easing.dev](https://easing.dev/) or [easings.co](https://easings
 | Button press feedback | 100–160ms |
 | Tooltips, small popovers | 125–200ms |
 | Dropdowns, selects | 150–250ms |
-| Modals, drawers | 200–500ms |
+| Modals, drawers | 200–250ms by default; 300–500ms only for a justified, occasional large transition |
 | Marketing / explanatory | Can be longer |
 
-**Rule: UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one. Faster spinners make load feel faster (same actual time). Instant tooltips after the first (skip delay + animation) make a toolbar feel faster.
+**Rule: default UI animations stay under 300ms.** Longer occasional modal/drawer transitions or gesture-settling springs need a documented purpose and responsiveness check. A 180ms dropdown feels more responsive than a 400ms one. Faster spinners make load feel faster (same actual time). Instant tooltips after the first (skip delay + animation) make a toolbar feel faster.
 
 ## Physicality
 
@@ -161,7 +161,7 @@ Stagger group entrances; 30–80ms between items. Longer delays feel slow. Stagg
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .element { animation: fade 0.2s ease; } /* keep opacity/color, drop transform-based motion */
+  .element { animation: none; transition: none; } /* also retain the component's visible final state, not an entrance opacity: 0 */
 }
 @media (hover: hover) and (pointer: fine) {
   .element:hover { transform: scale(1.05); } /* gate hover motion — touch fires false hovers on tap */
@@ -173,7 +173,7 @@ const reduce = useReducedMotion();
 const closedX = reduce ? 0 : '-100%';
 ```
 
-Reduced motion means fewer and gentler animations, not zero — keep transitions that aid comprehension, remove movement/position changes.
+Reduced motion may be static or use a short opacity/color transition when it helps comprehension. Remove nonessential movement; do not require animation to preserve feedback. Static state, focus, text, and color can provide feedback.
 
 ## Debugging (recommend in reviews when feel is uncertain)
 
