@@ -227,10 +227,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   assert.equal(packageValue.executionPolicies.packInstallation.gitSettlement, "opt-in-exact-write-set-commit");
   assert.equal(packageValue.executionPolicies.packInstallation.gitBlockedResult, "installation-preserved-and-typed");
   assert.deepEqual(packageValue.modules.map(({ id, version }) => ({ id, version })), [
-    { id: "development-core", version: "1.3.9" },
+    { id: "development-core", version: "1.3.10" },
     { id: "zuz-its", version: "1.11.2" },
     { id: "design-motion", version: "1.0.2" },
-    { id: "decal-maintainer", version: "1.1.4" },
+    { id: "decal-maintainer", version: "1.1.5" },
   ]);
   assert.ok(packageValue.modules.every((module) => /^[0-9a-f]{64}$/u.test(module.digest) && module.fileCount > 0));
   const decalAcceptance = JSON.parse(await readFile(join(repositoryRoot, "packs/decal-pack/src/consumer-acceptance/v1/decal-bundled-v1.json"), "utf8"));
@@ -289,6 +289,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
     assert.match(content, /누락·null·`unset`.*`pre_live`/us, id);
     assert.match(content, /배포.*권한/us, id);
     if (id === "decaldev-rebuild-relaunch") {
+      assert.equal(skill.version, "0.12.3");
+      assert.match(content, /Showcase 등록이나 권한 조회는 일반 빌드에 필요하지 않습니다/u);
+      assert.match(content, /--local-runner-only.*-LocalOnly/u);
+      assert.doesNotMatch(content, /config\/decal-build\.json/u);
       assert.match(content, /Remote 정적 preview 적용이 실패하면 경고와 미적용 사실을 보고하되 macOS 로컬 앱 재시작은 계속합니다/u);
       assert.match(content, /실패하면 Remote 미적용을 명시합니다/u);
     }
@@ -297,6 +301,9 @@ test("Pack execution policy binds cross-project approval and settlement commit",
   const buildFile = packageValue.files.find((file) => file.sourcePath === buildSkill.sourcePath);
   const buildContent = Buffer.from(buildFile.contentBase64, "base64").toString("utf8");
   assert.match(buildContent, /외부 host라는 이유만으로 설정 불가라고 단정하거나 작업을 거부하지/u);
+  assert.equal(buildSkill.version, "0.3.4");
+  assert.match(buildContent, /일반 빌드는 프로젝트 스크립트로 직접 실행/u);
+  assert.match(buildContent, /Showcase 등록이나 권한을 선행 조건으로 사용하지/u);
   assert.match(buildContent, /expectedStage/u);
   assert.match(buildContent, /지원됨.*지원되지 않음.*확인 불가/us);
   assert.match(buildContent, /읽기 전용 reader는 설정 도구가 아닙니다/u);
@@ -393,7 +400,7 @@ test("Pack keeps old contracts and advertises isolated v20 release settlement", 
   const revision = "e".repeat(40);
   execFileSync(process.execPath, [join(artifactRoot, "scripts/build-decal-pack.mjs"), "--source-revision", revision], { stdio: "pipe" });
   const packageValue = JSON.parse(await readFile(artifactPath("zuz-pack.json"), "utf8"));
-  assert.equal(packageValue.packVersion, "3.14.2");
+  assert.equal(packageValue.packVersion, "3.14.3");
   assert.equal(packageValue.compatibility.portableReleaseSettlement, "task-work-bug/v20");
   assert.equal(packageValue.compatibility.portableIsolatedSettlement, "task-work-bug/v20");
   for (const file of ["transaction.mjs", "drafts.mjs", "finalize.mjs", "task-lifecycle.mjs", "release-settle.mjs", "verify-contract.mjs"]) {
