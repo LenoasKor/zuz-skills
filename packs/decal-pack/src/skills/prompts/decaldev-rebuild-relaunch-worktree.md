@@ -1,7 +1,7 @@
 ---
 id: decaldev-rebuild-relaunch-worktree
 label: 데칼 워크트리 테스트 빌드
-version: 0.8.3
+version: 0.8.4
 risk: confirmation_required
 group: 개발
 target: active-cli
@@ -13,6 +13,8 @@ template: 개발 채널에서 Native 도구 `manage_showcase_test_build`가 실�
 # 데칼 워크트리 테스트 빌드
 
 쇼케이스의 개발빌드 등록기능을 이용하여 macOS의 유효한 Decal linked worktree 개발빌드를 등록한 후 `Decal TestBuild - <zuz ITS 티켓 번호>` 디버그 앱을 여는 개발 전용 스킬입니다.
+
+Windows의 직접 워크트리 테스트 빌드 절차는 `docs/dev_rules.md`의 **Windows 워크트리 테스트 빌드** 절을 참고합니다.
 
 쇼케이스는 필수 프로그램이 아닙니다. 격리 테스트 앱은 쇼케이스가 배정한 슬롯으로만 빌드되므로, 이 스킬은 사용자가 쇼케이스 테스트를 요청했거나 프로젝트의 `config/decal-build.json`에 `"showcase": true`가 있을 때만 씁니다. 그 밖에는 worktree에서 자동 테스트로 검증하고, 병합 뒤 main 개발빌드 재시작으로 확인합니다.
 

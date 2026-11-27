@@ -295,6 +295,10 @@ test("Pack execution policy binds cross-project approval and settlement commit",
       assert.doesNotMatch(content, /config\/decal-build\.json/u);
       assert.match(content, /Remote 정적 preview 적용이 실패하면 경고와 미적용 사실을 보고하되 macOS 로컬 앱 재시작은 계속합니다/u);
       assert.match(content, /실패하면 Remote 미적용을 명시합니다/u);
+    } else if (id === "decaldev-rebuild-relaunch-worktree") {
+      assert.equal(skill.version, "0.8.4");
+      assert.match(content, /Windows 워크트리 테스트 빌드/u);
+      assert.match(content, /쇼케이스가 배정한 슬롯으로만 빌드/u);
     }
   }
   const buildSkill = packageValue.skills.find((skill) => skill.id === "decal-build");
